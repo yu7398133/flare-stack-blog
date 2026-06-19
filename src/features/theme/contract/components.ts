@@ -10,9 +10,12 @@ import type {
   FriendLinksPageProps,
   HomePageProps,
   LoginPageProps,
+  MomentsPageProps,
+  PhotoWallPageProps,
   PostPageProps,
   PostsPageProps,
   ProfilePageProps,
+  ProjectsPageProps,
   RegisterPageProps,
   ResetPasswordPageProps,
   SearchPageProps,
@@ -84,6 +87,21 @@ export interface ThemeComponents {
 
   /** 个人资料页组件 */
   ProfilePage: React.ComponentType<ProfilePageProps>;
+
+  /** 照片墙页组件 */
+  PhotoWallPage: React.ComponentType<PhotoWallPageProps>;
+  /** 照片墙页骨架屏 */
+  PhotoWallPageSkeleton: React.ComponentType;
+
+  /** 说说/杂谈页组件 */
+  MomentsPage: React.ComponentType<MomentsPageProps>;
+  /** 说说/杂谈页骨架屏 */
+  MomentsPageSkeleton: React.ComponentType;
+
+  /** 项目展示页组件 */
+  ProjectsPage: React.ComponentType<ProjectsPageProps>;
+  /** 项目展示页骨架屏 */
+  ProjectsPageSkeleton: React.ComponentType;
 
   /** Toast 通知组件（Sonner 封装） */
   Toaster: React.ComponentType;

@@ -1,6 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, Search, X } from "lucide-react";
-import { useState } from "react";
+import { Link, useRouteContext } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
 interface NavbarProps {
@@ -11,7 +10,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps) {
-  const [showSearch, setShowSearch] = useState(false);
+  const { siteConfig } = useRouteContext({ from: "__root__" });
 
   return (
     <nav className="sticky top-0 z-50 w-full">
@@ -21,7 +20,7 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
           to="/"
           className="text-lg font-bold text-slate-800 dark:text-white tracking-wider hover:opacity-80 transition-opacity"
         >
-          ⚡ Blog
+          ⚡ {siteConfig.title}
         </Link>
 
         {/* Desktop Nav Links */}
@@ -43,14 +42,6 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
 
         {/* Right side actions */}
         <div className="flex items-center gap-2">
-          {/* Search toggle */}
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/10 transition-all"
-          >
-            <Search size={16} />
-          </button>
-
           {/* User / Login */}
           {!isLoading && (
             user ? (

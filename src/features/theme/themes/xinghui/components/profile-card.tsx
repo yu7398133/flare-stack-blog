@@ -16,7 +16,7 @@ export function ProfileCard({ postCount }: ProfileCardProps) {
         {/* Avatar */}
         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-500 p-1 shadow-lg flex-shrink-0 transition-transform duration-500 group-hover:rotate-3">
           <img
-            src={siteConfig.theme.xinghui?.avatar || siteConfig.theme.fuwari.avatar || "/images/avatar.png"}
+            src={siteConfig.theme.xinghui?.avatar || "/images/avatar.png"}
             alt={siteConfig.author}
             className="w-full h-full rounded-xl object-cover bg-white"
           />

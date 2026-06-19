@@ -17,31 +17,48 @@ export function PublicLayout({
   const { siteConfig } = useRouteContext({ from: "__root__" });
 
   const musicIds = siteConfig.theme.xinghui?.musicIds ?? [];
+  const homeBg = siteConfig.theme.xinghui?.homeBg;
 
   return (
     <MusicProvider musicIds={musicIds}>
-      <div className="xh-page-bg min-h-screen">
-        <MobileMenu
-          navOptions={navOptions}
-          isOpen={isMenuOpen}
-          onClose={() => setIsMenuOpen(false)}
-          user={user}
-          logout={logout}
-        />
+      <div className="xh-page-bg min-h-screen relative">
+        {/* Background image */}
+        {homeBg && (
+          <div className="fixed inset-0 z-0">
+            <img
+              src={homeBg}
+              alt=""
+              className="w-full h-full object-cover"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-black/30 dark:bg-black/50" />
+            <div className="absolute inset-0 backdrop-blur-sm" />
+          </div>
+        )}
 
-        <Navbar
-          navOptions={navOptions}
-          onMenuClick={() => setIsMenuOpen(true)}
-          user={user}
-          isLoading={isSessionLoading}
-        />
+        <div className="relative z-10">
+          <MobileMenu
+            navOptions={navOptions}
+            isOpen={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
+            user={user}
+            logout={logout}
+          />
 
-        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-6 pb-8">
-          {children}
-        </main>
+          <Navbar
+            navOptions={navOptions}
+            onMenuClick={() => setIsMenuOpen(true)}
+            user={user}
+            isLoading={isSessionLoading}
+          />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
-          <Footer navOptions={navOptions} />
+          <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-6 pb-8">
+            {children}
+          </main>
+
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
+            <Footer navOptions={navOptions} />
+          </div>
         </div>
       </div>
     </MusicProvider>

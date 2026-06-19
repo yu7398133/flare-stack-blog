@@ -12,8 +12,11 @@ import { ResetPasswordPage } from "./pages/auth/reset-password";
 import { VerifyEmailPage } from "./pages/auth/verify-email";
 import { FriendLinksPage, FriendLinksPageSkeleton } from "./pages/friend-links";
 import { HomePage, HomePageSkeleton } from "./pages/home";
+import { MomentsPage, MomentsPageSkeleton } from "./pages/moments";
+import { PhotoWallPage, PhotoWallPageSkeleton } from "./pages/photo-wall";
 import { PostPage, PostPageSkeleton } from "./pages/post";
 import { PostsPage, PostsPageSkeleton } from "./pages/posts";
+import { ProjectsPage, ProjectsPageSkeleton } from "./pages/projects";
 import { SearchPage } from "./pages/search";
 import { SubmitFriendLinkPage } from "./pages/submit-friend-link";
 import { ProfilePage } from "./pages/user/profile";
@@ -45,5 +48,11 @@ export default {
   ResetPasswordPage,
   VerifyEmailPage,
   ProfilePage,
+  PhotoWallPage,
+  PhotoWallPageSkeleton,
+  MomentsPage,
+  MomentsPageSkeleton,
+  ProjectsPage,
+  ProjectsPageSkeleton,
   Toaster,
 } satisfies ThemeComponents;

@@ -4,6 +4,12 @@ import { Hono } from "hono";
 import { proxy } from "hono/proxy";
 import { exportDownloadRoute } from "@/features/import-export/api/hono/download.route";
 import musicRoute from "@/features/music/api/hono/music.route";
+import momentsRoute from "@/features/moments/api/hono/moments.route";
+import photosRoute from "@/features/photos/api/hono/photos.route";
+import adminPhotosRoute from "@/features/photos/api/hono/admin-photos.route";
+import projectsRoute from "@/features/projects/api/hono/projects.route";
+import adminProjectsRoute from "@/features/projects/api/hono/admin-projects.route";
+import adminMomentsRoute from "@/features/moments/api/hono/admin-moments.route";
 import { handleImageRequest } from "@/features/media/service/media.service";
 import postsDetailRoute from "@/features/posts/api/hono/posts.detail.route";
 import postsListRoute from "@/features/posts/api/hono/posts.list.route";
@@ -39,7 +45,10 @@ const publicApi = new Hono<{ Bindings: Env }>()
   .route("/post", postsRelatedRoute)
   .route("/tags", tagsRoute)
   .route("/search", searchRoute)
-  .route("/music", musicRoute);
+  .route("/music", musicRoute)
+  .route("/photos", photosRoute)
+  .route("/moments", momentsRoute)
+  .route("/projects", projectsRoute);
 
 // Mount public API
 app.route("/api", publicApi);
@@ -135,6 +144,11 @@ app.post(
 
 // Admin export download route
 app.route("/api/admin/export", exportDownloadRoute);
+
+// Admin CRUD routes
+app.route("/api/admin/photos", adminPhotosRoute);
+app.route("/api/admin/moments", adminMomentsRoute);
+app.route("/api/admin/projects", adminProjectsRoute);
 
 // Router之前的防护
 app.all("*", shieldMiddleware);

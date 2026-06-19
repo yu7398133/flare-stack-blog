@@ -1,13 +1,13 @@
 import type { SiteConfig } from "@/features/config/site-config.schema";
 
 export const blogConfig = {
-  title: "站点名称",
-  author: "作者",
+  title: "XingHuiSama の 宝藏之地",
+  author: "XingHuiSama",
   description:
-    "这是我的个人网站和博客。在这里，我主要分享与技术和生活相关的内容。欢迎阅读！",
+    "在代码、学术与分子动力学模拟间穿梭的普通人。近期正埋头于 GROMACS 模拟研究与神经网络计算。",
   social: [
-    { platform: "github", url: "https://github.com/example" },
-    { platform: "email", url: "mailto:example@email.com" },
+    { platform: "github", url: "https://github.com/heiehiehi" },
+    { platform: "email", url: "mailto:xinghuisama@example.com" },
     { platform: "rss", url: "/rss.xml" },
   ],
   icons: {
@@ -20,17 +20,17 @@ export const blogConfig = {
   },
   theme: {
     default: {
-      navBarName: "导航栏名称",
+      navBarName: "XingHuiSama",
     },
     fuwari: {
-      homeBg: "/images/home-bg.webp",
-      avatar: "/images/avatar.png",
+      homeBg: "https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg",
+      avatar: "https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg",
       primaryHue: 250,
     },
     xinghui: {
-      homeBg: "/images/home-bg.webp",
-      avatar: "/images/avatar.png",
-      musicIds: [],
+      homeBg: "https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg",
+      avatar: "https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg",
+      musicIds: ["1809646618", "3361076230", "1859390262"],
     },
   },
 } as const satisfies SiteConfig;
