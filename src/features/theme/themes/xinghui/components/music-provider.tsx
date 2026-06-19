@@ -127,7 +127,7 @@ export function MusicProvider({ children, musicIds }: MusicProviderProps) {
                 (song.cover as string) ||
                 (song.pic as string) ||
                 "",
-              src: song.url as string,
+              src: `/api/music/proxy/${song.id}`,
               lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
             }),
           );

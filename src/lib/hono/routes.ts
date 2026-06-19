@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { proxy } from "hono/proxy";
 import { exportDownloadRoute } from "@/features/import-export/api/hono/download.route";
 import musicRoute from "@/features/music/api/hono/music.route";
+import musicProxyRoute from "@/features/music/api/hono/music-proxy.route";
 import momentsRoute from "@/features/moments/api/hono/moments.route";
 import photosRoute from "@/features/photos/api/hono/photos.route";
 import adminPhotosRoute from "@/features/photos/api/hono/admin-photos.route";
@@ -46,6 +47,7 @@ const publicApi = new Hono<{ Bindings: Env }>()
   .route("/tags", tagsRoute)
   .route("/search", searchRoute)
   .route("/music", musicRoute)
+  .route("/music/proxy", musicProxyRoute)
   .route("/photos", photosRoute)
   .route("/moments", momentsRoute)
   .route("/projects", projectsRoute);
