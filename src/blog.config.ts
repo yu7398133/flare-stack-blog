@@ -27,5 +27,10 @@ export const blogConfig = {
       avatar: "/images/avatar.png",
       primaryHue: 250,
     },
+    xinghui: {
+      homeBg: "/images/home-bg.webp",
+      avatar: "/images/avatar.png",
+      musicIds: [],
+    },
   },
 } as const satisfies SiteConfig;

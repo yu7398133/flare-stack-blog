@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { Hono } from "hono";
 import { proxy } from "hono/proxy";
 import { exportDownloadRoute } from "@/features/import-export/api/hono/download.route";
+import musicRoute from "@/features/music/api/hono/music.route";
 import { handleImageRequest } from "@/features/media/service/media.service";
 import postsDetailRoute from "@/features/posts/api/hono/posts.detail.route";
 import postsListRoute from "@/features/posts/api/hono/posts.list.route";
@@ -37,7 +38,8 @@ const publicApi = new Hono<{ Bindings: Env }>()
   .route("/post", postsDetailRoute)
   .route("/post", postsRelatedRoute)
   .route("/tags", tagsRoute)
-  .route("/search", searchRoute);
+  .route("/search", searchRoute)
+  .route("/music", musicRoute);
 
 // Mount public API
 app.route("/api", publicApi);

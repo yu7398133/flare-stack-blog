@@ -1,0 +1,145 @@
+/* ========================================
+   Xinghui Theme — Glassmorphism Global Styles
+   ======================================== */
+@import "./markdown.css";
+
+/* Page background with gradient */
+.xh-page-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+  transition: background 0.7s ease;
+}
+
+.dark .xh-page-bg {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+}
+
+/* Glassmorphism card base */
+.xh-glass {
+  background: var(--xh-glass-bg);
+  backdrop-filter: blur(var(--xh-blur));
+  -webkit-backdrop-filter: blur(var(--xh-blur));
+  border: 1px solid var(--xh-glass-border);
+  border-radius: var(--xh-radius);
+  box-shadow: var(--xh-shadow);
+  transition: all 0.7s ease;
+}
+
+.dark .xh-glass {
+  background: var(--xh-glass-bg-dark);
+  border-color: var(--xh-glass-border-dark);
+}
+
+/* Glass card hover effect */
+.xh-glass-hover {
+  transition: all 0.7s ease;
+}
+
+.xh-glass-hover:hover {
+  transform: scale(1.01);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+}
+
+/* Entrance animation */
+@keyframes xh-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.xh-animate-in {
+  animation: xh-fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* Staggered animation delays */
+.xh-delay-1 { animation-delay: 50ms; }
+.xh-delay-2 { animation-delay: 100ms; }
+.xh-delay-3 { animation-delay: 150ms; }
+.xh-delay-4 { animation-delay: 200ms; }
+.xh-delay-5 { animation-delay: 250ms; }
+.xh-delay-6 { animation-delay: 300ms; }
+
+/* Spinning disc animation (for music player) */
+@keyframes xh-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.xh-spin-slow {
+  animation: xh-spin 6s linear infinite;
+}
+
+.xh-spin-paused {
+  animation-play-state: paused;
+}
+
+/* Audio wave animation */
+@keyframes xh-wave {
+  0%, 100% { height: 4px; }
+  50% { height: 24px; }
+}
+
+.xh-wave-bar {
+  animation: xh-wave 1s ease-in-out infinite;
+}
+
+/* Typing cursor blink */
+@keyframes xh-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.xh-cursor {
+  animation: xh-cursor-blink 0.8s step-end infinite;
+}
+
+/* Gradient text */
+.xh-gradient-text {
+  background: linear-gradient(135deg, var(--xh-primary), var(--xh-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar styling */
+.xh-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.xh-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.xh-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 999px;
+}
+
+.dark .xh-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+/* Skeleton loading pulse */
+@keyframes xh-skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.xh-skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: xh-skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: var(--xh-radius-sm);
+}
+
+.dark .xh-skeleton {
+  background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+  background-size: 200% 100%;
+}

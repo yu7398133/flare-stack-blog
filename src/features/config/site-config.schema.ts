@@ -270,6 +270,30 @@ function createFuwariThemeSiteConfigInputFormSchema(messages: Messages) {
   });
 }
 
+function createXinghuiThemeSiteConfigSchema() {
+  return z.object({
+    homeBg: createBackgroundImageRefSchema(),
+    avatar: createAssetRefSchema(),
+    musicIds: z.array(z.string()).optional(),
+  });
+}
+
+function createXinghuiThemeSiteConfigInputSchema() {
+  return z.object({
+    homeBg: createBackgroundImageRefSchema().optional(),
+    avatar: createAssetRefSchema().optional(),
+    musicIds: z.array(z.string()).optional(),
+  });
+}
+
+function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
+  return z.object({
+    homeBg: createBackgroundImageRefFormSchema(messages).optional(),
+    avatar: createAssetRefFormSchema(messages).optional(),
+    musicIds: z.array(z.string()).optional(),
+  });
+}
+
 export const defaultThemeBackgroundSchema =
   createDefaultThemeBackgroundSchema();
 export const defaultThemeBackgroundInputSchema =
@@ -281,6 +305,9 @@ export const defaultThemeSiteConfigInputSchema =
 export const fuwariThemeSiteConfigSchema = createFuwariThemeSiteConfigSchema();
 export const fuwariThemeSiteConfigInputSchema =
   createFuwariThemeSiteConfigInputSchema();
+export const xinghuiThemeSiteConfigSchema = createXinghuiThemeSiteConfigSchema();
+export const xinghuiThemeSiteConfigInputSchema =
+  createXinghuiThemeSiteConfigInputSchema();
 
 export const FullSiteConfigSchema = z.object({
   title: createSiteTextSchema(120),
@@ -298,6 +325,7 @@ export const FullSiteConfigSchema = z.object({
   theme: z.object({
     default: defaultThemeSiteConfigSchema,
     fuwari: fuwariThemeSiteConfigSchema,
+    xinghui: xinghuiThemeSiteConfigSchema,
   }),
 });
 
@@ -322,6 +350,7 @@ export function createSiteConfigInputFormSchema(messages: Messages) {
         default:
           createDefaultThemeSiteConfigInputFormSchema(messages).optional(),
         fuwari: createFuwariThemeSiteConfigInputFormSchema(messages).optional(),
+        xinghui: createXinghuiThemeSiteConfigInputFormSchema(messages).optional(),
       })
       .optional(),
   });
@@ -346,6 +375,7 @@ export const SiteConfigInputSchema = z.object({
     .object({
       default: defaultThemeSiteConfigInputSchema.optional(),
       fuwari: fuwariThemeSiteConfigInputSchema.optional(),
+      xinghui: xinghuiThemeSiteConfigInputSchema.optional(),
     })
     .optional(),
 });
@@ -364,6 +394,10 @@ export type DefaultThemeSiteConfigInput = z.infer<
 export type FuwariThemeSiteConfig = z.infer<typeof fuwariThemeSiteConfigSchema>;
 export type FuwariThemeSiteConfigInput = z.infer<
   typeof fuwariThemeSiteConfigInputSchema
+>;
+export type XinghuiThemeSiteConfig = z.infer<typeof xinghuiThemeSiteConfigSchema>;
+export type XinghuiThemeSiteConfigInput = z.infer<
+  typeof xinghuiThemeSiteConfigInputSchema
 >;
 export type SiteConfig = z.infer<typeof FullSiteConfigSchema>;
 export type SiteConfigInput = z.infer<typeof SiteConfigInputSchema>;
