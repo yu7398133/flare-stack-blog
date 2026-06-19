@@ -249,7 +249,7 @@ function createDefaultThemeSiteConfigInputFormSchema(messages: Messages) {
 function createFuwariThemeSiteConfigSchema() {
   return z.object({
     homeBg: createBackgroundImageRefSchema(),
-    avatar: createAssetRefSchema(),
+    avatar: createBackgroundImageRefSchema(),
     primaryHue: createHueSchema(),
   });
 }
@@ -257,7 +257,7 @@ function createFuwariThemeSiteConfigSchema() {
 function createFuwariThemeSiteConfigInputSchema() {
   return z.object({
     homeBg: createBackgroundImageRefSchema().optional(),
-    avatar: createAssetRefSchema().optional(),
+    avatar: createBackgroundImageRefSchema().optional(),
     primaryHue: createHueSchema().optional(),
   });
 }
@@ -265,7 +265,7 @@ function createFuwariThemeSiteConfigInputSchema() {
 function createFuwariThemeSiteConfigInputFormSchema(messages: Messages) {
   return z.object({
     homeBg: createBackgroundImageRefFormSchema(messages).optional(),
-    avatar: createAssetRefFormSchema(messages).optional(),
+    avatar: createBackgroundImageRefFormSchema(messages).optional(),
     primaryHue: createHueFormSchema(messages).optional(),
   });
 }
@@ -273,7 +273,7 @@ function createFuwariThemeSiteConfigInputFormSchema(messages: Messages) {
 function createXinghuiThemeSiteConfigSchema() {
   return z.object({
     homeBg: createBackgroundImageRefSchema(),
-    avatar: createAssetRefSchema(),
+    avatar: createBackgroundImageRefSchema(),
     musicIds: z.array(z.string()).optional(),
   });
 }
@@ -281,7 +281,7 @@ function createXinghuiThemeSiteConfigSchema() {
 function createXinghuiThemeSiteConfigInputSchema() {
   return z.object({
     homeBg: createBackgroundImageRefSchema().optional(),
-    avatar: createAssetRefSchema().optional(),
+    avatar: createBackgroundImageRefSchema().optional(),
     musicIds: z.array(z.string()).optional(),
   });
 }
@@ -289,7 +289,7 @@ function createXinghuiThemeSiteConfigInputSchema() {
 function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
   return z.object({
     homeBg: createBackgroundImageRefFormSchema(messages).optional(),
-    avatar: createAssetRefFormSchema(messages).optional(),
+    avatar: createBackgroundImageRefFormSchema(messages).optional(),
     musicIds: z.array(z.string()).optional(),
   });
 }
