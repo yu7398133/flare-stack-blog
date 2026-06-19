@@ -561,6 +561,9 @@ interface PublicRouteRouteChildren {
   PublicUnsubscribeRoute: typeof PublicUnsubscribeRoute
   PublicIndexRoute: typeof PublicIndexRoute
   PublicPostSlugRoute: typeof PublicPostSlugRoute
+  PublicPhotowallIndexRoute: typeof PublicPhotowallIndexRoute
+  PublicMomentsIndexRoute: typeof PublicMomentsIndexRoute
+  PublicProjectsIndexRoute: typeof PublicProjectsIndexRoute
 }
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
@@ -570,6 +573,9 @@ const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicUnsubscribeRoute: PublicUnsubscribeRoute,
   PublicIndexRoute: PublicIndexRoute,
   PublicPostSlugRoute: PublicPostSlugRoute,
+  PublicPhotowallIndexRoute: PublicPhotowallIndexRoute,
+  PublicMomentsIndexRoute: PublicMomentsIndexRoute,
+  PublicProjectsIndexRoute: PublicProjectsIndexRoute,
 }
 
 const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
@@ -648,3 +654,26 @@ declare module '@tanstack/react-start' {
     config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
+
+// New routes for photowall, moments, projects
+import { Route as PublicPhotowallIndexRouteImport } from './routes/_public/photowall/index'
+import { Route as PublicMomentsIndexRouteImport } from './routes/_public/moments/index'
+import { Route as PublicProjectsIndexRouteImport } from './routes/_public/projects/index'
+
+const PublicPhotowallIndexRoute = PublicPhotowallIndexRouteImport.update({
+  id: '/photowall',
+  path: '/photowall',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+
+const PublicMomentsIndexRoute = PublicMomentsIndexRouteImport.update({
+  id: '/moments',
+  path: '/moments',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+
+const PublicProjectsIndexRoute = PublicProjectsIndexRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
