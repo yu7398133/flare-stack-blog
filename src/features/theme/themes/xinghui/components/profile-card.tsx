@@ -1,6 +1,6 @@
 import { useRouteContext } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Github, Mail, Rss } from "lucide-react";
+import { Globe, Mail, Rss } from "lucide-react";
 
 interface ProfileCardProps {
   postCount: number;
@@ -74,12 +74,12 @@ export function ProfileCard({ postCount }: ProfileCardProps) {
       {/* Social links */}
       <div className="flex gap-2 mt-4 relative z-10">
         {siteConfig.social?.map((link, i) => {
-          const iconMap: Record<string, typeof Github> = {
-            github: Github,
+          const iconMap: Record<string, typeof Globe> = {
+            github: Globe,
             email: Mail,
             rss: Rss,
           };
-          const Icon = iconMap[link.platform] || Github;
+          const Icon = iconMap[link.platform] || Globe;
           return (
             <a
               key={i}
