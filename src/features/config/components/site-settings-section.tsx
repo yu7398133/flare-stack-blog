@@ -15,6 +15,8 @@ function ThemeSettingsContent() {
       return <DefaultThemeSettings />;
     case "fuwari":
       return <FuwariThemeSettings />;
+    case "xinghui":
+      return null; // xinghui theme uses its own settings
     default: {
       __THEME_NAME__ satisfies never;
       return null;
