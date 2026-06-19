@@ -1,4 +1,4 @@
-import { ExternalLink, Github, Star } from "lucide-react";
+import { ExternalLink, GitBranch, Star } from "lucide-react";
 import type { ProjectsPageProps } from "@/features/theme/contract/pages";
 
 export function ProjectsPage({ projects }: ProjectsPageProps) {
@@ -122,7 +122,7 @@ function ProjectCard({ project, featured }: { project: any; featured?: boolean }
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
           >
-            <Github size={12} />
+            <GitBranch size={12} />
             <span>源码</span>
           </a>
         )}
