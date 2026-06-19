@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import * as ProjectsData from "@/features/projects/data/projects.data";
+import { getServiceContext } from "@/lib/hono/helper";
+import { baseMiddleware } from "@/lib/hono/middlewares";
 
 const projectCreateSchema = z.object({
   title: z.string().min(1).max(200),
@@ -17,11 +19,15 @@ const projectCreateSchema = z.object({
 
 const projectUpdateSchema = projectCreateSchema.partial();
 
-const adminProjectsRoute = new Hono<{ Bindings: Env }>()
+const app = new Hono<{ Bindings: Env }>();
+
+app.use("*", baseMiddleware);
+
+const adminProjectsRoute = app
   // GET /api/admin/projects
   .get("/", async (c) => {
-    const db = c.get("db");
-    const projects = await ProjectsData.getAll(db);
+    const ctx = getServiceContext(c);
+    const projects = await ProjectsData.getAll(ctx.db);
     return c.json(projects);
   })
   // POST /api/admin/projects
@@ -31,8 +37,8 @@ const adminProjectsRoute = new Hono<{ Bindings: Env }>()
     if (!parsed.success) {
       return c.json({ error: parsed.error.flatten() }, 400);
     }
-    const db = c.get("db");
-    const project = await ProjectsData.create(db, parsed.data);
+    const ctx = getServiceContext(c);
+    const project = await ProjectsData.create(ctx.db, parsed.data);
     return c.json(project, 201);
   })
   // PATCH /api/admin/projects/:id
@@ -44,8 +50,8 @@ const adminProjectsRoute = new Hono<{ Bindings: Env }>()
     if (!parsed.success) {
       return c.json({ error: parsed.error.flatten() }, 400);
     }
-    const db = c.get("db");
-    const project = await ProjectsData.update(db, id, parsed.data);
+    const ctx = getServiceContext(c);
+    const project = await ProjectsData.update(ctx.db, id, parsed.data);
     if (!project) return c.json({ error: "Not found" }, 404);
     return c.json(project);
   })
@@ -53,8 +59,8 @@ const adminProjectsRoute = new Hono<{ Bindings: Env }>()
   .delete("/:id", async (c) => {
     const id = parseInt(c.req.param("id"));
     if (isNaN(id)) return c.json({ error: "Invalid ID" }, 400);
-    const db = c.get("db");
-    await ProjectsData.remove(db, id);
+    const ctx = getServiceContext(c);
+    await ProjectsData.remove(ctx.db, id);
     return c.json({ success: true });
   });
 
