@@ -5,6 +5,7 @@ import { config } from "./config";
 import { AuthLayout } from "./layouts/auth-layout";
 import { PublicLayout } from "./layouts/public-layout";
 import { UserLayout } from "./layouts/user-layout";
+import { AboutPage } from "./pages/about/page";
 import { ForgotPasswordPage } from "./pages/auth/forgot-password";
 import { LoginPage } from "./pages/auth/login";
 import { RegisterPage } from "./pages/auth/register";
@@ -19,6 +20,7 @@ import { PostsPage, PostsPageSkeleton } from "./pages/posts";
 import { ProjectsPage, ProjectsPageSkeleton } from "./pages/projects";
 import { SearchPage } from "./pages/search";
 import { SubmitFriendLinkPage } from "./pages/submit-friend-link";
+import { TimelinePage, TimelinePageSkeleton } from "./pages/timeline/page";
 import { ProfilePage } from "./pages/user/profile";
 import { getXinghuiThemeStyle } from "./theme-style";
 
@@ -54,5 +56,8 @@ export default {
   MomentsPageSkeleton,
   ProjectsPage,
   ProjectsPageSkeleton,
+  AboutPage,
+  TimelinePage,
+  TimelinePageSkeleton,
   Toaster,
 } satisfies ThemeComponents;

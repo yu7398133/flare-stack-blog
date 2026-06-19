@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import theme from "@theme";
+import type { Photo } from "@/lib/db/schema/photos.table";
 
 export const Route = createFileRoute("/_public/photowall")({
   component: PhotoWallRoute,
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/_public/photowall")({
 function PhotoWallRoute() {
   const [selectedAlbum, setSelectedAlbum] = useState<string>("");
 
-  const { data: photos, isLoading: isLoadingPhotos } = useQuery({
+  const { data: photos, isLoading: isLoadingPhotos } = useQuery<Photo[]>({
     queryKey: ["photos", selectedAlbum],
     queryFn: async () => {
       const params = selectedAlbum ? `?album=${selectedAlbum}` : "";
@@ -19,7 +20,7 @@ function PhotoWallRoute() {
     },
   });
 
-  const { data: albums } = useQuery({
+  const { data: albums } = useQuery<string[]>({
     queryKey: ["photo-albums"],
     queryFn: async () => {
       const res = await fetch("/api/photos/albums");

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Calendar, Clock, Eye, Tag } from "lucide-react";
+import { Calendar, Clock, Eye } from "lucide-react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 
 interface PostCardProps {

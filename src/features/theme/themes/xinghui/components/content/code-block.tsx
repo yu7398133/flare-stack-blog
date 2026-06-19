@@ -1,5 +1,4 @@
-import type { JSONContent } from "@tiptap/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 
 interface CodeBlockProps {

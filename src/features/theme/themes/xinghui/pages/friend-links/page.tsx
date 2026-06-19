@@ -1,4 +1,4 @@
-import { Globe, Mail, ExternalLink } from "lucide-react";
+import { Globe, ExternalLink } from "lucide-react";
 import type { FriendLinksPageProps } from "@/features/theme/contract/pages";
 
 export function FriendLinksPage({ links }: FriendLinksPageProps) {
@@ -23,9 +23,9 @@ export function FriendLinksPage({ links }: FriendLinksPageProps) {
               rel="noopener noreferrer"
               className="xh-glass xh-glass-hover p-5 flex items-start gap-4 group"
             >
-              {link.avatar ? (
+              {link.logoUrl ? (
                 <img
-                  src={link.avatar}
+                  src={link.logoUrl}
                   alt={link.siteName}
                   className="w-12 h-12 rounded-xl object-cover border border-white/30 dark:border-white/10 flex-shrink-0"
                 />

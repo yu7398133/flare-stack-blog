@@ -34,13 +34,12 @@ function PublicLayout() {
   const queryClient = useQueryClient();
 
   const navOptions = [
-    { label: m.nav_home(), to: "/" as const, id: "home" },
-    { label: m.nav_posts(), to: "/posts" as const, id: "posts" },
-    {
-      label: m.nav_friend_links(),
-      to: "/friend-links" as const,
-      id: "friend-links",
-    },
+    { label: "首页", to: "/" as const, id: "home" },
+    { label: "项目", to: "/projects" as const, id: "projects" },
+    { label: "照片墙", to: "/photowall" as const, id: "photowall" },
+    { label: "说说", to: "/moments" as const, id: "moments" },
+    { label: "友链", to: "/friend-links" as const, id: "friend-links" },
+    { label: "关于", to: "/about" as const, id: "about" },
   ];
 
   const logout = async () => {

@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Calendar, Clock, Edit3, Eye, Tag } from "lucide-react";
-import { Suspense } from "react";
+import { ArrowLeft, Calendar, Clock, Edit3, Tag } from "lucide-react";
 import type { PostPageProps } from "@/features/theme/contract/pages";
 import { authClient } from "@/lib/auth/auth.client";
 import { ContentRenderer } from "../../components/content/content-renderer";

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { Loader2, XCircle } from "lucide-react";
 import type { ResetPasswordPageProps } from "@/features/theme/contract/pages";
 
 export function ResetPasswordPage({ resetPasswordForm, token, error }: ResetPasswordPageProps) {

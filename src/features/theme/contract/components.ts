@@ -6,6 +6,7 @@ import type {
   UserLayoutProps,
 } from "./layouts";
 import type {
+  AboutPageProps,
   ForgotPasswordPageProps,
   FriendLinksPageProps,
   HomePageProps,
@@ -20,6 +21,7 @@ import type {
   ResetPasswordPageProps,
   SearchPageProps,
   SubmitFriendLinkPageProps,
+  TimelinePageProps,
   VerifyEmailPageProps,
 } from "./pages";
 
@@ -102,6 +104,14 @@ export interface ThemeComponents {
   ProjectsPage: React.ComponentType<ProjectsPageProps>;
   /** 项目展示页骨架屏 */
   ProjectsPageSkeleton: React.ComponentType;
+
+  /** 关于页组件 */
+  AboutPage: React.ComponentType<AboutPageProps>;
+
+  /** 归档/时间线页组件 */
+  TimelinePage: React.ComponentType<TimelinePageProps>;
+  /** 归档/时间线页骨架屏 */
+  TimelinePageSkeleton: React.ComponentType;
 
   /** Toast 通知组件（Sonner 封装） */
   Toaster: React.ComponentType;

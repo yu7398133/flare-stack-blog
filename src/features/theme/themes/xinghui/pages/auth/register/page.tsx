@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import type { RegisterPageProps } from "@/features/theme/contract/pages";
 
-export function RegisterPage({ isEmailConfigured, registerForm, turnstileElement }: RegisterPageProps) {
+export function RegisterPage({ isEmailConfigured: _isEmailConfigured, registerForm, turnstileElement }: RegisterPageProps) {
   const { register, errors, handleSubmit, isSubmitting, isSuccess } = registerForm;
 
   if (isSuccess) {

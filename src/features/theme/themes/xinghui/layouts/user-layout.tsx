@@ -13,9 +13,9 @@ interface UserLayoutProps {
 
 export function UserLayout({
   isAuthenticated,
-  navOptions,
+  navOptions: _navOptions,
   user,
-  isSessionLoading,
+  isSessionLoading: _isSessionLoading,
   logout,
   children,
 }: UserLayoutProps) {

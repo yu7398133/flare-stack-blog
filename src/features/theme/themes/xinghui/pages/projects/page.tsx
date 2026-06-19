@@ -1,5 +1,6 @@
-import { ExternalLink, GitBranch, Star } from "lucide-react";
+import { ExternalLink, GitBranch } from "lucide-react";
 import type { ProjectsPageProps } from "@/features/theme/contract/pages";
+import type { Project } from "@/lib/db/schema/projects.table";
 
 export function ProjectsPage({ projects }: ProjectsPageProps) {
   const featured = projects.filter((p) => p.featured);
@@ -54,8 +55,14 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
   );
 }
 
-function ProjectCard({ project, featured }: { project: any; featured?: boolean }) {
-  const techStack: string[] = project.techStack ? JSON.parse(project.techStack) : [];
+function ProjectCard({ project, featured }: { project: Project; featured?: boolean }) {
+  const techStack: string[] = (() => {
+    try {
+      return project.techStack ? JSON.parse(project.techStack) : [];
+    } catch {
+      return [];
+    }
+  })();
 
   return (
     <div className={`xh-glass xh-glass-hover p-5 flex flex-col gap-3 ${featured ? "min-h-[200px]" : ""}`}>

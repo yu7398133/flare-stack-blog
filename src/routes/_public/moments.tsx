@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import theme from "@theme";
+import type { Moment } from "@/lib/db/schema/moments.table";
 
 export const Route = createFileRoute("/_public/moments")({
   component: MomentsRoute,
@@ -11,7 +12,7 @@ function MomentsRoute() {
   const [page, setPage] = useState(0);
   const limit = 20;
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<{ items: Moment[]; total: number }>({
     queryKey: ["moments", page],
     queryFn: async () => {
       const res = await fetch(`/api/moments?limit=${limit}&offset=${page * limit}`);

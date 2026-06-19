@@ -4,7 +4,7 @@ import type { SiteConfig } from "@/features/config/site-config.schema";
 /**
  * Xinghui theme — Glassmorphism style CSS custom properties.
  */
-export function getXinghuiThemeStyle(siteConfig: SiteConfig): CSSProperties {
+export function getXinghuiThemeStyle(_siteConfig: SiteConfig): CSSProperties {
   return {
     "--xh-glass-bg": "rgba(255, 255, 255, 0.4)",
     "--xh-glass-bg-dark": "rgba(30, 41, 59, 0.5)",

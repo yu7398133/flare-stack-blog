@@ -1,0 +1,5 @@
+import type { PostItem } from "@/features/posts/schema/posts.schema";
+
+export interface TimelinePageProps {
+  posts: PostItem[];
+}

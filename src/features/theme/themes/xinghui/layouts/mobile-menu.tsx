@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { X } from "lucide-react";
+import { X, Sun, Moon } from "lucide-react";
+import { useState, useEffect } from "react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
 interface MobileMenuProps {
@@ -11,6 +12,25 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ navOptions, isOpen, onClose, user, logout }: MobileMenuProps) {
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
   if (!isOpen) return null;
 
   return (
@@ -66,6 +86,15 @@ export function MobileMenu({ navOptions, isOpen, onClose, user, logout }: Mobile
             </Link>
           ))}
         </div>
+
+        {/* Night mode toggle */}
+        <button
+          onClick={() => setIsDark(!isDark)}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white/40 dark:hover:bg-white/10 transition-all"
+        >
+          {isDark ? <Sun size={18} /> : <Moon size={18} />}
+          <span>{isDark ? "日间模式" : "夜间模式"}</span>
+        </button>
 
         {/* Auth actions */}
         <div className="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-700/50">

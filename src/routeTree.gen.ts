@@ -19,9 +19,14 @@ import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
 import { Route as UserSubmitFriendLinkRouteImport } from './routes/_user/submit-friend-link'
 import { Route as UserProfileRouteImport } from './routes/_user/profile'
 import { Route as PublicUnsubscribeRouteImport } from './routes/_public/unsubscribe'
+import { Route as PublicTimelineRouteImport } from './routes/_public/timeline'
 import { Route as PublicSearchRouteImport } from './routes/_public/search'
+import { Route as PublicProjectsRouteImport } from './routes/_public/projects'
 import { Route as PublicPostsRouteImport } from './routes/_public/posts'
+import { Route as PublicPhotowallRouteImport } from './routes/_public/photowall'
+import { Route as PublicMomentsRouteImport } from './routes/_public/moments'
 import { Route as PublicFriendLinksRouteImport } from './routes/_public/friend-links'
+import { Route as PublicAboutRouteImport } from './routes/_public/about'
 import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
 import { Route as AuthResetLinkRouteImport } from './routes/_auth/reset-link'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
@@ -84,9 +89,19 @@ const PublicUnsubscribeRoute = PublicUnsubscribeRouteImport.update({
   path: '/unsubscribe',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const PublicTimelineRoute = PublicTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const PublicSearchRoute = PublicSearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicProjectsRoute = PublicProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const PublicPostsRoute = PublicPostsRouteImport.update({
@@ -94,9 +109,24 @@ const PublicPostsRoute = PublicPostsRouteImport.update({
   path: '/posts',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const PublicPhotowallRoute = PublicPhotowallRouteImport.update({
+  id: '/photowall',
+  path: '/photowall',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicMomentsRoute = PublicMomentsRouteImport.update({
+  id: '/moments',
+  path: '/moments',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const PublicFriendLinksRoute = PublicFriendLinksRouteImport.update({
   id: '/friend-links',
   path: '/friend-links',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicAboutRoute = PublicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
@@ -179,9 +209,14 @@ export interface FileRoutesByFullPath {
   '/register': typeof AuthRegisterRoute
   '/reset-link': typeof AuthResetLinkRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/about': typeof PublicAboutRoute
   '/friend-links': typeof PublicFriendLinksRoute
+  '/moments': typeof PublicMomentsRoute
+  '/photowall': typeof PublicPhotowallRoute
   '/posts': typeof PublicPostsRoute
+  '/projects': typeof PublicProjectsRoute
   '/search': typeof PublicSearchRoute
+  '/timeline': typeof PublicTimelineRoute
   '/unsubscribe': typeof PublicUnsubscribeRoute
   '/profile': typeof UserProfileRoute
   '/submit-friend-link': typeof UserSubmitFriendLinkRoute
@@ -203,9 +238,14 @@ export interface FileRoutesByTo {
   '/register': typeof AuthRegisterRoute
   '/reset-link': typeof AuthResetLinkRoute
   '/verify-email': typeof AuthVerifyEmailRoute
+  '/about': typeof PublicAboutRoute
   '/friend-links': typeof PublicFriendLinksRoute
+  '/moments': typeof PublicMomentsRoute
+  '/photowall': typeof PublicPhotowallRoute
   '/posts': typeof PublicPostsRoute
+  '/projects': typeof PublicProjectsRoute
   '/search': typeof PublicSearchRoute
+  '/timeline': typeof PublicTimelineRoute
   '/unsubscribe': typeof PublicUnsubscribeRoute
   '/profile': typeof UserProfileRoute
   '/submit-friend-link': typeof UserSubmitFriendLinkRoute
@@ -232,9 +272,14 @@ export interface FileRoutesById {
   '/_auth/register': typeof AuthRegisterRoute
   '/_auth/reset-link': typeof AuthResetLinkRoute
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
+  '/_public/about': typeof PublicAboutRoute
   '/_public/friend-links': typeof PublicFriendLinksRoute
+  '/_public/moments': typeof PublicMomentsRoute
+  '/_public/photowall': typeof PublicPhotowallRoute
   '/_public/posts': typeof PublicPostsRoute
+  '/_public/projects': typeof PublicProjectsRoute
   '/_public/search': typeof PublicSearchRoute
+  '/_public/timeline': typeof PublicTimelineRoute
   '/_public/unsubscribe': typeof PublicUnsubscribeRoute
   '/_user/profile': typeof UserProfileRoute
   '/_user/submit-friend-link': typeof UserSubmitFriendLinkRoute
@@ -261,9 +306,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-link'
     | '/verify-email'
+    | '/about'
     | '/friend-links'
+    | '/moments'
+    | '/photowall'
     | '/posts'
+    | '/projects'
     | '/search'
+    | '/timeline'
     | '/unsubscribe'
     | '/profile'
     | '/submit-friend-link'
@@ -285,9 +335,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-link'
     | '/verify-email'
+    | '/about'
     | '/friend-links'
+    | '/moments'
+    | '/photowall'
     | '/posts'
+    | '/projects'
     | '/search'
+    | '/timeline'
     | '/unsubscribe'
     | '/profile'
     | '/submit-friend-link'
@@ -313,9 +368,14 @@ export interface FileRouteTypes {
     | '/_auth/register'
     | '/_auth/reset-link'
     | '/_auth/verify-email'
+    | '/_public/about'
     | '/_public/friend-links'
+    | '/_public/moments'
+    | '/_public/photowall'
     | '/_public/posts'
+    | '/_public/projects'
     | '/_public/search'
+    | '/_public/timeline'
     | '/_public/unsubscribe'
     | '/_user/profile'
     | '/_user/submit-friend-link'
@@ -412,11 +472,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicUnsubscribeRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_public/timeline': {
+      id: '/_public/timeline'
+      path: '/timeline'
+      fullPath: '/timeline'
+      preLoaderRoute: typeof PublicTimelineRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/_public/search': {
       id: '/_public/search'
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof PublicSearchRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/projects': {
+      id: '/_public/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof PublicProjectsRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_public/posts': {
@@ -426,11 +500,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicPostsRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_public/photowall': {
+      id: '/_public/photowall'
+      path: '/photowall'
+      fullPath: '/photowall'
+      preLoaderRoute: typeof PublicPhotowallRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/moments': {
+      id: '/_public/moments'
+      path: '/moments'
+      fullPath: '/moments'
+      preLoaderRoute: typeof PublicMomentsRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/_public/friend-links': {
       id: '/_public/friend-links'
       path: '/friend-links'
       fullPath: '/friend-links'
       preLoaderRoute: typeof PublicFriendLinksRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/about': {
+      id: '/_public/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof PublicAboutRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_auth/verify-email': {
@@ -555,27 +650,31 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface PublicRouteRouteChildren {
+  PublicAboutRoute: typeof PublicAboutRoute
   PublicFriendLinksRoute: typeof PublicFriendLinksRoute
+  PublicMomentsRoute: typeof PublicMomentsRoute
+  PublicPhotowallRoute: typeof PublicPhotowallRoute
   PublicPostsRoute: typeof PublicPostsRoute
+  PublicProjectsRoute: typeof PublicProjectsRoute
   PublicSearchRoute: typeof PublicSearchRoute
+  PublicTimelineRoute: typeof PublicTimelineRoute
   PublicUnsubscribeRoute: typeof PublicUnsubscribeRoute
   PublicIndexRoute: typeof PublicIndexRoute
   PublicPostSlugRoute: typeof PublicPostSlugRoute
-  PublicPhotowallIndexRoute: typeof PublicPhotowallIndexRoute
-  PublicMomentsIndexRoute: typeof PublicMomentsIndexRoute
-  PublicProjectsIndexRoute: typeof PublicProjectsIndexRoute
 }
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicAboutRoute: PublicAboutRoute,
   PublicFriendLinksRoute: PublicFriendLinksRoute,
+  PublicMomentsRoute: PublicMomentsRoute,
+  PublicPhotowallRoute: PublicPhotowallRoute,
   PublicPostsRoute: PublicPostsRoute,
+  PublicProjectsRoute: PublicProjectsRoute,
   PublicSearchRoute: PublicSearchRoute,
+  PublicTimelineRoute: PublicTimelineRoute,
   PublicUnsubscribeRoute: PublicUnsubscribeRoute,
   PublicIndexRoute: PublicIndexRoute,
   PublicPostSlugRoute: PublicPostSlugRoute,
-  PublicPhotowallIndexRoute: PublicPhotowallIndexRoute,
-  PublicMomentsIndexRoute: PublicMomentsIndexRoute,
-  PublicProjectsIndexRoute: PublicProjectsIndexRoute,
 }
 
 const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
@@ -654,26 +753,3 @@ declare module '@tanstack/react-start' {
     config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
-
-// New routes for photowall, moments, projects
-import { Route as PublicPhotowallIndexRouteImport } from './routes/_public/photowall/index'
-import { Route as PublicMomentsIndexRouteImport } from './routes/_public/moments/index'
-import { Route as PublicProjectsIndexRouteImport } from './routes/_public/projects/index'
-
-const PublicPhotowallIndexRoute = PublicPhotowallIndexRouteImport.update({
-  id: '/photowall',
-  path: '/photowall',
-  getParentRoute: () => PublicRouteRoute,
-} as any)
-
-const PublicMomentsIndexRoute = PublicMomentsIndexRouteImport.update({
-  id: '/moments',
-  path: '/moments',
-  getParentRoute: () => PublicRouteRoute,
-} as any)
-
-const PublicProjectsIndexRoute = PublicProjectsIndexRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => PublicRouteRoute,
-} as any)

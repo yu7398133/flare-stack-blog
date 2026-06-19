@@ -51,7 +51,7 @@ export function PostsPage({
             }`}
           >
             {tag.name}
-            <span className="ml-1 opacity-60">({tag.count})</span>
+            <span className="ml-1 opacity-60">({tag.postCount})</span>
           </button>
         ))}
       </div>

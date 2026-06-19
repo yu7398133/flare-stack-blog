@@ -1,5 +1,6 @@
 import { Link, useRouteContext } from "@tanstack/react-router";
-import { Menu } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, Sun, Moon } from "lucide-react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
 interface NavbarProps {
@@ -11,6 +12,24 @@ interface NavbarProps {
 
 export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps) {
   const { siteConfig } = useRouteContext({ from: "__root__" });
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
 
   return (
     <nav className="sticky top-0 z-50 w-full">
@@ -42,11 +61,20 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
 
         {/* Right side actions */}
         <div className="flex items-center gap-2">
+          {/* Night mode toggle */}
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/10 transition-all"
+            title={isDark ? "切换到日间模式" : "切换到夜间模式"}
+          >
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
           {/* User / Login */}
           {!isLoading && (
             user ? (
               <Link
-                to="/user/profile"
+                to="/profile"
                 className="w-9 h-9 rounded-xl overflow-hidden border-2 border-white/50 hover:border-indigo-400 transition-colors"
               >
                 {user.image ? (

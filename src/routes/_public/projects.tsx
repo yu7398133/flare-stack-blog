@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import theme from "@theme";
+import type { Project } from "@/lib/db/schema/projects.table";
 
 export const Route = createFileRoute("/_public/projects")({
   component: ProjectsRoute,
 });
 
 function ProjectsRoute() {
-  const { data: projects, isLoading } = useQuery({
+  const { data: projects, isLoading } = useQuery<Project[]>({
     queryKey: ["projects"],
     queryFn: async () => {
       const res = await fetch("/api/projects");

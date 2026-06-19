@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MapPin, Smile, Image as ImageIcon, ChevronDown } from "lucide-react";
+import { Heart, MapPin, Smile, ChevronDown } from "lucide-react";
 import type { MomentsPageProps } from "@/features/theme/contract/pages";
 
 function formatTime(date: Date | string) {
@@ -41,7 +41,13 @@ export function MomentsPage({ moments, total, hasNextPage, onLoadMore, onLike }:
       {/* Moments list */}
       <div className="flex flex-col gap-4">
         {moments.map((moment) => {
-          const images: string[] = moment.images ? JSON.parse(moment.images) : [];
+          const images: string[] = (() => {
+            try {
+              return moment.images ? JSON.parse(moment.images) : [];
+            } catch {
+              return [];
+            }
+          })();
 
           return (
             <div key={moment.id} className="xh-glass xh-glass-hover p-5">
