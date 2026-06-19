@@ -36,6 +36,7 @@ function PublicLayout() {
   const navOptions = [
     { label: "首页", to: "/" as const, id: "home" },
     { label: "项目", to: "/projects" as const, id: "projects" },
+    { label: "归档", to: "/timeline" as const, id: "timeline" },
     { label: "照片墙", to: "/photowall" as const, id: "photowall" },
     { label: "说说", to: "/moments" as const, id: "moments" },
     { label: "友链", to: "/friend-links" as const, id: "friend-links" },

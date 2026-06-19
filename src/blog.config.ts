@@ -1,7 +1,7 @@
 import type { SiteConfig } from "@/features/config/site-config.schema";
 
 export const blogConfig = {
-  title: "XingHuiSama の 宝藏之地",
+  title: "XingHuiSamaの宝藏之地",
   author: "XingHuiSama",
   description:
     "在代码、学术与分子动力学模拟间穿梭的普通人。近期正埋头于 GROMACS 模拟研究与神经网络计算。",

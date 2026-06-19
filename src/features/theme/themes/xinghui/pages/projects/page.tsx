@@ -1,4 +1,5 @@
-import { ExternalLink, GitBranch } from "lucide-react";
+import { ExternalLink, GitBranch, ArrowLeft } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { ProjectsPageProps } from "@/features/theme/contract/pages";
 import type { Project } from "@/lib/db/schema/projects.table";
 
@@ -10,11 +11,15 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="xh-glass p-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors mb-3">
+          <ArrowLeft size={12} />
+          返回上一级
+        </Link>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
-          🚀 项目展示
+          Projects Matrix
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          我参与开发的项目
+          开源项目、科研代码与实验室折腾记录。
         </p>
       </div>
 

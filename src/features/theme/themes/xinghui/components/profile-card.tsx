@@ -1,5 +1,6 @@
 import { useRouteContext } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { Github, Mail, Rss } from "lucide-react";
 
 interface ProfileCardProps {
   postCount: number;
@@ -72,18 +73,26 @@ export function ProfileCard({ postCount }: ProfileCardProps) {
 
       {/* Social links */}
       <div className="flex gap-2 mt-4 relative z-10">
-        {siteConfig.social?.map((link, i) => (
-          <a
-            key={i}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-8 h-8 rounded-lg bg-white/50 dark:bg-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-white/80 dark:hover:bg-white/20 transition-all text-xs font-bold"
-            title={link.platform}
-          >
-            {link.platform.charAt(0).toUpperCase()}
-          </a>
-        ))}
+        {siteConfig.social?.map((link, i) => {
+          const iconMap: Record<string, typeof Github> = {
+            github: Github,
+            email: Mail,
+            rss: Rss,
+          };
+          const Icon = iconMap[link.platform] || Github;
+          return (
+            <a
+              key={i}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-lg bg-white/50 dark:bg-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-white/80 dark:hover:bg-white/20 transition-all"
+              title={link.platform}
+            >
+              <Icon size={16} />
+            </a>
+          );
+        })}
       </div>
     </div>
   );
