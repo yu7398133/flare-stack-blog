@@ -49,8 +49,20 @@ export function HomePage({ posts, pinnedPosts, popularPosts }: HomePageProps) {
   });
 
   const latestPost = posts[0];
-  const latestPhoto = photos?.[0];
-  const latestMoment = momentsData?.items?.[0];
+  const latestPhoto = photos?.[0] || {
+    id: 0,
+    title: "二六年南昌五一摄影",
+    imageUrl: "https://bu.dusays.com/2026/05/07/69fc46808a782.jpg",
+    album: "风景",
+    description: "随便拍拍",
+  };
+  const latestMoment = momentsData?.items?.[0] || {
+    id: 0,
+    content: "Yumi开发计划与Hermes智能体使用",
+    createdAt: "2026-06-03T15:27:00Z",
+    mood: null,
+    location: null,
+  };
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
