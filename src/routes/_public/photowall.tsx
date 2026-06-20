@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import theme from "@theme";
-import type { Photo } from "@/lib/db/schema/photos.table";
 
 export const Route = createFileRoute("/_public/photowall")({
   component: PhotoWallRoute,
@@ -10,30 +8,37 @@ export const Route = createFileRoute("/_public/photowall")({
 
 function PhotoWallRoute() {
   const [selectedAlbum, setSelectedAlbum] = useState<string>("");
+  const [photos, setPhotos] = useState<Array<{ id: number; title: string; imageUrl: string; album: string; description: string | null; thumbnailUrl: string | null; createdAt: string }>>([]);
+  const [albums, setAlbums] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const { data: photos, isLoading: isLoadingPhotos } = useQuery<Photo[]>({
-    queryKey: ["photos", selectedAlbum],
-    queryFn: async () => {
-      const params = selectedAlbum ? `?album=${selectedAlbum}` : "";
-      const res = await fetch(`/api/photos${params}`);
-      return res.json();
-    },
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const params = selectedAlbum ? `?album=${selectedAlbum}` : "";
+        const [photosRes, albumsRes] = await Promise.all([
+          fetch(`/api/photos${params}`),
+          fetch("/api/photos/albums"),
+        ]);
+        const photosData = await photosRes.json();
+        const albumsData = await albumsRes.json();
+        setPhotos(photosData);
+        setAlbums(albumsData);
+      } catch (e) {
+        console.error("Failed to load photos:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [selectedAlbum]);
 
-  const { data: albums } = useQuery<string[]>({
-    queryKey: ["photo-albums"],
-    queryFn: async () => {
-      const res = await fetch("/api/photos/albums");
-      return res.json();
-    },
-  });
-
-  if (isLoadingPhotos) return <theme.PhotoWallPageSkeleton />;
+  if (loading) return <theme.PhotoWallPageSkeleton />;
 
   return (
     <theme.PhotoWallPage
-      photos={photos || []}
-      albums={albums || []}
+      photos={photos}
+      albums={albums}
       selectedAlbum={selectedAlbum}
       onAlbumChange={setSelectedAlbum}
     />
