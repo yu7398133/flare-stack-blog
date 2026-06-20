@@ -4,20 +4,33 @@ import theme from "@theme";
 
 export const Route = createFileRoute("/_public/photowall")({
   component: PhotoWallRoute,
+  loader: async () => {
+    const [photosRes, albumsRes] = await Promise.all([
+      fetch("https://blog.chenyusc.eu.org/api/photos"),
+      fetch("https://blog.chenyusc.eu.org/api/photos/albums"),
+    ]);
+    const photos = await photosRes.json();
+    const albums = await albumsRes.json();
+    return { photos, albums };
+  },
 });
 
 function PhotoWallRoute() {
+  const { photos: initialPhotos, albums: initialAlbums } = Route.useLoaderData();
   const [selectedAlbum, setSelectedAlbum] = useState<string>("");
-  const [photos, setPhotos] = useState<Array<{ id: number; title: string; imageUrl: string; album: string; description: string | null; thumbnailUrl: string | null; createdAt: string }>>([]);
-  const [albums, setAlbums] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [photos, setPhotos] = useState(initialPhotos);
+  const [albums, setAlbums] = useState(initialAlbums);
 
   useEffect(() => {
+    if (!selectedAlbum) {
+      setPhotos(initialPhotos);
+      setAlbums(initialAlbums);
+      return;
+    }
     const fetchData = async () => {
       try {
-        const params = selectedAlbum ? `?album=${selectedAlbum}` : "";
         const [photosRes, albumsRes] = await Promise.all([
-          fetch(`/api/photos${params}`),
+          fetch(`/api/photos?album=${selectedAlbum}`),
           fetch("/api/photos/albums"),
         ]);
         const photosData = await photosRes.json();
@@ -26,14 +39,10 @@ function PhotoWallRoute() {
         setAlbums(albumsData);
       } catch (e) {
         console.error("Failed to load photos:", e);
-      } finally {
-        setLoading(false);
       }
     };
     fetchData();
-  }, [selectedAlbum]);
-
-  if (loading) return <theme.PhotoWallPageSkeleton />;
+  }, [selectedAlbum, initialPhotos, initialAlbums]);
 
   return (
     <theme.PhotoWallPage
