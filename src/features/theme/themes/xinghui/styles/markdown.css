@@ -58,6 +58,7 @@
   background: rgb(99 102 241 / 0.05);
   border-radius: 0 0.75rem 0.75rem 0;
   color: rgb(71 85 105);
+  font-size: 1em;
 }
 
 .dark .xh-prose blockquote {
