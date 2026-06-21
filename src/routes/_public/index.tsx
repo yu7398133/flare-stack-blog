@@ -23,16 +23,10 @@ export const Route = createFileRoute("/_public/")({
       context.queryClient.ensureQueryData(siteDomainQuery),
       context.queryClient.ensureQueryData(pinnedPostsQuery),
       context.queryClient.ensureQueryData(popularPostsQuery(popularPostsLimit)),
-      // Xinghui theme extra data — fail silently if unavailable during SSR
-      context.queryClient
-        .ensureQueryData(recentMomentsQuery(5))
-        .catch(() => ({ items: [], total: 0 })),
-      context.queryClient
-        .ensureQueryData(allPhotosQuery)
-        .catch(() => []),
-      context.queryClient
-        .ensureQueryData(allProjectsQuery)
-        .catch(() => []),
+      // Xinghui theme: these return empty on SSR, real data fetched client-side
+      context.queryClient.ensureQueryData(recentMomentsQuery(5)),
+      context.queryClient.ensureQueryData(allPhotosQuery),
+      context.queryClient.ensureQueryData(allProjectsQuery),
     ]);
 
     return {
