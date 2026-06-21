@@ -75,7 +75,7 @@ export function DanmakuBackground() {
   }, [danmakuList, opacity]);
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[1]">
       {items.map((item) => (
         <div
           key={item.id}

@@ -67,7 +67,7 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
       }`}
     >
       <div className="xh-glass mx-0 mt-0 border-t-0 border-x-0" style={{ borderRadius: 0 }}>
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-3 flex items-center justify-between">
           {/* Logo */}
           <Link
             to="/"

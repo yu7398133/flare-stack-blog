@@ -52,7 +52,7 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
   }, [projects, searchQuery]);
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 sm:px-10 py-10 relative z-10">
+    <div className="w-full py-10 relative z-10">
       {/* Back button + header — matches reference site layout */}
       <div className="mb-8 flex flex-col items-center md:items-start">
         <div className="w-full flex justify-start mb-6">
