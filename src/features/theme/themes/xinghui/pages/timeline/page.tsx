@@ -204,7 +204,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                       </span>
                     </div>
                   <div className="p-3 md:p-4 flex-1 flex flex-col">
-                    <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
                       {post.title}
                     </h3>
                     {post.summary && (
@@ -265,7 +265,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                     </span>
                   ))}
                 </div>
-                <h3 className="text-sm font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                   {post.title}
                 </h3>
                 {post.summary && (
