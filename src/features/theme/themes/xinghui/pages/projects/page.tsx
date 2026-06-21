@@ -1,14 +1,32 @@
-import { ExternalLink, GitBranch } from "lucide-react";
+import { ExternalLink, GitBranch, Search } from "lucide-react";
+import { useState, useMemo } from "react";
 import type { ProjectsPageProps } from "@/features/theme/contract/pages";
 import type { Project } from "@/lib/db/schema/projects.table";
 
 export function ProjectsPage({ projects }: ProjectsPageProps) {
-  const featured = projects.filter((p) => p.featured);
-  const regular = projects.filter((p) => !p.featured);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    if (!searchQuery.trim()) return projects;
+    const q = searchQuery.toLowerCase();
+    return projects.filter((p) => {
+      const techStack = (() => {
+        try { return p.techStack ? JSON.parse(p.techStack) : []; } catch { return []; }
+      })();
+      return (
+        p.title.toLowerCase().includes(q) ||
+        (p.description || "").toLowerCase().includes(q) ||
+        techStack.some((t: string) => t.toLowerCase().includes(q))
+      );
+    });
+  }, [projects, searchQuery]);
+
+  const featured = filtered.filter((p) => p.featured);
+  const regular = filtered.filter((p) => !p.featured);
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header — matching reference site */}
+      {/* Header */}
       <div className="text-center md:text-left">
         <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-widest uppercase">
           Projects Matrix
@@ -18,9 +36,26 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
         </p>
       </div>
 
+      {/* Search bar */}
+      <div className="flex justify-center">
+        <div className="relative w-full max-w-lg group">
+          <Search
+            size={20}
+            className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-20"
+          />
+          <input
+            type="text"
+            placeholder="搜索项目名称、描述或技术栈..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/40 dark:border-white/5 rounded-2xl px-6 py-4 pl-14 text-slate-800 dark:text-white shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder-slate-400 font-medium"
+          />
+        </div>
+      </div>
+
       {/* Featured projects */}
       {featured.length > 0 && (
-        <div className="mt-2">
+        <div>
           <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 px-1">
             ⭐ 精选项目
           </h2>
@@ -46,9 +81,11 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
         </div>
       )}
 
-      {projects.length === 0 && (
+      {filtered.length === 0 && (
         <div className="xh-glass p-12 text-center">
-          <p className="text-sm text-slate-400 dark:text-slate-500">暂无项目</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500">
+            {searchQuery ? "没有找到匹配的项目" : "暂无项目"}
+          </p>
         </div>
       )}
     </div>
@@ -66,7 +103,6 @@ function ProjectCard({ project, featured }: { project: Project; featured?: boole
 
   return (
     <div className={`xh-glass xh-glass-hover p-5 flex flex-col gap-3 ${featured ? "min-h-[200px]" : ""}`}>
-      {/* Image */}
       {project.imageUrl && (
         <img
           src={project.imageUrl}
@@ -76,7 +112,6 @@ function ProjectCard({ project, featured }: { project: Project; featured?: boole
         />
       )}
 
-      {/* Title + Status */}
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-xl font-bold text-slate-800 dark:text-white">
           {project.title}
@@ -88,14 +123,12 @@ function ProjectCard({ project, featured }: { project: Project; featured?: boole
         )}
       </div>
 
-      {/* Description */}
       {project.description && (
         <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
           {project.description}
         </p>
       )}
 
-      {/* Tech stack */}
       {techStack.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {techStack.map((tech, i) => (
@@ -109,7 +142,6 @@ function ProjectCard({ project, featured }: { project: Project; featured?: boole
         </div>
       )}
 
-      {/* Links */}
       <div className="flex items-center gap-3 mt-auto pt-2">
         {project.projectUrl && (
           <a

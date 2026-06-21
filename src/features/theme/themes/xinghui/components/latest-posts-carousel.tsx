@@ -15,7 +15,7 @@ function formatDate(date: Date | string) {
 }
 
 function getPostCover(slug: string) {
-  return `https://www.loliapi.com/acg/pc/?_=${encodeURIComponent(slug)}`;
+  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/800/500`;
 }
 
 export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {

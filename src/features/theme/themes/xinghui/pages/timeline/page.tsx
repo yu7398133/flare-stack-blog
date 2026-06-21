@@ -4,9 +4,7 @@ import { Search, Sparkles, LayoutGrid, ListTree, ArrowUp } from "lucide-react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
 function getPostCover(slug: string) {
-  // Each slug gets a unique cache-busting param → different image per post
-  // Same slug across pages (homepage/archive/article) → same image
-  return `https://www.loliapi.com/acg/pc/?_=${encodeURIComponent(slug)}`;
+  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/800/500`;
 }
 
 export function TimelinePageSkeleton() {
