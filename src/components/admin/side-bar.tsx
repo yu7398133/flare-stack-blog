@@ -7,9 +7,11 @@ import {
   Link2,
   LogOut,
   MessageSquare,
+  Sparkles,
   Tag,
   User,
   X,
+  Rocket,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -101,6 +103,24 @@ export function SideBar({
       path: "/admin/friend-links",
       icon: Link2,
       label: m.admin_sidebar_friend_links(),
+      exact: false,
+    },
+    {
+      path: "/admin/moments",
+      icon: Sparkles,
+      label: "说说",
+      exact: false,
+    },
+    {
+      path: "/admin/photos",
+      icon: ImageIcon,
+      label: "照片",
+      exact: false,
+    },
+    {
+      path: "/admin/projects",
+      icon: Rocket,
+      label: "项目",
       exact: false,
     },
   ] satisfies Array<NavItem>;
