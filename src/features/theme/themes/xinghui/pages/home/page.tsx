@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 import type { HomePageProps } from "@/features/theme/contract/pages";
 import { ProfileCard } from "../../components/profile-card";
@@ -54,28 +54,6 @@ export function HomePage({
     description: "查看摄影",
   };
 
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== "undefined") {
-      return (
-        localStorage.getItem("theme") === "dark" ||
-        (!localStorage.getItem("theme") &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      );
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDark]);
-
   return (
     <div className="flex flex-col gap-6 relative">
       <DanmakuBackground />
@@ -128,21 +106,40 @@ export function HomePage({
             </div>
           </Link>
 
-          {/* Theme toggle */}
-          <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col items-center justify-center gap-3 transition-all duration-700 hover:scale-[1.02]">
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="w-16 h-16 rounded-full flex items-center justify-center text-3xl hover:scale-110 transition-transform"
-            >
-              {isDark ? "🌸" : "✨"}
-            </button>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              {isDark ? "浅色模式" : "深色模式"}
-            </span>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500">
-              {isDark ? "流萤飞舞的深空" : "星辰大海"}
-            </span>
-          </div>
+          {/* Moments preview */}
+          <Link
+            to="/moments"
+            className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[10px] font-mono text-pink-500 dark:text-pink-400 uppercase tracking-widest">
+                💬 说说
+              </span>
+              <div className="flex-1 h-px bg-gradient-to-r from-pink-500/30 to-transparent" />
+            </div>
+            {moments && moments.items.length > 0 ? (
+              <>
+                <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {moments.items[0].content}
+                </p>
+                <div className="flex items-center gap-2 mt-3">
+                  {moments.items[0].mood && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
+                      {moments.items[0].mood}
+                    </span>
+                  )}
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                    {new Date(moments.items[0].createdAt).toLocaleDateString("zh-CN")}
+                  </span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto">
+                    共 {moments.total} 条 →
+                  </span>
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-slate-400 dark:text-slate-500">暂无说说，去写一条吧 →</p>
+            )}
+          </Link>
         </div>
       </div>
 
