@@ -133,10 +133,9 @@ export function resolveSiteConfig(
           blogConfig.theme.fuwari.primaryHue,
       },
       xinghui: {
-        homeBg:
-          blogConfig.theme.xinghui.homeBg ||
-          config?.site?.theme?.xinghui?.homeBg ||
-          "",
+        // Always prefer blog.config.ts homeBg (LoliAPI random image)
+        // over any cached database value that might be stale
+        homeBg: blogConfig.theme.xinghui.homeBg,
         avatar:
           config?.site?.theme?.xinghui?.avatar ?? blogConfig.theme.xinghui.avatar,
         navAvatar:
