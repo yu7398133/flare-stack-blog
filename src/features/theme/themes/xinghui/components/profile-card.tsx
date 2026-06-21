@@ -1,18 +1,32 @@
 import { useRouteContext } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Globe, Mail, Rss } from "lucide-react";
 
 interface ProfileCardProps {
   postCount: number;
-  momentsCount: number;
-  photosCount: number;
 }
 
-export function ProfileCard({
-  postCount,
-  momentsCount,
-  photosCount,
-}: ProfileCardProps) {
+export function ProfileCard({ postCount }: ProfileCardProps) {
   const { siteConfig } = useRouteContext({ from: "__root__" });
+
+  const { data: momentsData } = useQuery<{ total: number }>({
+    queryKey: ["moments-count"],
+    queryFn: async () => {
+      const res = await fetch("/api/moments?limit=1");
+      return res.json();
+    },
+  });
+
+  const { data: photosData } = useQuery<Array<unknown>>({
+    queryKey: ["photos-count"],
+    queryFn: async () => {
+      const res = await fetch("/api/photos");
+      return res.json();
+    },
+  });
+
+  const momentsCount = momentsData?.total ?? 0;
+  const photosCount = photosData?.length ?? 0;
 
   return (
     <div className="xh-glass xh-glass-hover p-6 sm:p-8 flex flex-col justify-between h-full min-h-[240px] relative overflow-hidden group">
@@ -42,30 +56,18 @@ export function ProfileCard({
       {/* Stats */}
       <div className="flex items-center gap-6 mt-6 relative z-10">
         <div className="text-center">
-          <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
-            {postCount}
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
-            文章
-          </p>
+          <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{postCount}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">文章</p>
         </div>
         <div className="w-px h-8 bg-slate-300/50 dark:bg-slate-700" />
         <div className="text-center">
-          <p className="text-2xl font-black text-purple-600 dark:text-purple-400">
-            {momentsCount}
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
-            杂谈
-          </p>
+          <p className="text-2xl font-black text-purple-600 dark:text-purple-400">{momentsCount}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">杂谈</p>
         </div>
         <div className="w-px h-8 bg-slate-300/50 dark:bg-slate-700" />
         <div className="text-center">
-          <p className="text-2xl font-black text-pink-600 dark:text-pink-400">
-            {photosCount}
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
-            照片
-          </p>
+          <p className="text-2xl font-black text-pink-600 dark:text-pink-400">{photosCount}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">照片</p>
         </div>
       </div>
 

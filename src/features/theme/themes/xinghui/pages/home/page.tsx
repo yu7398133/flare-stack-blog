@@ -1,12 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useViewCounts } from "@/features/pageview/queries";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
-import type {
-  HomePageProps,
-  MomentItem,
-  PhotoItem,
-  ProjectItem,
-} from "@/features/theme/contract/pages";
+import type { HomePageProps } from "@/features/theme/contract/pages";
 import { ProfileCard } from "../../components/profile-card";
 import { CloudPlayer } from "../../components/cloud-player";
 import { LyricBar } from "../../components/lyric-bar";
@@ -15,14 +12,17 @@ import { LatestChatterCarousel } from "../../components/latest-chatter-carousel"
 import { SiteDashboard } from "../../components/site-dashboard";
 import { DanmakuBackground } from "../../components/danmaku-background";
 
-export function HomePage({
-  posts,
-  pinnedPosts,
-  popularPosts,
-  moments,
-  photos,
-  projects,
-}: HomePageProps) {
+function formatDate(date: Date | string) {
+  const d = new Date(date);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const h = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${y}.${m}.${day} ${h}:${min}`;
+}
+
+export function HomePage({ posts, pinnedPosts, popularPosts }: HomePageProps) {
   const allPosts = useMemo(() => {
     const seen = new Set<string>();
     const result: PostItem[] = [];
@@ -47,13 +47,46 @@ export function HomePage({
     return result;
   }, [posts, pinnedPosts, popularPosts]);
 
-  const topPosts = allPosts.slice(0, 5);
-  const chatters: MomentItem[] = moments?.items ?? [];
-  const momentsTotal = moments?.total ?? 0;
-  const photosList: PhotoItem[] = photos ?? [];
-  const projectsList: ProjectItem[] = projects ?? [];
+  const allSlugs = useMemo(() => allPosts.map((p) => p.slug), [allPosts]);
+  const { data: viewCounts } = useViewCounts(allSlugs);
 
-  const latestPhoto = photosList[0] || {
+  // Fetch chatters for carousel
+  const { data: chatterData } = useQuery<{
+    items: Array<{
+      id: number;
+      content: string;
+      createdAt: string;
+      mood: string | null;
+      location: string | null;
+    }>;
+  }>({
+    queryKey: ["chatter-preview"],
+    queryFn: async () => {
+      const r = await fetch("/api/moments?limit=5");
+      return r.json();
+    },
+  });
+
+  // Fetch photos for photo wall banner
+  const { data: photos } = useQuery<
+    Array<{
+      id: number;
+      title: string;
+      imageUrl: string;
+      album: string;
+      description: string | null;
+    }>
+  >({
+    queryKey: ["photos-preview"],
+    queryFn: async () => {
+      const r = await fetch("/api/photos?limit=1");
+      return r.json();
+    },
+  });
+
+  const topPosts = allPosts.slice(0, 5);
+  const chatters = chatterData?.items || [];
+  const latestPhoto = photos?.[0] || {
     id: 0,
     title: "照片墙",
     imageUrl: "https://bu.dusays.com/2026/05/07/69fc46808a782.jpg",
@@ -91,11 +124,7 @@ export function HomePage({
       {/* Row 1: Profile Card (7 cols) + Cloud Player (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 xh-animate-in xh-delay-1">
-          <ProfileCard
-            postCount={posts.length}
-            momentsCount={momentsTotal}
-            photosCount={photosList.length}
-          />
+          <ProfileCard postCount={posts.length} />
         </div>
         <div className="lg:col-span-5 xh-animate-in xh-delay-2">
           <CloudPlayer />
@@ -165,11 +194,7 @@ export function HomePage({
 
       {/* Bottom: Site Dashboard */}
       <div className="xh-animate-in xh-delay-5">
-        <SiteDashboard
-          momentsCount={momentsTotal}
-          photosCount={photosList.length}
-          projectsCount={projectsList.length}
-        />
+        <SiteDashboard />
       </div>
     </div>
   );
