@@ -133,15 +133,11 @@ export function resolveSiteConfig(
           blogConfig.theme.fuwari.primaryHue,
       },
       xinghui: {
-        // Always prefer blog.config.ts homeBg (LoliAPI random image)
-        // over any cached database value that might be stale
         homeBg: blogConfig.theme.xinghui.homeBg,
         avatar:
           config?.site?.theme?.xinghui?.avatar ?? blogConfig.theme.xinghui.avatar,
-        navAvatar:
-          config?.site?.theme?.xinghui?.navAvatar ?? "",
-        homePhotoBanner:
-          config?.site?.theme?.xinghui?.homePhotoBanner ?? "",
+        userAvatar:
+          config?.site?.theme?.xinghui?.userAvatar ?? "",
         musicIds:
           config?.site?.theme?.xinghui?.musicIds ??
           blogConfig.theme.xinghui.musicIds,

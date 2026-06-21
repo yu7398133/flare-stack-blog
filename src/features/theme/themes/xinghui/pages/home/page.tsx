@@ -49,7 +49,7 @@ export function HomePage({
   const projectsList = projects ?? [];
 
   const latestPhoto = photosList[0];
-  const homePhotoBanner = siteConfig.theme.xinghui?.homePhotoBanner || "";
+  const userAvatar = siteConfig.theme.xinghui?.userAvatar || "";
 
   // Search
   const [searchQuery, setSearchQuery] = useState("");
@@ -149,10 +149,10 @@ export function HomePage({
             to="/photowall"
             className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-700 hover:scale-[1.02] relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
           >
-            {latestPhoto || homePhotoBanner ? (
+            {latestPhoto || userAvatar ? (
               <>
                 <img
-                  src={homePhotoBanner || latestPhoto?.imageUrl}
+                  src={userAvatar || latestPhoto?.imageUrl}
                   alt={latestPhoto?.title || ""}
                   className="w-full h-full absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
                   loading="lazy"
