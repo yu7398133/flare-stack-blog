@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouteContext } from "@tanstack/react-router";
 import type { PublicLayoutProps } from "@/features/theme/contract/layouts";
 import { MusicProvider } from "../components/music-provider";
@@ -20,19 +20,28 @@ export function PublicLayout({
   const musicIds = siteConfig.theme.xinghui?.musicIds ?? [];
   const musicPlaylistIds = siteConfig.theme.xinghui?.musicPlaylistIds ?? [];
   const homeBgBase = siteConfig.theme.xinghui?.homeBg;
-  // Append cache-busting param for random image APIs so each load gets a fresh image
-  const homeBg = homeBgBase
-    ? `${homeBgBase}${homeBgBase.includes("?") ? "&" : "?"}_t=${Date.now()}`
-    : undefined;
+
+  // Background URL: load once, refresh only on button click
+  const [bgUrl, setBgUrl] = useState<string | undefined>(() => {
+    if (!homeBgBase) return undefined;
+    const sep = homeBgBase.includes("?") ? "&" : "?";
+    return `${homeBgBase}${sep}_t=${Date.now()}`;
+  });
+
+  const refreshBg = useCallback(() => {
+    if (!homeBgBase) return;
+    const sep = homeBgBase.includes("?") ? "&" : "?";
+    setBgUrl(`${homeBgBase}${sep}_t=${Date.now()}`);
+  }, [homeBgBase]);
 
   return (
     <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds}>
       <div className="xh-page-bg min-h-screen relative">
         {/* Background image */}
-        {homeBg && (
+        {bgUrl && (
           <div className="fixed inset-0 z-0">
             <img
-              src={homeBg}
+              src={bgUrl}
               alt=""
               className="w-full h-full object-cover"
               aria-hidden="true"
@@ -56,6 +65,7 @@ export function PublicLayout({
             onMenuClick={() => setIsMenuOpen(true)}
             user={user}
             isLoading={isSessionLoading}
+            onRefreshBg={refreshBg}
           />
 
           <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-20 pb-8">
