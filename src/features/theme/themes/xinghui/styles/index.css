@@ -3,6 +3,62 @@
    ======================================== */
 @import "./markdown.css";
 
+/* Fonts: Geist Sans + Geist Mono + Noto Serif SC */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
+
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Apply fonts globally for xinghui theme */
+.xh-page-bg {
+  font-family: 'Geist', 'Noto Serif SC', ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+.xh-page-bg h1, .xh-page-bg h2, .xh-page-bg h3, .xh-page-bg h4, .xh-page-bg h5, .xh-page-bg h6 {
+  font-family: 'Geist', 'Noto Serif SC', ui-sans-serif, system-ui, sans-serif;
+}
+
+.xh-page-bg code, .xh-page-bg pre, .xh-page-bg .font-mono {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+}
+
+.xh-page-bg .font-serif {
+  font-family: 'Noto Serif SC', 'Geist', serif;
+}
+
 /* Page background with gradient */
 .xh-page-bg {
   min-height: 100vh;
