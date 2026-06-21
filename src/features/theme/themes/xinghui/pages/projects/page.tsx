@@ -8,12 +8,12 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
-      <div className="xh-glass p-8 md:p-10">
-        <h1 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white mb-4 tracking-wider">
+      {/* Header — matching reference site */}
+      <div className="text-center md:text-left">
+        <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-widest uppercase">
           Projects Matrix
         </h1>
-        <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-serif">
+        <p className="text-slate-600 dark:text-slate-400 font-serif text-base md:text-lg">
           开源项目、科研代码与实验室折腾记录。
         </p>
       </div>

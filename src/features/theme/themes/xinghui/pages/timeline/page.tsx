@@ -1,14 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Calendar, Search, ArrowUp } from "lucide-react";
+import { Search, Sparkles, LayoutGrid, ListTree, ArrowUp } from "lucide-react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
-// Consistent image per post slug (same URL = same image across pages)
 function getPostCover(_slug: string) {
   return "https://www.loliapi.com/acg/pc/";
-}
-function getPostCoverLarge(slug: string) {
-  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/1200/600`;
 }
 
 export function TimelinePageSkeleton() {
@@ -34,7 +30,6 @@ export function TimelinePage({ posts }: TimelinePageProps) {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Force card mode on mobile
   useEffect(() => {
     const enforce = () => {
       if (window.innerWidth < 768) setViewMode("card");
@@ -44,7 +39,6 @@ export function TimelinePage({ posts }: TimelinePageProps) {
     return () => window.removeEventListener("resize", enforce);
   }, []);
 
-  // Collect all tags with counts
   const tags = useMemo(() => {
     const map = new Map<string, number>();
     for (const post of posts) {
@@ -57,7 +51,6 @@ export function TimelinePage({ posts }: TimelinePageProps) {
       .map(([name, count]) => ({ name, count }));
   }, [posts]);
 
-  // Filter posts
   const filtered = useMemo(() => {
     return posts.filter((post) => {
       const tagMatch =
@@ -83,84 +76,86 @@ export function TimelinePage({ posts }: TimelinePageProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
-      <div className="xh-glass p-8 md:p-10 text-center">
-        <h1 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white tracking-wider mb-4">
+      {/* Header — centered, matching reference */}
+      <div className="text-center">
+        <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter mb-4">
           归档与探索
         </h1>
-        <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-serif">
-          ✨ 总计 {posts.length} 篇文章
+        <p className="text-slate-500 dark:text-slate-400 font-medium flex items-center justify-center gap-2 italic">
+          <Sparkles size={16} className="text-indigo-500" />
+          总计 {posts.length} 篇文章
         </p>
       </div>
 
-      {/* Search + Tags + View toggle */}
-      <div className="xh-glass p-4 flex flex-col gap-4">
-        {/* Search */}
-        <div className="relative max-w-lg mx-auto w-full">
+      {/* Search bar — separated from tags */}
+      <div className="flex justify-center">
+        <div className="relative w-full max-w-lg group">
           <Search
-            size={16}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            size={20}
+            className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-20"
           />
           <input
             type="text"
             placeholder="搜寻被封存的知识..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/30 dark:bg-slate-900/40 backdrop-blur-md border border-white/40 dark:border-white/5 rounded-2xl px-6 py-3 pl-11 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all"
+            className="w-full bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/40 dark:border-white/5 rounded-2xl px-6 py-4 pl-14 text-slate-800 dark:text-white shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder-slate-400 font-medium"
           />
         </div>
+      </div>
 
-        {/* Tags + View toggle */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex flex-wrap justify-center md:justify-start gap-2 flex-1">
+      {/* Tags + View toggle — in a glass container */}
+      <div className="w-full flex flex-col md:flex-row justify-between items-center gap-4 bg-white/30 dark:bg-slate-800/30 backdrop-blur-md p-4 rounded-3xl border border-white/20 dark:border-white/5">
+        <div className="flex flex-wrap justify-center md:justify-start gap-2 flex-1">
+          <button
+            onClick={() => setSelectedTag("All")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
+              selectedTag === "All"
+                ? "bg-indigo-500 text-white shadow-md"
+                : "bg-white/50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 hover:bg-white"
+            }`}
+          >
+            全部档案
+          </button>
+          {tags.map((tag) => (
             <button
-              onClick={() => setSelectedTag("All")}
-              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                selectedTag === "All"
+              key={tag.name}
+              onClick={() => setSelectedTag(tag.name)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
+                selectedTag === tag.name
                   ? "bg-indigo-500 text-white shadow-md"
-                  : "bg-white/50 dark:bg-white/10 text-slate-600 dark:text-slate-400 hover:bg-white"
+                  : "bg-white/50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 hover:bg-white"
               }`}
             >
-              全部档案
+              {tag.name}{" "}
+              <span className="opacity-50 ml-1">{tag.count}</span>
             </button>
-            {tags.map((tag) => (
-              <button
-                key={tag.name}
-                onClick={() => setSelectedTag(tag.name)}
-                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  selectedTag === tag.name
-                    ? "bg-indigo-500 text-white shadow-md"
-                    : "bg-white/50 dark:bg-white/10 text-slate-600 dark:text-slate-400 hover:bg-white"
-                }`}
-              >
-                {tag.name}{" "}
-                <span className="opacity-50 ml-1">{tag.count}</span>
-              </button>
-            ))}
-          </div>
+          ))}
+        </div>
 
-          <div className="hidden md:flex bg-white/50 dark:bg-slate-900/50 p-1 rounded-2xl shadow-inner shrink-0">
-            <button
-              onClick={() => setViewMode("timeline")}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                viewMode === "timeline"
-                  ? "bg-white dark:bg-slate-700 text-indigo-500 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-              }`}
-            >
-              📋 时间线
-            </button>
-            <button
-              onClick={() => setViewMode("card")}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                viewMode === "card"
-                  ? "bg-white dark:bg-slate-700 text-indigo-500 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-              }`}
-            >
-              🔲 矩阵网格
-            </button>
-          </div>
+        <div className="hidden md:flex bg-white/50 dark:bg-slate-900/50 p-1 rounded-2xl shadow-inner shrink-0">
+          <button
+            onClick={() => setViewMode("timeline")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${
+              viewMode === "timeline"
+                ? "bg-white dark:bg-slate-700 text-indigo-500 shadow-sm"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            }`}
+          >
+            <ListTree size={16} />
+            <span>中枢链路</span>
+          </button>
+          <button
+            onClick={() => setViewMode("card")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300 ${
+              viewMode === "card"
+                ? "bg-white dark:bg-slate-700 text-indigo-500 shadow-sm"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+            }`}
+          >
+            <LayoutGrid size={16} />
+            <span>矩阵网格</span>
+          </button>
         </div>
       </div>
 
@@ -172,14 +167,13 @@ export function TimelinePage({ posts }: TimelinePageProps) {
           </p>
         </div>
       ) : viewMode === "card" ? (
-        /* Card grid view */
         <div className="relative">
           <div
             ref={scrollRef}
             onScroll={handleScroll}
             className="max-h-[75vh] overflow-y-auto xh-scrollbar pr-1"
           >
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
               {filtered.map((post) => (
                 <Link
                   key={post.id}
@@ -187,24 +181,21 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                   params={{ slug: post.slug }}
                   className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-transform duration-300"
                 >
-                    <div className="relative h-28 sm:h-36 overflow-hidden">
+                  <div className="relative h-28 sm:h-36 overflow-hidden">
                     <img
-                      src={getPostCover(post.slug)}
+                      src={post.cover || getPostCover(post.slug)}
                       alt=""
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <span className="absolute bottom-2 left-2 text-white/90 text-[10px] font-mono font-bold bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded flex items-center gap-1">
-                        <Calendar size={10} />
-                        {post.publishedAt
-                          ? new Date(post.publishedAt).toLocaleDateString(
-                              "zh-CN",
-                            )
-                          : ""}
-                      </span>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <span className="absolute bottom-2 left-2 text-white/90 text-[10px] font-mono font-bold bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded">
+                      {post.publishedAt
+                        ? new Date(post.publishedAt).toLocaleDateString("zh-CN")
+                        : ""}
+                    </span>
+                  </div>
                   <div className="p-3 md:p-4 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
                       {post.title}
                     </h3>
                     {post.summary && (
@@ -228,7 +219,6 @@ export function TimelinePage({ posts }: TimelinePageProps) {
             </div>
           </div>
 
-          {/* Scroll to top */}
           {showScrollTop && (
             <button
               onClick={scrollToTop}
@@ -239,7 +229,6 @@ export function TimelinePage({ posts }: TimelinePageProps) {
           )}
         </div>
       ) : (
-        /* Timeline view */
         <div className="relative pl-8">
           <div className="absolute left-3 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500/50 via-purple-500/50 to-transparent" />
           {filtered.map((post) => (
