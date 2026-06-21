@@ -6,7 +6,6 @@ import { ProfileCard } from "../../components/profile-card";
 import { CloudPlayer } from "../../components/cloud-player";
 import { LyricBar } from "../../components/lyric-bar";
 import { LatestPostsCarousel } from "../../components/latest-posts-carousel";
-import { LatestChatterCarousel } from "../../components/latest-chatter-carousel";
 import { SiteDashboard } from "../../components/site-dashboard";
 import { DanmakuBackground } from "../../components/danmaku-background";
 
@@ -43,7 +42,6 @@ export function HomePage({
   }, [posts, pinnedPosts, popularPosts]);
 
   const topPosts = allPosts.slice(0, 5);
-  const chatters = moments?.items ?? [];
   const momentsTotal = moments?.total ?? 0;
   const photosList = photos ?? [];
   const projectsList = projects ?? [];
@@ -80,7 +78,6 @@ export function HomePage({
 
   return (
     <div className="flex flex-col gap-6 relative">
-      {/* Danmaku background */}
       <DanmakuBackground />
 
       {/* Row 1: Profile Card (7 cols) + Cloud Player (5 cols) */}
@@ -104,14 +101,12 @@ export function HomePage({
 
       {/* Row 2: Posts Carousel (4 cols) + Right panel (8 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Latest Posts Carousel */}
         <div className="lg:col-span-4 xh-animate-in xh-delay-3 min-h-[280px]">
           <LatestPostsCarousel posts={topPosts} />
         </div>
 
-        {/* Right: Photo Wall Banner + Chatter Carousel + Theme Toggle */}
         <div className="lg:col-span-8 flex flex-col gap-6">
-          {/* Photo wall big banner */}
+          {/* Photo wall banner */}
           <Link
             to="/photowall"
             className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-700 hover:scale-[1.02] relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
@@ -133,27 +128,20 @@ export function HomePage({
             </div>
           </Link>
 
-          {/* Bottom grid: Chatter carousel + Theme toggle */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1">
-            <div className="sm:col-span-2 min-h-[200px]">
-              <LatestChatterCarousel chatters={chatters} />
-            </div>
-            <div className="sm:col-span-1 min-h-[120px]">
-              <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 h-full flex flex-col items-center justify-center gap-3 transition-all duration-700 hover:scale-[1.02]">
-                <button
-                  onClick={() => setIsDark(!isDark)}
-                  className="w-16 h-16 rounded-full flex items-center justify-center text-3xl hover:scale-110 transition-transform"
-                >
-                  {isDark ? "🌸" : "✨"}
-                </button>
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  {isDark ? "浅色模式" : "深色模式"}
-                </span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                  {isDark ? "流萤飞舞的深空" : "星辰大海"}
-                </span>
-              </div>
-            </div>
+          {/* Theme toggle */}
+          <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col items-center justify-center gap-3 transition-all duration-700 hover:scale-[1.02]">
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className="w-16 h-16 rounded-full flex items-center justify-center text-3xl hover:scale-110 transition-transform"
+            >
+              {isDark ? "🌸" : "✨"}
+            </button>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {isDark ? "浅色模式" : "深色模式"}
+            </span>
+            <span className="text-[10px] text-slate-400 dark:text-slate-500">
+              {isDark ? "流萤飞舞的深空" : "星辰大海"}
+            </span>
           </div>
         </div>
       </div>

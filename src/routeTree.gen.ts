@@ -27,7 +27,6 @@ import { Route as PublicPhotowallRouteImport } from './routes/_public/photowall'
 import { Route as PublicMusicRouteImport } from './routes/_public/music'
 import { Route as PublicMomentsRouteImport } from './routes/_public/moments'
 import { Route as PublicFriendLinksRouteImport } from './routes/_public/friend-links'
-import { Route as PublicChatterRouteImport } from './routes/_public/chatter'
 import { Route as PublicAboutRouteImport } from './routes/_public/about'
 import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
 import { Route as AuthResetLinkRouteImport } from './routes/_auth/reset-link'
@@ -131,11 +130,6 @@ const PublicFriendLinksRoute = PublicFriendLinksRouteImport.update({
   path: '/friend-links',
   getParentRoute: () => PublicRouteRoute,
 } as any)
-const PublicChatterRoute = PublicChatterRouteImport.update({
-  id: '/chatter',
-  path: '/chatter',
-  getParentRoute: () => PublicRouteRoute,
-} as any)
 const PublicAboutRoute = PublicAboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -222,7 +216,6 @@ export interface FileRoutesByFullPath {
   '/reset-link': typeof AuthResetLinkRoute
   '/verify-email': typeof AuthVerifyEmailRoute
   '/about': typeof PublicAboutRoute
-  '/chatter': typeof PublicChatterRoute
   '/friend-links': typeof PublicFriendLinksRoute
   '/moments': typeof PublicMomentsRoute
   '/music': typeof PublicMusicRoute
@@ -253,7 +246,6 @@ export interface FileRoutesByTo {
   '/reset-link': typeof AuthResetLinkRoute
   '/verify-email': typeof AuthVerifyEmailRoute
   '/about': typeof PublicAboutRoute
-  '/chatter': typeof PublicChatterRoute
   '/friend-links': typeof PublicFriendLinksRoute
   '/moments': typeof PublicMomentsRoute
   '/music': typeof PublicMusicRoute
@@ -289,7 +281,6 @@ export interface FileRoutesById {
   '/_auth/reset-link': typeof AuthResetLinkRoute
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_public/about': typeof PublicAboutRoute
-  '/_public/chatter': typeof PublicChatterRoute
   '/_public/friend-links': typeof PublicFriendLinksRoute
   '/_public/moments': typeof PublicMomentsRoute
   '/_public/music': typeof PublicMusicRoute
@@ -325,7 +316,6 @@ export interface FileRouteTypes {
     | '/reset-link'
     | '/verify-email'
     | '/about'
-    | '/chatter'
     | '/friend-links'
     | '/moments'
     | '/music'
@@ -356,7 +346,6 @@ export interface FileRouteTypes {
     | '/reset-link'
     | '/verify-email'
     | '/about'
-    | '/chatter'
     | '/friend-links'
     | '/moments'
     | '/music'
@@ -391,7 +380,6 @@ export interface FileRouteTypes {
     | '/_auth/reset-link'
     | '/_auth/verify-email'
     | '/_public/about'
-    | '/_public/chatter'
     | '/_public/friend-links'
     | '/_public/moments'
     | '/_public/music'
@@ -552,13 +540,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicFriendLinksRouteImport
       parentRoute: typeof PublicRouteRoute
     }
-    '/_public/chatter': {
-      id: '/_public/chatter'
-      path: '/chatter'
-      fullPath: '/chatter'
-      preLoaderRoute: typeof PublicChatterRouteImport
-      parentRoute: typeof PublicRouteRoute
-    }
     '/_public/about': {
       id: '/_public/about'
       path: '/about'
@@ -689,7 +670,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface PublicRouteRouteChildren {
   PublicAboutRoute: typeof PublicAboutRoute
-  PublicChatterRoute: typeof PublicChatterRoute
   PublicFriendLinksRoute: typeof PublicFriendLinksRoute
   PublicMomentsRoute: typeof PublicMomentsRoute
   PublicMusicRoute: typeof PublicMusicRoute
@@ -705,7 +685,6 @@ interface PublicRouteRouteChildren {
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicAboutRoute: PublicAboutRoute,
-  PublicChatterRoute: PublicChatterRoute,
   PublicFriendLinksRoute: PublicFriendLinksRoute,
   PublicMomentsRoute: PublicMomentsRoute,
   PublicMusicRoute: PublicMusicRoute,
