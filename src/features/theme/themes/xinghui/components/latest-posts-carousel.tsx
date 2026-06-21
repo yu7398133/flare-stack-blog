@@ -14,8 +14,8 @@ function formatDate(date: Date | string) {
   return `${y}.${m}.${day}`;
 }
 
-function getPostCover(_slug: string) {
-  return "https://www.loliapi.com/acg/pc/";
+function getPostCover(slug: string) {
+  return `https://www.loliapi.com/acg/pc/?_=${encodeURIComponent(slug)}`;
 }
 
 export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
