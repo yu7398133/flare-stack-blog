@@ -39,14 +39,16 @@ function DanmakuAdminPage() {
       setSaving(true);
       try {
         await saveSettings({
-          ...settings,
-          site: {
-            ...settings.site,
-            theme: {
-              ...settings.site?.theme,
-              xinghui: {
-                ...settings.site?.theme?.xinghui,
-                ...patch,
+          data: {
+            ...settings,
+            site: {
+              ...settings.site,
+              theme: {
+                ...settings.site?.theme,
+                xinghui: {
+                  ...settings.site?.theme?.xinghui,
+                  ...patch,
+                },
               },
             },
           },
