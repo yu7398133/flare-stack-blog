@@ -70,7 +70,9 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
       }`}
     >
       {/* Full-width glass bar */}
-      <div className="xh-glass mx-0 mt-0 rounded-none px-6 py-3 flex items-center justify-between border-t-0 border-x-0">
+      <div className="xh-glass mx-0 mt-0 border-t-0 border-x-0" style={{ borderRadius: 0 }}>
+        {/* Inner container — centered content */}
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
         {/* Logo / Site Name */}
         <Link
           to="/"
@@ -142,6 +144,7 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
           >
             <Menu size={18} />
           </button>
+        </div>
         </div>
       </div>
     </nav>
