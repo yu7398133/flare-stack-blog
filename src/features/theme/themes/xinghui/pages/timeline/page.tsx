@@ -4,8 +4,8 @@ import { Calendar, Search, ArrowUp } from "lucide-react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
 // Consistent image per post slug (same URL = same image across pages)
-function getPostCover(slug: string) {
-  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/400/250`;
+function getPostCover(_slug: string) {
+  return "https://www.loliapi.com/acg/pc/";
 }
 function getPostCoverLarge(slug: string) {
   return `https://picsum.photos/seed/${encodeURIComponent(slug)}/1200/600`;

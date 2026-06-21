@@ -17,8 +17,8 @@ function formatDate(date: Date | string) {
 }
 
 // Consistent image per post slug (same seed = same image as timeline)
-function getPostCover(slug: string) {
-  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/1200/600`;
+function getPostCover(_slug: string) {
+  return "https://www.loliapi.com/acg/pc/";
 }
 
 export function PostPage({ post }: PostPageProps) {
