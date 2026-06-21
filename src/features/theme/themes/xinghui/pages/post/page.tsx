@@ -43,9 +43,9 @@ export function PostPage({ post }: PostPageProps) {
       {/* Back navigation */}
       <Link
         to="/posts"
-        className="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+        className="inline-flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
       >
-        <ArrowLeft size={14} />
+        <ArrowLeft size={12} />
         <span>返回上一级</span>
       </Link>
 
@@ -65,7 +65,7 @@ export function PostPage({ post }: PostPageProps) {
 
           <div className="p-6 md:p-10">
             {/* Title */}
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-4 leading-tight tracking-tight">
               {post.title}
             </h1>
 
@@ -126,10 +126,10 @@ export function PostPage({ post }: PostPageProps) {
                 className="w-full h-full rounded-full object-cover bg-white"
               />
             </div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
               {siteConfig.author}
             </h3>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
               {siteConfig.description}
             </p>
           </div>
@@ -137,7 +137,7 @@ export function PostPage({ post }: PostPageProps) {
           {/* Recommended posts */}
           {recommended && recommended.length > 0 && (
             <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5">
-              <h3 className="font-black text-slate-900 dark:text-white mb-3 border-l-4 border-indigo-500 pl-2 text-xs uppercase tracking-widest">
+              <h3 className="font-black text-slate-900 dark:text-white mb-3 border-l-4 border-indigo-500 pl-2 text-sm uppercase tracking-widest">
                 Recommended
               </h3>
               <div className="space-y-3">
@@ -149,11 +149,11 @@ export function PostPage({ post }: PostPageProps) {
                       params={{ slug: r.slug }}
                       className="group block"
                     >
-                      <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                         {r.title}
                       </h4>
                       {r.publishedAt && (
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-mono">
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-mono">
                           {formatDate(r.publishedAt)}
                         </p>
                       )}
@@ -167,7 +167,7 @@ export function PostPage({ post }: PostPageProps) {
           {/* TOC */}
           {post.toc && post.toc.length > 0 && (
             <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-4 max-h-[calc(100vh-20rem)] overflow-y-auto xh-scrollbar">
-              <h3 className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">
+              <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">
                 目录
               </h3>
               <nav className="flex flex-col">
@@ -181,7 +181,7 @@ export function PostPage({ post }: PostPageProps) {
                         .getElementById(item.id)
                         ?.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className={`block text-xs py-1 border-l-[1.5px] transition-all duration-300 leading-relaxed ${
+                    className={`block text-sm py-1 border-l-[1.5px] transition-all duration-300 leading-relaxed ${
                       activeId === item.id
                         ? "text-indigo-600 dark:text-indigo-400 border-indigo-500 font-medium pl-3"
                         : "text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-slate-300 pl-3 hover:border-slate-300 dark:hover:border-slate-600"
