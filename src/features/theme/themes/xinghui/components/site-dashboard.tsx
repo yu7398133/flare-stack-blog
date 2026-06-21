@@ -1,41 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
+interface SiteDashboardProps {
+  momentsCount: number;
+  photosCount: number;
+  projectsCount: number;
+}
 
-export function SiteDashboard() {
-  const { data: momentsData } = useQuery<{ total: number }>({
-    queryKey: ["moments-count-dashboard"],
-    queryFn: async () => {
-      const res = await fetch("/api/moments?limit=1");
-      return res.json();
-    },
-  });
-
-  const { data: photosData } = useQuery<Array<unknown>>({
-    queryKey: ["photos-count-dashboard"],
-    queryFn: async () => {
-      const res = await fetch("/api/photos");
-      return res.json();
-    },
-  });
-
-  const { data: projectsData } = useQuery<Array<unknown>>({
-    queryKey: ["projects-count-dashboard"],
-    queryFn: async () => {
-      const res = await fetch("/api/projects");
-      return res.json();
-    },
-  });
-
-  const chatterCount = momentsData?.total ?? 0;
-  const photoCount = photosData?.length ?? 0;
-  const projectCount = projectsData?.length ?? 0;
+export function SiteDashboard({
+  momentsCount,
+  photosCount,
+  projectsCount,
+}: SiteDashboardProps) {
   const runningDays = Math.floor(
     (Date.now() - new Date("2026-01-01").getTime()) / (1000 * 60 * 60 * 24),
   );
 
   const items = [
-    { label: "说说", value: chatterCount, icon: "💬" },
-    { label: "照片", value: photoCount, icon: "📸" },
-    { label: "项目", value: projectCount, icon: "🚀" },
+    { label: "说说", value: momentsCount, icon: "💬" },
+    { label: "照片", value: photosCount, icon: "📸" },
+    { label: "项目", value: projectsCount, icon: "🚀" },
     { label: "运行天数", value: runningDays, icon: "⏱️" },
   ];
 
