@@ -79,7 +79,7 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-8">
             {navOptions.map((opt) => (
               <Link
                 key={opt.id}
