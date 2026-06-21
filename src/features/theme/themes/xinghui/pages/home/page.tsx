@@ -8,7 +8,6 @@ import { CloudPlayer } from "../../components/cloud-player";
 import { LyricBar } from "../../components/lyric-bar";
 import { LatestPostsCarousel } from "../../components/latest-posts-carousel";
 import { SiteDashboard } from "../../components/site-dashboard";
-import { DanmakuBackground } from "../../components/danmaku-background";
 
 export function HomePage({
   posts,
@@ -67,8 +66,6 @@ export function HomePage({
 
   return (
     <div className="flex flex-col gap-6 relative">
-      <DanmakuBackground />
-
       {/* Search bar */}
       <div className="xh-animate-in">
         <div className="relative max-w-2xl mx-auto w-full group">

@@ -42,15 +42,17 @@
 }
 
 @layer base {
+  :root {
+    --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
+    --font-mono: 'Geist Mono', ui-monospace, monospace;
+  }
   body {
-    font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
+    font-family: var(--font-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  }
-  code, pre, .font-mono {
-    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-family: var(--font-sans);
   }
 }

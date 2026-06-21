@@ -3,6 +3,7 @@ import { useRouteContext } from "@tanstack/react-router";
 import type { PublicLayoutProps } from "@/features/theme/contract/layouts";
 import { MusicProvider } from "../components/music-provider";
 import { FloatingPlayer } from "../components/floating-player";
+import { DanmakuBackground } from "../components/danmaku-background";
 import { MobileMenu } from "./mobile-menu";
 import { Navbar } from "./navbar";
 
@@ -35,6 +36,8 @@ export function PublicLayout({
   return (
     <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds}>
       <div className="xh-page-bg min-h-screen relative">
+        <DanmakuBackground />
+
         {bgUrl && (
           <div className="fixed inset-0 z-0">
             <img
