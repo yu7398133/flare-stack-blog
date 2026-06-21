@@ -134,7 +134,9 @@ export function resolveSiteConfig(
       },
       xinghui: {
         homeBg:
-          config?.site?.theme?.xinghui?.homeBg ?? blogConfig.theme.xinghui.homeBg,
+          blogConfig.theme.xinghui.homeBg ||
+          config?.site?.theme?.xinghui?.homeBg ||
+          "",
         avatar:
           config?.site?.theme?.xinghui?.avatar ?? blogConfig.theme.xinghui.avatar,
         musicIds:

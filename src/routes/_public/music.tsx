@@ -125,8 +125,8 @@ function MusicPage() {
       </div>
 
       {/* Header */}
-      <div className="xh-animate-in">
-        <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-widest mb-1 md:mb-2">
+      <div className="xh-animate-in mb-4 md:mb-8">
+        <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-widest mb-2 md:mb-4">
           云端乐律
         </h1>
         <p className="text-xs md:text-base text-slate-600 dark:text-slate-400 font-medium tracking-wider">

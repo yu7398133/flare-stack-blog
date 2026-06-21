@@ -84,11 +84,11 @@ export function TimelinePage({ posts }: TimelinePageProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="xh-glass p-6 text-center">
-        <h1 className="text-4xl font-black text-slate-800 dark:text-white tracking-wider mb-3">
+      <div className="xh-glass p-8 md:p-10 text-center">
+        <h1 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white tracking-wider mb-4">
           归档与探索
         </h1>
-        <p className="text-base text-slate-600 dark:text-slate-400 font-serif">
+        <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-serif">
           ✨ 总计 {posts.length} 篇文章
         </p>
       </div>

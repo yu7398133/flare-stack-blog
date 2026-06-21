@@ -9,18 +9,18 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="xh-glass p-6">
-        <h1 className="text-4xl font-black text-slate-800 dark:text-white mb-3 tracking-wider">
+      <div className="xh-glass p-8 md:p-10">
+        <h1 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white mb-4 tracking-wider">
           Projects Matrix
         </h1>
-        <p className="text-base text-slate-600 dark:text-slate-400 font-serif">
+        <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 font-serif">
           开源项目、科研代码与实验室折腾记录。
         </p>
       </div>
 
       {/* Featured projects */}
       {featured.length > 0 && (
-        <div>
+        <div className="mt-2">
           <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 px-1">
             ⭐ 精选项目
           </h2>
