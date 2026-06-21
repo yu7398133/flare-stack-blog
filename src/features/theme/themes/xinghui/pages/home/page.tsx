@@ -7,7 +7,10 @@ import type { HomePageProps } from "@/features/theme/contract/pages";
 import { ProfileCard } from "../../components/profile-card";
 import { CloudPlayer } from "../../components/cloud-player";
 import { LyricBar } from "../../components/lyric-bar";
-import { PostCard } from "../../components/post-card";
+import { LatestPostsCarousel } from "../../components/latest-posts-carousel";
+import { LatestChatterCarousel } from "../../components/latest-chatter-carousel";
+import { SiteDashboard } from "../../components/site-dashboard";
+import { DanmakuBackground } from "../../components/danmaku-background";
 
 function formatDate(date: Date | string) {
   const d = new Date(date);
@@ -22,52 +25,82 @@ function formatDate(date: Date | string) {
 export function HomePage({ posts, pinnedPosts, popularPosts }: HomePageProps) {
   const allPosts = useMemo(() => {
     const seen = new Set<string>();
-    const result: { post: PostItem; pinned: boolean }[] = [];
+    const result: PostItem[] = [];
     for (const post of pinnedPosts ?? []) {
-      if (!seen.has(post.slug)) { seen.add(post.slug); result.push({ post, pinned: true }); }
+      if (!seen.has(post.slug)) {
+        seen.add(post.slug);
+        result.push(post);
+      }
     }
     for (const post of popularPosts ?? []) {
-      if (!seen.has(post.slug)) { seen.add(post.slug); result.push({ post, pinned: false }); }
+      if (!seen.has(post.slug)) {
+        seen.add(post.slug);
+        result.push(post);
+      }
     }
     for (const post of posts) {
-      if (!seen.has(post.slug)) { seen.add(post.slug); result.push({ post, pinned: false }); }
+      if (!seen.has(post.slug)) {
+        seen.add(post.slug);
+        result.push(post);
+      }
     }
     return result;
   }, [posts, pinnedPosts, popularPosts]);
 
-  const allSlugs = useMemo(() => allPosts.map((p) => p.post.slug), [allPosts]);
+  const allSlugs = useMemo(() => allPosts.map((p) => p.slug), [allPosts]);
   const { data: viewCounts } = useViewCounts(allSlugs);
 
-  const { data: photos } = useQuery<Array<{ id: number; title: string; imageUrl: string; album: string; description: string | null }>>({
+  // Fetch chatters for carousel
+  const { data: chatterData } = useQuery<{
+    items: Array<{
+      id: number;
+      content: string;
+      createdAt: string;
+      mood: string | null;
+      location: string | null;
+    }>;
+  }>({
+    queryKey: ["chatter-preview"],
+    queryFn: async () => {
+      const r = await fetch("/api/moments?limit=5");
+      return r.json();
+    },
+  });
+
+  // Fetch photos for photo wall banner
+  const { data: photos } = useQuery<
+    Array<{
+      id: number;
+      title: string;
+      imageUrl: string;
+      album: string;
+      description: string | null;
+    }>
+  >({
     queryKey: ["photos-preview"],
-    queryFn: async () => { const r = await fetch("/api/photos?limit=1"); return r.json(); },
+    queryFn: async () => {
+      const r = await fetch("/api/photos?limit=1");
+      return r.json();
+    },
   });
 
-  const { data: momentsData } = useQuery<{ items: Array<{ id: number; content: string; createdAt: string; mood: string | null; location: string | null }> }>({
-    queryKey: ["moments-preview"],
-    queryFn: async () => { const r = await fetch("/api/moments?limit=1"); return r.json(); },
-  });
-
-  const latestPost = posts[0];
+  const topPosts = allPosts.slice(0, 5);
+  const chatters = chatterData?.items || [];
   const latestPhoto = photos?.[0] || {
     id: 0,
-    title: "二六年南昌五一摄影",
+    title: "照片墙",
     imageUrl: "https://bu.dusays.com/2026/05/07/69fc46808a782.jpg",
     album: "风景",
-    description: "随便拍拍",
-  };
-  const latestMoment = momentsData?.items?.[0] || {
-    id: 0,
-    content: "Yumi开发计划与Hermes智能体使用",
-    createdAt: "2026-06-03T15:27:00Z",
-    mood: null,
-    location: null,
+    description: "查看摄影",
   };
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") === "dark" ||
-        (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      return (
+        localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      );
     }
     return false;
   });
@@ -84,8 +117,11 @@ export function HomePage({ posts, pinnedPosts, popularPosts }: HomePageProps) {
   }, [isDark]);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Row 1: Profile Card + Music Player */}
+    <div className="flex flex-col gap-6 relative">
+      {/* Danmaku background */}
+      <DanmakuBackground />
+
+      {/* Row 1: Profile Card (7 cols) + Cloud Player (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 xh-animate-in xh-delay-1">
           <ProfileCard postCount={posts.length} />
@@ -100,126 +136,65 @@ export function HomePage({ posts, pinnedPosts, popularPosts }: HomePageProps) {
         <LyricBar />
       </div>
 
-      {/* Row 2: Latest Insight + Preview cards */}
+      {/* Row 2: Posts Carousel (4 cols) + Right panel (8 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Latest Insight */}
-        <div className="lg:col-span-5 xh-animate-in xh-delay-3">
-          {latestPost && (
-            <Link
-              to="/post/$slug"
-              params={{ slug: latestPost.slug }}
-              className="block xh-glass xh-glass-hover overflow-hidden group"
-            >
-              {latestPost.cover && (
-                <div className="aspect-video overflow-hidden">
-                  <img
-                    src={latestPost.cover}
-                    alt={latestPost.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <div className="p-4">
-                <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">
-                  Latest Insight{latestPost.publishedAt ? ` ${formatDate(latestPost.publishedAt)}` : ""}
-                </p>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
-                  {latestPost.title}
-                </h3>
-                {latestPost.summary && (
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">{latestPost.summary}</p>
-                )}
-              </div>
-            </Link>
-          )}
+        {/* Left: Latest Posts Carousel */}
+        <div className="lg:col-span-4 xh-animate-in xh-delay-3 min-h-[280px]">
+          <LatestPostsCarousel posts={topPosts} />
         </div>
 
-        {/* Photo preview */}
-        <div className="lg:col-span-3 xh-animate-in xh-delay-3">
-          <Link to="/photowall" className="block xh-glass xh-glass-hover overflow-hidden group h-full">
-            {latestPhoto ? (
-              <div className="aspect-square overflow-hidden">
-                <img src={latestPhoto.imageUrl} alt={latestPhoto.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-              </div>
-            ) : (
-              <div className="aspect-square flex items-center justify-center text-4xl bg-slate-100 dark:bg-slate-800">📸</div>
-            )}
-            <div className="p-3">
-              <h3 className="text-sm font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
-                {latestPhoto?.title || "照片墙"}
+        {/* Right: Photo Wall Banner + Chatter Carousel + Theme Toggle */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          {/* Photo wall big banner */}
+          <Link
+            to="/photowall"
+            className="xh-glass xh-glass-hover overflow-hidden relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
+          >
+            <img
+              src={latestPhoto.imageUrl}
+              alt={latestPhoto.title}
+              className="w-full h-full absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-black/30 dark:bg-black/50 group-hover:bg-black/10 transition-colors duration-500" />
+            <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-6">
+              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 underline decoration-pink-400">
+                {latestPhoto.title}
               </h3>
-              {latestPhoto?.description && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate">{latestPhoto.description}</p>
-              )}
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Click to Open</p>
+              <p className="text-white/90 text-sm sm:text-lg line-clamp-1">
+                {latestPhoto.description || "点击查看照片墙"}
+              </p>
             </div>
           </Link>
-        </div>
 
-        {/* Moments preview */}
-        <div className="lg:col-span-4 xh-animate-in xh-delay-3">
-          <Link to="/moments" className="block xh-glass xh-glass-hover p-4 h-full group">
-            <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-              Records{latestMoment ? ` ${formatDate(latestMoment.createdAt)}` : ""}
-            </p>
-            {latestMoment ? (
-              <>
-                <h3 className="text-sm font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
-                  {latestMoment.content.slice(0, 60)}{latestMoment.content.length > 60 ? "..." : ""}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
-                  {latestMoment.content}
-                </p>
-              </>
-            ) : (
-              <h3 className="text-sm font-bold text-slate-800 dark:text-white">说说</h3>
-            )}
-          </Link>
+          {/* Bottom grid: Chatter carousel + Theme toggle */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1">
+            <div className="sm:col-span-2 min-h-[200px]">
+              <LatestChatterCarousel chatters={chatters} />
+            </div>
+            <div className="sm:col-span-1 min-h-[120px]">
+              <div className="xh-glass p-5 h-full flex flex-col items-center justify-center gap-3">
+                <button
+                  onClick={() => setIsDark(!isDark)}
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-3xl hover:scale-110 transition-transform"
+                >
+                  {isDark ? "🌸" : "✨"}
+                </button>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {isDark ? "浅色模式" : "深色模式"}
+                </span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                  {isDark ? "流萤飞舞的深空" : "星辰大海"}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Night mode toggle */}
-      <div className="xh-animate-in xh-delay-4 flex justify-center">
-        <button
-          onClick={() => setIsDark(!isDark)}
-          className="xh-glass px-6 py-3 flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all group"
-        >
-          <span className="text-lg">{isDark ? "🌸" : "✨"}</span>
-          <span className="font-medium">夜间模式</span>
-          <span className="text-xs text-slate-400 dark:text-slate-500 group-hover:text-indigo-400 dark:group-hover:text-indigo-300 transition-colors">
-            {isDark ? "流萤飞舞的深空" : "切换到夜间模式"}
-          </span>
-        </button>
-      </div>
-
-      {/* Row 3: Recent posts grid */}
+      {/* Bottom: Site Dashboard */}
       <div className="xh-animate-in xh-delay-5">
-        <h2 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 px-1">
-          🕐 最近更新
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {allPosts.slice(0, 6).map(({ post, pinned }) => (
-            <PostCard key={post.slug} post={post} pinned={pinned} views={viewCounts?.[post.slug]} />
-          ))}
-        </div>
-      </div>
-
-      {/* View all button */}
-      <div className="xh-animate-in xh-delay-6 text-center">
-        <Link to="/posts" className="inline-block px-8 py-3 rounded-xl xh-glass text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:scale-105 transition-all">
-          查看全部文章 →
-        </Link>
-      </div>
-
-      {/* Bottom dashboard */}
-      <div className="xh-animate-in xh-delay-7">
-        <div className="xh-glass p-4 flex items-center justify-center gap-6 text-xs text-slate-500 dark:text-slate-400">
-          <span>系统已稳定运行：</span>
-          <span className="font-mono">Next.js 15</span>
-          <span className="font-mono">React 19</span>
-          <span className="font-mono">Tailwind 4</span>
-        </div>
+        <SiteDashboard />
       </div>
     </div>
   );

@@ -1,61 +1,71 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export function SiteDashboard() {
-  const [timeStr, setTimeStr] = useState("");
-  const [dateStr, setDateStr] = useState("");
+  const { data: momentsData } = useQuery<{ total: number }>({
+    queryKey: ["moments-count-dashboard"],
+    queryFn: async () => {
+      const res = await fetch("/api/moments?limit=1");
+      return res.json();
+    },
+  });
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeStr(
-        now.toLocaleTimeString("en-US", {
-          hour12: false,
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        }),
-      );
-      setDateStr(
-        now.toLocaleDateString("zh-CN", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          weekday: "short",
-        }),
-      );
-    };
+  const { data: photosData } = useQuery<Array<unknown>>({
+    queryKey: ["photos-count-dashboard"],
+    queryFn: async () => {
+      const res = await fetch("/api/photos");
+      return res.json();
+    },
+  });
 
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  const { data: projectsData } = useQuery<Array<unknown>>({
+    queryKey: ["projects-count-dashboard"],
+    queryFn: async () => {
+      const res = await fetch("/api/projects");
+      return res.json();
+    },
+  });
+
+  const chatterCount = momentsData?.total ?? 0;
+  const photoCount = photosData?.length ?? 0;
+  const projectCount = projectsData?.length ?? 0;
+  const runningDays = Math.floor(
+    (Date.now() - new Date("2026-01-01").getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  const items = [
+    { label: "说说", value: chatterCount, icon: "💬" },
+    { label: "照片", value: photoCount, icon: "📸" },
+    { label: "项目", value: projectCount, icon: "🚀" },
+    { label: "运行天数", value: runningDays, icon: "⏱️" },
+  ];
 
   return (
-    <div className="xh-glass overflow-hidden flex flex-col sm:flex-row items-stretch transition-colors h-auto sm:h-16">
-      {/* Clock */}
-      <div className="bg-slate-900 dark:bg-black text-white px-6 py-3 sm:py-0 flex items-center justify-center font-mono text-xl sm:text-2xl font-black tracking-widest relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
-        {timeStr || "00:00:00"}
-        <div className="absolute left-0 right-0 top-1/2 h-px bg-black/50" />
+    <div className="xh-glass p-4">
+      <div className="grid grid-cols-4 gap-4">
+        {items.map((item) => (
+          <div
+            key={item.label}
+            className="flex flex-col items-center gap-1 group"
+          >
+            <span className="text-lg group-hover:scale-110 transition-transform">
+              {item.icon}
+            </span>
+            <span className="text-lg font-black bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+              {item.value}
+            </span>
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+              {item.label}
+            </span>
+          </div>
+        ))}
       </div>
-
-      {/* Info bar */}
-      <div className="flex-1 px-6 py-3 sm:py-0 flex flex-wrap items-center justify-between gap-3 text-xs font-bold text-slate-600 dark:text-slate-300">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span>{dateStr}</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="px-2 py-1 bg-white/50 dark:bg-slate-700/50 rounded-md text-[10px] border border-white/40 dark:border-slate-600">
-            React
-          </span>
-          <span className="px-2 py-1 bg-white/50 dark:bg-slate-700/50 rounded-md text-[10px] border border-white/40 dark:border-slate-600">
-            Cloudflare
-          </span>
-          <span className="px-2 py-1 bg-white/50 dark:bg-slate-700/50 rounded-md text-[10px] border border-white/40 dark:border-slate-600">
-            TailwindCSS
-          </span>
+      <div className="mt-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/50">
+        <div className="flex items-center justify-center gap-4 text-[10px] text-slate-400 dark:text-slate-500">
+          <span className="font-mono">TanStack Start</span>
+          <span>•</span>
+          <span className="font-mono">Cloudflare Workers</span>
+          <span>•</span>
+          <span className="font-mono">D1 + R2 + KV</span>
         </div>
       </div>
     </div>

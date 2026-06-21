@@ -143,3 +143,58 @@
   background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
   background-size: 200% 100%;
 }
+
+/* Danmaku (bullet comments) animation */
+@keyframes xh-danmaku-scroll {
+  from {
+    transform: translateX(100vw);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.xh-danmaku-item {
+  animation: xh-danmaku-scroll linear infinite;
+}
+
+/* Rotating disc for music player */
+@keyframes xh-rotate-disc {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.xh-rotating-disc {
+  animation: xh-rotate-disc 8s linear infinite;
+}
+
+.xh-rotating-disc-paused {
+  animation-play-state: paused;
+}
+
+/* Photo wall grid masonry effect */
+.xh-photo-masonry {
+  columns: 2;
+  column-gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .xh-photo-masonry {
+    columns: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .xh-photo-masonry {
+    columns: 4;
+  }
+}
+
+.xh-photo-masonry > * {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}

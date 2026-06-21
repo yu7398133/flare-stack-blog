@@ -1,6 +1,5 @@
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import { useState } from "react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 
 interface LatestPostsCarouselProps {
@@ -9,84 +8,96 @@ interface LatestPostsCarouselProps {
 
 export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const prev = () => setCurrentIndex((i) => (i === 0 ? posts.length - 1 : i - 1));
-  const next = () => setCurrentIndex((i) => (i === posts.length - 1 ? 0 : i + 1));
+  const goToSlide = useCallback(
+    (index: number) => {
+      if (isTransitioning) return;
+      setIsTransitioning(true);
+      setCurrentIndex(index);
+      setTimeout(() => setIsTransitioning(false), 500);
+    },
+    [isTransitioning],
+  );
 
-  if (posts.length === 0) return null;
+  const nextSlide = useCallback(() => {
+    goToSlide((currentIndex + 1) % posts.length);
+  }, [currentIndex, posts.length, goToSlide]);
+
+  useEffect(() => {
+    if (posts.length <= 1) return;
+    const timer = setInterval(nextSlide, 4000);
+    return () => clearInterval(timer);
+  }, [nextSlide, posts.length]);
+
+  if (posts.length === 0) {
+    return (
+      <div className="xh-glass p-6 h-full flex items-center justify-center">
+        <p className="text-slate-400 dark:text-slate-500 text-sm">
+          暂无文章
+        </p>
+      </div>
+    );
+  }
 
   const post = posts[currentIndex];
 
   return (
-    <div className="xh-glass xh-glass-hover p-5 flex flex-col h-full min-h-[280px] relative overflow-hidden group">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-          📝 最新文章
-        </h3>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={prev}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/40 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-all"
-          >
-            <ChevronLeft size={14} />
-          </button>
-          <span className="text-xs text-slate-400 font-mono min-w-[3ch] text-center">
-            {currentIndex + 1}/{posts.length}
-          </span>
-          <button
-            onClick={next}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/40 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white transition-all"
-          >
-            <ChevronRight size={14} />
-          </button>
+    <div className="xh-glass overflow-hidden h-full flex flex-col relative group">
+      {/* Background image */}
+      {post.cover && (
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src={post.cover}
+            alt=""
+            className="w-full h-full object-cover blur-md scale-110 opacity-30 dark:opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent dark:from-slate-900/80 dark:via-slate-900/40 dark:to-transparent" />
         </div>
-      </div>
+      )}
 
-      {/* Post content */}
-      <Link
-        to="/post/$slug"
-        params={{ slug: post.slug }}
-        className="flex-1 flex flex-col justify-between group/link"
-      >
-        <div>
-          <h4 className="text-lg font-bold text-slate-800 dark:text-white mb-2 line-clamp-2 group-hover/link:text-indigo-600 dark:group-hover/link:text-indigo-400 transition-colors">
-            {post.title}
-          </h4>
+      <div className="relative z-10 p-5 flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">
+            Latest Posts
+          </span>
+          <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 to-transparent" />
+        </div>
+
+        {/* Post content */}
+        <div className="flex-1 flex flex-col justify-center">
+          <Link
+            to="/post/$slug"
+            params={{ slug: post.slug }}
+            className="group/link"
+          >
+            <h3 className="text-base font-bold text-slate-800 dark:text-white group-hover/link:text-indigo-600 dark:group-hover/link:text-indigo-400 transition-colors line-clamp-2 mb-2">
+              {post.title}
+            </h3>
+          </Link>
           {post.summary && (
-            <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">
+            <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
               {post.summary}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-2 mt-4 text-xs text-slate-400 dark:text-slate-500">
-          <Clock size={12} />
-          <span>
-            {post.publishedAt
-              ? new Date(post.publishedAt).toLocaleDateString("zh-CN", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                })
-              : "未发布"}
-          </span>
-          {post.readTimeInMinutes && (
-            <>
-              <span>·</span>
-              <span>{post.readTimeInMinutes} 分钟</span>
-            </>
-          )}
+        {/* Dots indicator */}
+        <div className="flex items-center justify-center gap-1.5 mt-2">
+          {posts.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => goToSlide(idx)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                idx === currentIndex
+                  ? "w-6 bg-indigo-500"
+                  : "w-1.5 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500"
+              }`}
+            />
+          ))}
         </div>
-      </Link>
-
-      {/* View all link */}
-      <Link
-        to="/posts"
-        className="mt-4 text-center text-xs font-medium text-indigo-500 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
-      >
-        查看全部文章 →
-      </Link>
+      </div>
     </div>
   );
 }
