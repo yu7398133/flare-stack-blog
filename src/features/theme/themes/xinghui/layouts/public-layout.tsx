@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouteContext } from "@tanstack/react-router";
 import type { PublicLayoutProps } from "@/features/theme/contract/layouts";
 import { MusicProvider } from "../components/music-provider";
+import { FloatingPlayer } from "../components/floating-player";
 import { Footer } from "./footer";
 import { MobileMenu } from "./mobile-menu";
 import { Navbar } from "./navbar";
@@ -60,6 +61,9 @@ export function PublicLayout({
             <Footer navOptions={navOptions} />
           </div>
         </div>
+
+        {/* Floating music player widget - visible on all pages except home & music */}
+        <FloatingPlayer />
       </div>
     </MusicProvider>
   );
