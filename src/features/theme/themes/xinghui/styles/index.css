@@ -3,7 +3,8 @@
    ======================================== */
 @import "./markdown.css";
 
-/* Fonts: Geist Sans + Geist Mono + Noto Serif SC */
+/* Fonts: Noto Serif SC (body) + Geist Sans (UI) + Geist Mono (code)
+   Matches reference site: body uses serif, UI elements use sans */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
 
 @font-face {
@@ -42,21 +43,26 @@
   font-display: swap;
 }
 
-/* Apply fonts globally for xinghui theme */
+/* Apply fonts globally for xinghui theme —
+   Body uses Noto Serif SC (matches reference site font-serif),
+   Headings & UI use Geist Sans */
 .xh-page-bg {
-  font-family: 'Geist', 'Noto Serif SC', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .xh-page-bg h1, .xh-page-bg h2, .xh-page-bg h3, .xh-page-bg h4, .xh-page-bg h5, .xh-page-bg h6 {
-  font-family: 'Geist', 'Noto Serif SC', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 .xh-page-bg code, .xh-page-bg pre, .xh-page-bg .font-mono {
   font-family: 'Geist Mono', ui-monospace, monospace;
 }
 
-.xh-page-bg .font-serif {
-  font-family: 'Noto Serif SC', 'Geist', serif;
+/* Override Tailwind font-sans to use Geist */
+.xh-page-bg .font-sans {
+  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 /* Page background with gradient */

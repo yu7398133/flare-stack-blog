@@ -14,8 +14,30 @@ function formatDate(date: Date | string) {
   return `${y}.${m}.${day}`;
 }
 
-function getPostCover(slug: string) {
-  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/800/500`;
+/**
+ * Generate a simple numeric hash from a string (for LoliAPI id parameter).
+ * Produces a positive 32-bit integer.
+ */
+function simpleHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash + char) | 0;
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Get post cover image URL.
+ * Priority:
+ *   1. Explicit cover field from post metadata
+ *   2. LoliAPI random image seeded by slug (different per article)
+ */
+function getPostCover(slug: string, cover?: string | null): string {
+  if (cover && cover.trim()) return cover;
+  // Use LoliAPI with a unique id per slug so each article gets a different image
+  const id = simpleHash(slug);
+  return `https://www.loliapi.com/acg/pc/?id=${id}`;
 }
 
 export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
@@ -59,7 +81,7 @@ export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
         style={{ opacity: fade ? 1 : 0 }}
       >
         <img
-          src={post.cover || getPostCover(post.slug)}
+          src={getPostCover(post.slug, post.cover)}
           alt=""
           className="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105"
         />

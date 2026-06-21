@@ -133,7 +133,8 @@ export function resolveSiteConfig(
           blogConfig.theme.fuwari.primaryHue,
       },
       xinghui: {
-        homeBg: blogConfig.theme.xinghui.homeBg,
+        homeBg:
+          config?.site?.theme?.xinghui?.homeBg ?? blogConfig.theme.xinghui.homeBg,
         avatar:
           config?.site?.theme?.xinghui?.avatar ?? blogConfig.theme.xinghui.avatar,
         userAvatar:
@@ -142,7 +143,20 @@ export function resolveSiteConfig(
           config?.site?.theme?.xinghui?.musicIds ??
           blogConfig.theme.xinghui.musicIds,
         musicPlaylistIds:
-          config?.site?.theme?.xinghui?.musicPlaylistIds ?? []
+          config?.site?.theme?.xinghui?.musicPlaylistIds ??
+          blogConfig.theme.xinghui.musicPlaylistIds,
+        buildDate:
+          config?.site?.theme?.xinghui?.buildDate ??
+          blogConfig.theme.xinghui.buildDate,
+        danmakuList:
+          config?.site?.theme?.xinghui?.danmakuList ??
+          [...blogConfig.theme.xinghui.danmakuList],
+        danmakuFontSize:
+          config?.site?.theme?.xinghui?.danmakuFontSize ??
+          blogConfig.theme.xinghui.danmakuFontSize,
+        danmakuOpacity:
+          config?.site?.theme?.xinghui?.danmakuOpacity ??
+          blogConfig.theme.xinghui.danmakuOpacity,
       },
     },
   });

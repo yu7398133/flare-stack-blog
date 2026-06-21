@@ -16,7 +16,6 @@ export function SiteDashboard({
   const [timeStr, setTimeStr] = useState("");
   const [uptimeStr, setUptimeStr] = useState("");
 
-  // Read buildDate from config, fallback to 2026-01-01
   const buildDate =
     siteConfig.theme.xinghui?.buildDate || "2026-01-01T00:00:00";
   const START_DATE = new Date(buildDate).getTime();
@@ -41,13 +40,6 @@ export function SiteDashboard({
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, [START_DATE]);
-
-  const badges = [
-    { name: "TanStack Start", color: "text-blue-500" },
-    { name: "Cloudflare", color: "text-orange-500" },
-    { name: "React", color: "text-cyan-500" },
-    { name: "D1 + R2 + KV", color: "text-amber-500" },
-  ];
 
   const stats = [
     { label: "说说", value: momentsCount, icon: "💬" },
@@ -87,18 +79,6 @@ export function SiteDashboard({
                 {s.label}
               </span>
             </div>
-          ))}
-        </div>
-
-        {/* Tech badges */}
-        <div className="hidden md:flex gap-1.5">
-          {badges.map((b) => (
-            <span
-              key={b.name}
-              className="px-2 py-0.5 bg-white/50 dark:bg-slate-700/50 rounded text-[10px] font-mono border border-white/40 dark:border-slate-600"
-            >
-              {b.name}
-            </span>
           ))}
         </div>
       </div>

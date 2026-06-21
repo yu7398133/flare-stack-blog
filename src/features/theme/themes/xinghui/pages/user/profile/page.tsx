@@ -1,4 +1,5 @@
 import { Loader2, Bell, BellOff, LogOut, Key, User } from "lucide-react";
+import { useRouteContext } from "@tanstack/react-router";
 import type { ProfilePageProps } from "@/features/theme/contract/pages";
 
 export function ProfilePage({
@@ -8,14 +9,20 @@ export function ProfilePage({
   notification,
   logout,
 }: ProfilePageProps) {
+  const { siteConfig } = useRouteContext({ from: "__root__" });
+  const xinghuiAvatar =
+    siteConfig.theme?.xinghui?.userAvatar ||
+    siteConfig.theme?.xinghui?.avatar ||
+    "";
+
   return (
     <div className="flex flex-col gap-6">
       {/* Profile card */}
       <div className="xh-glass p-6 md:p-8">
         <div className="flex items-center gap-4 mb-6">
-          {user.image ? (
+          {xinghuiAvatar || user.image ? (
             <img
-              src={user.image}
+              src={xinghuiAvatar || user.image}
               alt={user.name}
               className="w-16 h-16 rounded-2xl object-cover border-2 border-white/50"
             />

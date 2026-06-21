@@ -278,6 +278,9 @@ function createXinghuiThemeSiteConfigSchema() {
     musicIds: z.array(z.string()).optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
+    danmakuList: z.array(z.string()).optional(),
+    danmakuFontSize: z.number().int().min(10).max(40).optional(),
+    danmakuOpacity: z.number().min(0).max(1).optional(),
   });
 }
 
@@ -289,6 +292,9 @@ function createXinghuiThemeSiteConfigInputSchema() {
     musicIds: z.array(z.string()).optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
+    danmakuList: z.array(z.string()).optional(),
+    danmakuFontSize: z.number().int().min(10).max(40).optional(),
+    danmakuOpacity: z.number().min(0).max(1).optional(),
   });
 }
 
@@ -300,6 +306,9 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
     musicIds: z.array(z.string()).optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
+    danmakuList: z.array(z.string()).optional(),
+    danmakuFontSize: z.number().int().min(10).max(40).optional(),
+    danmakuOpacity: z.number().min(0).max(1).optional(),
   });
 }
 

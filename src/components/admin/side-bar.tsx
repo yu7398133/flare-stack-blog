@@ -13,6 +13,7 @@ import {
   User,
   X,
   Rocket,
+  MessageCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -128,6 +129,12 @@ export function SideBar({
       path: "/admin/music",
       icon: Music,
       label: "音乐",
+      exact: false,
+    },
+    {
+      path: "/admin/danmaku",
+      icon: MessageCircle,
+      label: "弹幕",
       exact: false,
     },
   ] satisfies Array<NavItem>;
