@@ -74,22 +74,11 @@ export async function getMyFriendLinks(context: AuthContext) {
 export async function getApprovedFriendLinks(
   context: DbContext & { executionCtx: ExecutionContext },
 ) {
-  const fetcher = async () =>
-    await FriendLinkRepo.getAllFriendLinks(context.db, {
-      status: "approved",
-      limit: null,
-    });
-
-  const version = await CacheService.getVersion(context, "friend-links:list");
-  const cacheKey = FRIEND_LINKS_CACHE_KEYS.approvedList(version);
-
-  return await CacheService.get(
-    context,
-    cacheKey,
-    ApprovedFriendLinksResponseSchema,
-    fetcher,
-    { ttl: "7d" },
-  );
+  // Direct DB query (skip cache to avoid stale data)
+  return await FriendLinkRepo.getAllFriendLinks(context.db, {
+    status: "approved",
+    limit: null,
+  });
 }
 
 // ============ Admin Methods ============
