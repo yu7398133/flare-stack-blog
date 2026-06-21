@@ -18,6 +18,7 @@ export function PublicLayout({
   const { siteConfig } = useRouteContext({ from: "__root__" });
 
   const musicIds = siteConfig.theme.xinghui?.musicIds ?? [];
+  const musicPlaylistIds = siteConfig.theme.xinghui?.musicPlaylistIds ?? [];
   const homeBgBase = siteConfig.theme.xinghui?.homeBg;
   // Append cache-busting param for random image APIs so each load gets a fresh image
   const homeBg = homeBgBase
@@ -25,7 +26,7 @@ export function PublicLayout({
     : undefined;
 
   return (
-    <MusicProvider musicIds={musicIds}>
+    <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds}>
       <div className="xh-page-bg min-h-screen relative">
         {/* Background image */}
         {homeBg && (

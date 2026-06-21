@@ -140,6 +140,8 @@ export function resolveSiteConfig(
         musicIds:
           config?.site?.theme?.xinghui?.musicIds ??
           blogConfig.theme.xinghui.musicIds,
+        musicPlaylistIds:
+          config?.site?.theme?.xinghui?.musicPlaylistIds ?? []
       },
     },
   });

@@ -84,9 +84,10 @@ export function useMusic() {
 interface MusicProviderProps {
   children: ReactNode;
   musicIds: string[];
+  musicPlaylistIds?: string[];
 }
 
-export function MusicProvider({ children, musicIds }: MusicProviderProps) {
+export function MusicProvider({ children, musicIds, musicPlaylistIds }: MusicProviderProps) {
   const [playlist, setPlaylist] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -110,7 +111,10 @@ export function MusicProvider({ children, musicIds }: MusicProviderProps) {
 
     const fetchMusicData = async () => {
       try {
-        const res = await fetch(`/api/music?ids=${musicIds.join(",")}`);
+        const params = new URLSearchParams();
+        if (musicIds.length > 0) params.set("ids", musicIds.join(","));
+        if (musicPlaylistIds && musicPlaylistIds.length > 0) params.set("playlistIds", musicPlaylistIds.join(","));
+        const res = await fetch(`/api/music?${params.toString()}`);
         const rawResults = await res.json();
 
         const mergedPlaylist = (rawResults as Array<Record<string, unknown>>)
@@ -148,7 +152,7 @@ export function MusicProvider({ children, musicIds }: MusicProviderProps) {
       }
     };
 
-    if (musicIds.length > 0) {
+    if (musicIds.length > 0 || (musicPlaylistIds && musicPlaylistIds.length > 0)) {
       fetchMusicData();
     } else {
       setIsLoading(false);
@@ -158,7 +162,7 @@ export function MusicProvider({ children, musicIds }: MusicProviderProps) {
     return () => {
       isMounted = false;
     };
-  }, [musicIds]);
+  }, [musicIds, musicPlaylistIds]);
 
   // Update lyrics when song changes
   useEffect(() => {
