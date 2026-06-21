@@ -70,16 +70,16 @@ export function MobileMenu({ navOptions, isOpen, onClose, user, logout }: Mobile
         )}
 
         {/* Nav links */}
-        <div className="flex flex-col gap-1 flex-1">
+        <div className="flex flex-col gap-2 flex-1">
           {navOptions.map((opt) => (
             <Link
               key={opt.id}
               to={opt.to}
               onClick={onClose}
-              className="px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white/40 dark:hover:bg-white/10 transition-all"
+              className="px-4 py-3 rounded-xl text-[15px] font-medium text-slate-600 dark:text-slate-300 hover:bg-white/40 dark:hover:bg-white/10 transition-all"
               activeProps={{
                 className:
-                  "px-4 py-3 rounded-xl text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-white/10",
+                  "px-4 py-3 rounded-xl text-[15px] font-bold text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-white/10",
               }}
             >
               {opt.label}

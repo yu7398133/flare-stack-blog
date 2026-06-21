@@ -45,15 +45,15 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
         </Link>
 
         {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-4">
           {navOptions.map((opt) => (
             <Link
               key={opt.id}
               to={opt.to}
-              className="relative py-1 text-sm font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              className="relative py-1.5 text-[15px] font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               activeProps={{
                 className:
-                  "relative py-1 text-sm font-bold text-indigo-600 dark:text-indigo-400 transition-colors",
+                  "relative py-1.5 text-[15px] font-bold text-indigo-600 dark:text-indigo-400 transition-colors",
               }}
             >
               {opt.label}
