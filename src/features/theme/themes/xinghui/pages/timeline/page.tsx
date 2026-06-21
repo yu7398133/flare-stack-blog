@@ -3,9 +3,12 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Calendar, Search, ArrowUp } from "lucide-react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
-// Random anime image for posts without covers
-function getPostCover(id: number) {
-  return `https://picsum.photos/seed/post${id}/400/250`;
+// Consistent image per post slug (same URL = same image across pages)
+function getPostCover(slug: string) {
+  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/400/250`;
+}
+function getPostCoverLarge(slug: string) {
+  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/1200/600`;
 }
 
 export function TimelinePageSkeleton() {
@@ -82,10 +85,10 @@ export function TimelinePage({ posts }: TimelinePageProps) {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="xh-glass p-6 text-center">
-        <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
+        <h1 className="text-4xl font-black text-slate-800 dark:text-white tracking-wider mb-3">
           归档与探索
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-base text-slate-600 dark:text-slate-400 font-serif">
           ✨ 总计 {posts.length} 篇文章
         </p>
       </div>
@@ -186,7 +189,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                 >
                     <div className="relative h-28 sm:h-36 overflow-hidden">
                     <img
-                      src={getPostCover(post.id)}
+                      src={getPostCover(post.slug)}
                       alt=""
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -201,11 +204,11 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                       </span>
                     </div>
                   <div className="p-3 md:p-4 flex-1 flex flex-col">
-                    <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
                       {post.title}
                     </h3>
                     {post.summary && (
-                      <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-2 flex-1">
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-2 flex-1">
                         {post.summary}
                       </p>
                     )}

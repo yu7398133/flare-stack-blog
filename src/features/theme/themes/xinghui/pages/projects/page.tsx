@@ -15,10 +15,10 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
           <ArrowLeft size={12} />
           返回上一级
         </Link>
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
+        <h1 className="text-4xl font-black text-slate-800 dark:text-white mb-3 tracking-wider">
           Projects Matrix
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-base text-slate-600 dark:text-slate-400 font-serif">
           开源项目、科研代码与实验室折腾记录。
         </p>
       </div>

@@ -40,13 +40,13 @@ export function PhotoWallPage({
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="xh-glass p-6">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
+        <h1 className="text-4xl font-black text-slate-800 dark:text-white mb-3 tracking-wider">
           光影画廊
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-base text-slate-600 dark:text-slate-400 font-serif">
           定格时间，封存泰拉与现实的每一次心跳
         </p>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+        <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
           {photos.length} 张照片
         </p>
       </div>
@@ -122,11 +122,11 @@ export function PhotoWallPage({
                   />
                 </div>
                 <div className="p-2">
-                  <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
+                  <p className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate">
                     {photo.title}
                   </p>
                   {photo.description && (
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 truncate mt-0.5">
                       {photo.description}
                     </p>
                   )}

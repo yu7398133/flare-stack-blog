@@ -16,8 +16,10 @@ function formatDate(date: Date | string) {
   });
 }
 
-// Random anime image API
-const ANIME_IMG_API = "https://www.dmoe.cc/random.php";
+// Consistent image per post slug (same seed = same image as timeline)
+function getPostCover(slug: string) {
+  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/1200/600`;
+}
 
 export function PostPage({ post }: PostPageProps) {
   const { data: session } = authClient.useSession();
@@ -34,7 +36,7 @@ export function PostPage({ post }: PostPageProps) {
     },
   });
 
-  const coverSrc = post.cover || `${ANIME_IMG_API}?t=${post.id}`;
+  const coverSrc = post.cover || getPostCover(post.slug);
 
   return (
     <div className="flex flex-col gap-6 xh-animate-in">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouteContext } from "@tanstack/react-router";
 
 interface SiteDashboardProps {
   momentsCount: number;
@@ -11,10 +12,14 @@ export function SiteDashboard({
   photosCount,
   projectsCount,
 }: SiteDashboardProps) {
+  const { siteConfig } = useRouteContext({ from: "__root__" });
   const [timeStr, setTimeStr] = useState("");
   const [uptimeStr, setUptimeStr] = useState("");
 
-  const START_DATE = new Date("2026-01-01T00:00:00").getTime();
+  // Read buildDate from config, fallback to 2026-01-01
+  const buildDate =
+    siteConfig.theme.xinghui?.buildDate || "2026-01-01T00:00:00";
+  const START_DATE = new Date(buildDate).getTime();
 
   useEffect(() => {
     const updateTime = () => {
@@ -35,7 +40,7 @@ export function SiteDashboard({
     updateTime();
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [START_DATE]);
 
   const badges = [
     { name: "TanStack Start", color: "text-blue-500" },
