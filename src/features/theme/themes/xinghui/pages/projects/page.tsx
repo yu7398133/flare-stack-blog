@@ -28,11 +28,11 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="text-center md:text-left">
-        <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-widest uppercase">
+        <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-3 tracking-widest drop-shadow-sm uppercase">
           Projects Matrix
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 font-serif text-base md:text-lg">
-          开源项目、科研代码与实验室折腾记录。
+        <p className="text-slate-600 dark:text-slate-400 font-serif text-base">
+          开源项目、折腾记录。
         </p>
       </div>
 
@@ -113,7 +113,7 @@ function ProjectCard({ project, featured }: { project: Project; featured?: boole
       )}
 
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-xl font-bold text-slate-800 dark:text-white">
+        <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white">
           {project.title}
         </h3>
         {project.status === "archived" && (
