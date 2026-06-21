@@ -14,6 +14,10 @@ function formatDate(date: Date | string) {
   return `${y}.${m}.${day}`;
 }
 
+function getPostCover(slug: string) {
+  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/800/500`;
+}
+
 export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -54,13 +58,11 @@ export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
         className="absolute inset-0 z-0 transition-opacity duration-700"
         style={{ opacity: fade ? 1 : 0 }}
       >
-        {post.cover && (
-          <img
-            src={post.cover}
-            alt=""
-            className="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105"
-          />
-        )}
+        <img
+          src={post.cover || getPostCover(post.slug)}
+          alt=""
+          className="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
       </div>
 

@@ -1,4 +1,4 @@
-import { Link, useRouteContext } from "@tanstack/react-router";
+import { Link, useRouteContext, useMatchRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Menu, Sun, Moon } from "lucide-react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
@@ -37,9 +37,11 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
         {/* Logo / Site Name */}
         <Link
           to="/"
-          className="text-lg font-bold text-slate-800 dark:text-white tracking-wider hover:opacity-80 transition-opacity"
+          className="text-xl font-black text-slate-800 dark:text-white tracking-tighter hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300"
         >
-          ⚡ {siteConfig.title}
+          {siteConfig.author}
+          <span className="text-indigo-500 mx-1">の</span>
+          宝藏之地
         </Link>
 
         {/* Desktop Nav Links */}
@@ -48,13 +50,14 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
             <Link
               key={opt.id}
               to={opt.to}
-              className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white/40 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all"
+              className="relative py-1 text-sm font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               activeProps={{
                 className:
-                  "px-4 py-2 rounded-xl text-sm font-bold text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-white/10",
+                  "relative py-1 text-sm font-bold text-indigo-600 dark:text-indigo-400 transition-colors",
               }}
             >
               {opt.label}
+              <LinkIndicator to={opt.to} />
             </Link>
           ))}
         </div>
@@ -105,5 +108,14 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
         </div>
       </div>
     </nav>
+  );
+}
+
+function LinkIndicator({ to }: { to: string }) {
+  const matchRoute = useMatchRoute();
+  const isActive = matchRoute({ to, fuzzy: to === "/" });
+  if (!isActive) return null;
+  return (
+    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full animate-pulse" />
   );
 }
