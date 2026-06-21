@@ -1,37 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
-import { dbMiddleware } from "@/lib/middlewares";
-import * as MomentsData from "@/features/moments/data/moments.data";
-import * as PhotosData from "@/features/photos/data/photos.data";
-import * as ProjectsData from "@/features/projects/data/projects.data";
-
-// ── Server Functions ──────────────────────────────────────
-
-export const getRecentMomentsFn = createServerFn()
-  .middleware([dbMiddleware])
-  .validator((input: { limit: number }) => input)
-  .handler(async ({ data, context }) => {
-    const items = await MomentsData.getAll(context.db, {
-      visibility: "public",
-      limit: data.limit,
-    });
-    const total = await MomentsData.count(context.db, "public");
-    return { items, total };
-  });
-
-export const getAllPhotosFn = createServerFn()
-  .middleware([dbMiddleware])
-  .handler(async ({ context }) => {
-    return PhotosData.getAll(context.db);
-  });
-
-export const getAllProjectsFn = createServerFn()
-  .middleware([dbMiddleware])
-  .handler(async ({ context }) => {
-    return ProjectsData.getAll(context.db);
-  });
-
-// ── Query Options ─────────────────────────────────────────
 
 export const XINGHUI_KEYS = {
   moments: ["xinghui", "moments"] as const,
@@ -39,19 +6,67 @@ export const XINGHUI_KEYS = {
   projects: ["xinghui", "projects"] as const,
 };
 
+function getBaseUrl() {
+  if (typeof window !== "undefined") return "";
+  // In SSR on Cloudflare Workers, we can use the request URL origin
+  // Fall back to empty string (relative) which works in the same worker
+  return "";
+}
+
 export function recentMomentsQuery(limit = 5) {
   return queryOptions({
     queryKey: [...XINGHUI_KEYS.moments, limit],
-    queryFn: () => getRecentMomentsFn({ data: { limit } }),
+    queryFn: async () => {
+      const base = getBaseUrl();
+      const res = await fetch(`${base}/api/moments?limit=${limit}`);
+      if (!res.ok) return { items: [], total: 0 };
+      return res.json() as Promise<{
+        items: Array<{
+          id: number;
+          content: string;
+          createdAt: string;
+          mood: string | null;
+          location: string | null;
+        }>;
+        total: number;
+      }>;
+    },
   });
 }
 
 export const allPhotosQuery = queryOptions({
   queryKey: XINGHUI_KEYS.photos,
-  queryFn: () => getAllPhotosFn(),
+  queryFn: async () => {
+    const base = getBaseUrl();
+    const res = await fetch(`${base}/api/photos`);
+    if (!res.ok) return [];
+    return res.json() as Promise<
+      Array<{
+        id: number;
+        title: string;
+        imageUrl: string;
+        album: string;
+        description: string | null;
+      }>
+    >;
+  },
 });
 
 export const allProjectsQuery = queryOptions({
   queryKey: XINGHUI_KEYS.projects,
-  queryFn: () => getAllProjectsFn(),
+  queryFn: async () => {
+    const base = getBaseUrl();
+    const res = await fetch(`${base}/api/projects`);
+    if (!res.ok) return [];
+    return res.json() as Promise<
+      Array<{
+        id: number;
+        title: string;
+        description: string;
+        projectUrl: string | null;
+        repoUrl: string | null;
+        techStack: string | null;
+      }>
+    >;
+  },
 });

@@ -18,16 +18,12 @@ const { recentPostsLimit, popularPostsLimit } = theme.config.home;
 
 export const Route = createFileRoute("/_public/")({
   loader: async ({ context }) => {
-    // Core queries (always required)
-    const corePromises = [
+    const [, domain] = await Promise.all([
       context.queryClient.ensureQueryData(recentPostsQuery(recentPostsLimit)),
       context.queryClient.ensureQueryData(siteDomainQuery),
       context.queryClient.ensureQueryData(pinnedPostsQuery),
       context.queryClient.ensureQueryData(popularPostsQuery(popularPostsLimit)),
-    ];
-
-    // Xinghui theme extra data — fail gracefully
-    const xinghuiPromises = [
+      // Xinghui theme extra data — fail silently if unavailable during SSR
       context.queryClient
         .ensureQueryData(recentMomentsQuery(5))
         .catch(() => ({ items: [], total: 0 })),
@@ -37,10 +33,7 @@ export const Route = createFileRoute("/_public/")({
       context.queryClient
         .ensureQueryData(allProjectsQuery)
         .catch(() => []),
-    ];
-
-    const results = await Promise.all([...corePromises, ...xinghuiPromises]);
-    const domain = results[1];
+    ]);
 
     return {
       canonicalHref: buildCanonicalUrl(domain, "/"),
