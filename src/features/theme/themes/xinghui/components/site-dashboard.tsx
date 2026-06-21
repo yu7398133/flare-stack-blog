@@ -42,7 +42,7 @@ export function SiteDashboard({
   }, [START_DATE]);
 
   const stats = [
-    { label: "说说", value: momentsCount, icon: "💬" },
+    { label: "杂谈", value: momentsCount, icon: "✨" },
     { label: "照片", value: photosCount, icon: "📸" },
     { label: "项目", value: projectsCount, icon: "🚀" },
   ];

@@ -21,6 +21,7 @@ import type {
   ResetPasswordPageProps,
   SearchPageProps,
   SubmitFriendLinkPageProps,
+  TalkPageProps,
   TimelinePageProps,
   VerifyEmailPageProps,
 } from "./pages";
@@ -107,6 +108,11 @@ export interface ThemeComponents {
 
   /** 关于页组件 */
   AboutPage: React.ComponentType<AboutPageProps>;
+
+  /** 杂谈页组件 */
+  TalkPage?: React.ComponentType<TalkPageProps>;
+  /** 杂谈页骨架屏 */
+  TalkPageSkeleton?: React.ComponentType;
 
   /** 归档/时间线页组件 */
   TimelinePage: React.ComponentType<TimelinePageProps>;

@@ -179,9 +179,11 @@ export function PostPage({ post }: PostPageProps) {
                     href={`#${item.id}`}
                     onClick={(e) => {
                       e.preventDefault();
-                      document
-                        .getElementById(item.id)
-                        ?.scrollIntoView({ behavior: "smooth" });
+                      const el = document.getElementById(item.id);
+                      if (!el) return;
+                      const navbarH = 64;
+                      const y = el.getBoundingClientRect().top + window.scrollY - navbarH - 16;
+                      window.scrollTo({ top: y, behavior: "smooth" });
                     }}
                     className={`block text-sm py-1 border-l-[1.5px] transition-all duration-300 leading-relaxed ${
                       activeId === item.id
@@ -221,7 +223,7 @@ function useActiveTOC(
           if (e.isIntersecting) setActiveId(e.target.id);
         }
       },
-      { rootMargin: "-80px 0px -70% 0px", threshold: 0 },
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0 },
     );
     for (const item of toc) {
       const el = document.getElementById(item.id);

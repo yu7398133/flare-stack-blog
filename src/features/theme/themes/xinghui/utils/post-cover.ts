@@ -3,24 +3,29 @@
  *
  * Priority:
  *   1. Explicit cover field from post metadata
- *   2. Deterministic random image seeded by slug (picsum.photos)
+ *   2. Anime random image from API (same URL used across all pages)
  *
- * The seeded approach ensures the same article always gets the same
- * image across homepage, archive, and post detail pages.
- * The image only changes when the CDN cache is purged.
+ * Uses anime random image API so the same article URL is consistent
+ * across homepage, archive, and post detail pages.
  */
 
 /**
- * Generate a deterministic cover image URL from a post slug.
- * Uses picsum.photos with a seed so the same slug always produces the same image.
+ * Generate an anime cover image URL from a post slug.
+ * Uses a hash to pick from a fixed pool of anime images for consistency.
  */
-export function getPostCoverBySlug(slug: string, width = 800, height = 500): string {
-  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/${width}/${height}`;
+export function getPostCoverBySlug(slug: string, _width = 800, _height = 500): string {
+  // Simple hash to get a deterministic index
+  let hash = 0;
+  for (let i = 0; i < slug.length; i++) {
+    hash = ((hash << 5) - hash + slug.charCodeAt(i)) | 0;
+  }
+  const idx = Math.abs(hash) % 1000;
+  return `https://t.mwm.moe/fj/?${idx}`;
 }
 
 /**
  * Get the cover image for a post.
- * Returns the explicit cover if set, otherwise a deterministic random image.
+ * Returns the explicit cover if set, otherwise an anime random image.
  */
 export function getPostCover(
   slug: string,

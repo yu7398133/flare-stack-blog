@@ -171,16 +171,16 @@ export function HomePage({
             )}
           </Link>
 
-          {/* Moments preview */}
+          {/* Talk (杂谈) preview */}
           <Link
-            to="/moments"
+            to="/talk"
             className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
           >
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] font-mono text-pink-500 dark:text-pink-400 uppercase tracking-widest">
-                💬 说说
+              <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">
+                ✨ 杂谈
               </span>
-              <div className="flex-1 h-px bg-gradient-to-r from-pink-500/30 to-transparent" />
+              <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 to-transparent" />
             </div>
             {moments && moments.items.length > 0 ? (
               <>
@@ -189,8 +189,8 @@ export function HomePage({
                 </p>
                 <div className="flex items-center gap-2 mt-3">
                   {moments.items[0].mood && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
-                      {moments.items[0].mood}
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
+                      ✨ {moments.items[0].mood}
                     </span>
                   )}
                   <span className="text-[10px] text-slate-400 dark:text-slate-500">
@@ -202,7 +202,7 @@ export function HomePage({
                 </div>
               </>
             ) : (
-              <p className="text-sm text-slate-400 dark:text-slate-500">暂无说说，去写一条吧 →</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">暂无杂谈，去看看吧 →</p>
             )}
           </Link>
         </div>

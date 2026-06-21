@@ -20,6 +20,8 @@ import { PostsPage, PostsPageSkeleton } from "./pages/posts";
 import { ProjectsPage, ProjectsPageSkeleton } from "./pages/projects";
 import { SearchPage } from "./pages/search";
 import { SubmitFriendLinkPage } from "./pages/submit-friend-link";
+import { TalkPage } from "./pages/talk/page";
+import { TalkPageSkeleton } from "./pages/talk/skeleton";
 import { TimelinePage, TimelinePageSkeleton } from "./pages/timeline/page";
 import { ProfilePage } from "./pages/user/profile";
 import { getXinghuiThemeStyle } from "./theme-style";
@@ -57,6 +59,8 @@ export default {
   ProjectsPage,
   ProjectsPageSkeleton,
   AboutPage,
+  TalkPage,
+  TalkPageSkeleton,
   TimelinePage,
   TimelinePageSkeleton,
   Toaster,

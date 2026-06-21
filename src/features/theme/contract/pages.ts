@@ -21,5 +21,6 @@ export type * from "./pages/projects";
 export type * from "./pages/register";
 export type * from "./pages/reset-password";
 export type * from "./pages/search";
+export type * from "./pages/talk";
 export type * from "./pages/timeline";
 export type * from "./pages/verify-email";

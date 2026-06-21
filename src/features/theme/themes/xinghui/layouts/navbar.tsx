@@ -1,6 +1,6 @@
 import { Link, useRouteContext, useMatchRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Menu, Sun, Moon, RefreshCw } from "lucide-react";
+import { Menu, Sun, Moon, RefreshCw, MessageSquare } from "lucide-react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
 interface NavbarProps {
@@ -81,18 +81,7 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-8">
             {navOptions.map((opt) => (
-              <Link
-                key={opt.id}
-                to={opt.to}
-                className="relative py-1.5 text-[15px] font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                activeProps={{
-                  className:
-                    "relative py-1.5 text-[15px] font-bold text-indigo-600 dark:text-indigo-400 transition-colors",
-                }}
-              >
-                {opt.label}
-                <LinkIndicator to={opt.to} />
-              </Link>
+              <NavLinkItem key={opt.id} to={opt.to} label={opt.label} />
             ))}
           </div>
 
@@ -108,6 +97,15 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
                 <RefreshCw size={17} />
               </button>
             )}
+
+            {/* Moments (说说) link */}
+            <Link
+              to="/moments"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/10 transition-all"
+              title="说说"
+            >
+              <MessageSquare size={17} />
+            </Link>
 
             {/* Night mode toggle */}
             <button
@@ -157,11 +155,22 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
   );
 }
 
-function LinkIndicator({ to }: { to: string }) {
+function NavLinkItem({ to, label }: { to: string; label: string }) {
   const matchRoute = useMatchRoute();
   const isActive = matchRoute({ to, fuzzy: to === "/" });
-  if (!isActive) return null;
   return (
-    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full animate-pulse" />
+    <Link
+      to={to}
+      className={`relative py-1.5 text-[15px] font-bold transition-colors ${
+        isActive
+          ? "text-indigo-600 dark:text-indigo-400"
+          : "text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
+      }`}
+    >
+      {label}
+      {isActive && (
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full animate-pulse" />
+      )}
+    </Link>
   );
 }
