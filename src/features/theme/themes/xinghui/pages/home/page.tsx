@@ -46,13 +46,7 @@ export function HomePage({
   const photosList = photos ?? [];
   const projectsList = projects ?? [];
 
-  const latestPhoto = photosList[0] || {
-    id: 0,
-    title: "照片墙",
-    imageUrl: "https://bu.dusays.com/2026/05/07/69fc46808a782.jpg",
-    album: "风景",
-    description: "查看摄影",
-  };
+  const latestPhoto = photosList[0];
 
   return (
     <div className="flex flex-col gap-6 relative">
@@ -89,21 +83,29 @@ export function HomePage({
             to="/photowall"
             className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-700 hover:scale-[1.02] relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
           >
-            <img
-              src={latestPhoto.imageUrl}
-              alt={latestPhoto.title}
-              className="w-full h-full absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-black/30 dark:bg-black/50 group-hover:bg-black/10 transition-colors duration-500" />
-            <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-6">
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 underline decoration-pink-400">
-                {latestPhoto.title}
-              </h3>
-              <p className="text-white/90 text-sm sm:text-lg line-clamp-1">
-                {latestPhoto.description || "点击查看照片墙"}
-              </p>
-            </div>
+            {latestPhoto ? (
+              <>
+                <img
+                  src={latestPhoto.imageUrl}
+                  alt={latestPhoto.title}
+                  className="w-full h-full absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-black/30 dark:bg-black/50 group-hover:bg-black/10 transition-colors duration-500" />
+                <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-6">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 underline decoration-pink-400">
+                    {latestPhoto.title}
+                  </h3>
+                  <p className="text-white/90 text-sm sm:text-lg line-clamp-1">
+                    {latestPhoto.description || "点击查看照片墙"}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="w-full h-full min-h-[200px] flex items-center justify-center">
+                <span className="text-4xl">📸</span>
+              </div>
+            )}
           </Link>
 
           {/* Moments preview */}

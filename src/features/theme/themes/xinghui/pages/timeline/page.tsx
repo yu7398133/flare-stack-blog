@@ -3,6 +3,11 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Calendar, Search, ArrowUp } from "lucide-react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
+// Random anime image for posts without covers
+function getPostCover(id: number) {
+  return `https://picsum.photos/seed/post${id}/400/250`;
+}
+
 export function TimelinePageSkeleton() {
   return (
     <div className="flex flex-col gap-6">
@@ -179,13 +184,12 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                   params={{ slug: post.slug }}
                   className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-transform duration-300"
                 >
-                  {post.cover && (
                     <div className="relative h-28 sm:h-36 overflow-hidden">
-                      <img
-                        src={post.cover}
-                        alt=""
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
+                    <img
+                      src={getPostCover(post.id)}
+                      alt=""
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <span className="absolute bottom-2 left-2 text-white/90 text-[10px] font-mono font-bold bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded flex items-center gap-1">
                         <Calendar size={10} />
@@ -196,7 +200,6 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                           : ""}
                       </span>
                     </div>
-                  )}
                   <div className="p-3 md:p-4 flex-1 flex flex-col">
                     <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
                       {post.title}
