@@ -7,6 +7,7 @@ import {
   Link2,
   LogOut,
   MessageSquare,
+  Music,
   Sparkles,
   Tag,
   User,
@@ -121,6 +122,12 @@ export function SideBar({
       path: "/admin/projects",
       icon: Rocket,
       label: "项目",
+      exact: false,
+    },
+    {
+      path: "/admin/music",
+      icon: Music,
+      label: "音乐",
       exact: false,
     },
   ] satisfies Array<NavItem>;
