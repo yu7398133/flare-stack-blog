@@ -1,5 +1,5 @@
 import { Link, useRouteContext, useMatchRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, Sun, Moon } from "lucide-react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
@@ -19,6 +19,9 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
     }
     return false;
   });
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -31,9 +34,43 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
     }
   }, [isDark]);
 
+  // Hide on scroll down, show on scroll up
+  const handleScroll = useCallback(() => {
+    if (ticking.current) return;
+    ticking.current = true;
+    requestAnimationFrame(() => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollY.current;
+
+      // Always show at top
+      if (currentY < 10) {
+        setVisible(true);
+      } else if (delta > 8) {
+        // Scrolling down → hide
+        setVisible(false);
+      } else if (delta < -8) {
+        // Scrolling up → show
+        setVisible(true);
+      }
+
+      lastScrollY.current = currentY;
+      ticking.current = false;
+    });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
   return (
-    <nav className="sticky top-0 z-50 w-full">
-      <div className="xh-glass mx-auto max-w-6xl mt-4 px-6 py-3 flex items-center justify-between">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-transform duration-300 ease-in-out ${
+        visible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
+      {/* Full-width glass bar */}
+      <div className="xh-glass mx-0 mt-0 rounded-none px-6 py-3 flex items-center justify-between border-t-0 border-x-0">
         {/* Logo / Site Name */}
         <Link
           to="/"

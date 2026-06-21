@@ -58,7 +58,7 @@ export function PublicLayout({
             isLoading={isSessionLoading}
           />
 
-          <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-6 pb-8">
+          <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-20 pb-8">
             {children}
           </main>
 
