@@ -119,8 +119,8 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading }: NavbarProps
                 to="/profile"
                 className="w-9 h-9 rounded-xl overflow-hidden border-2 border-white/50 hover:border-indigo-400 transition-colors"
               >
-                {user.image ? (
-                  <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                {(siteConfig.theme.xinghui?.navAvatar || user.image) ? (
+                  <img src={siteConfig.theme.xinghui?.navAvatar || user.image} alt={user.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
                     {user.name?.charAt(0).toUpperCase()}

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
@@ -18,6 +18,7 @@ export function HomePage({
   photos,
   projects,
 }: HomePageProps) {
+  const { siteConfig } = useRouteContext({ from: "__root__" });
   const allPosts = useMemo(() => {
     const seen = new Set<string>();
     const result: PostItem[] = [];
@@ -48,6 +49,7 @@ export function HomePage({
   const projectsList = projects ?? [];
 
   const latestPhoto = photosList[0];
+  const homePhotoBanner = siteConfig.theme.xinghui?.homePhotoBanner || "";
 
   // Search
   const [searchQuery, setSearchQuery] = useState("");
@@ -147,21 +149,21 @@ export function HomePage({
             to="/photowall"
             className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-700 hover:scale-[1.02] relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
           >
-            {latestPhoto ? (
+            {latestPhoto || homePhotoBanner ? (
               <>
                 <img
-                  src={latestPhoto.imageUrl}
-                  alt={latestPhoto.title}
+                  src={homePhotoBanner || latestPhoto?.imageUrl}
+                  alt={latestPhoto?.title || ""}
                   className="w-full h-full absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/30 dark:bg-black/50 group-hover:bg-black/10 transition-colors duration-500" />
                 <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-6">
                   <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 underline decoration-pink-400">
-                    {latestPhoto.title}
+                    {latestPhoto?.title || "照片墙"}
                   </h3>
                   <p className="text-white/90 text-sm sm:text-lg line-clamp-1">
-                    {latestPhoto.description || "点击查看照片墙"}
+                    {latestPhoto?.description || "点击查看照片墙"}
                   </p>
                 </div>
               </>

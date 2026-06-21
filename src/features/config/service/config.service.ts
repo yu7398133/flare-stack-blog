@@ -139,6 +139,10 @@ export function resolveSiteConfig(
           "",
         avatar:
           config?.site?.theme?.xinghui?.avatar ?? blogConfig.theme.xinghui.avatar,
+        navAvatar:
+          config?.site?.theme?.xinghui?.navAvatar ?? "",
+        homePhotoBanner:
+          config?.site?.theme?.xinghui?.homePhotoBanner ?? "",
         musicIds:
           config?.site?.theme?.xinghui?.musicIds ??
           blogConfig.theme.xinghui.musicIds,

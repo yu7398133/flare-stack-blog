@@ -274,6 +274,8 @@ function createXinghuiThemeSiteConfigSchema() {
   return z.object({
     homeBg: createBackgroundImageRefSchema(),
     avatar: createBackgroundImageRefSchema(),
+    navAvatar: createBackgroundImageRefSchema().optional(),
+    homePhotoBanner: createBackgroundImageRefSchema().optional(),
     musicIds: z.array(z.string()).optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
@@ -284,6 +286,8 @@ function createXinghuiThemeSiteConfigInputSchema() {
   return z.object({
     homeBg: createBackgroundImageRefSchema().optional(),
     avatar: createBackgroundImageRefSchema().optional(),
+    navAvatar: createBackgroundImageRefSchema().optional(),
+    homePhotoBanner: createBackgroundImageRefSchema().optional(),
     musicIds: z.array(z.string()).optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
@@ -294,6 +298,8 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
   return z.object({
     homeBg: createBackgroundImageRefFormSchema(messages).optional(),
     avatar: createBackgroundImageRefFormSchema(messages).optional(),
+    navAvatar: createBackgroundImageRefFormSchema(messages).optional(),
+    homePhotoBanner: createBackgroundImageRefFormSchema(messages).optional(),
     musicIds: z.array(z.string()).optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
