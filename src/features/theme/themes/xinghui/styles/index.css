@@ -3,62 +3,8 @@
    ======================================== */
 @import "./markdown.css";
 
-/* Fonts: Noto Serif SC (body) + Geist Sans (UI) + Geist Mono (code)
-   Matches reference site: body uses serif, UI elements use sans */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
-
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Black.woff2') format('woff2');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Geist Mono';
-  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Apply fonts globally for xinghui theme —
-   Body uses Noto Serif SC (matches reference site font-serif),
-   Headings & UI use Geist Sans */
-.xh-page-bg {
-  font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.xh-page-bg h1, .xh-page-bg h2, .xh-page-bg h3, .xh-page-bg h4, .xh-page-bg h5, .xh-page-bg h6 {
-  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
-}
-
-.xh-page-bg code, .xh-page-bg pre, .xh-page-bg .font-mono {
-  font-family: 'Geist Mono', ui-monospace, monospace;
-}
+/* Fonts are loaded globally in src/styles.css.
+   Xinghui theme-specific font overrides below. */
 
 /* Override Tailwind font-sans to use Geist */
 .xh-page-bg .font-sans {

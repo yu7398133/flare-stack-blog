@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { useSystemSetting } from "@/features/config/hooks/use-system-setting";
 
@@ -15,37 +15,71 @@ function DanmakuAdminPage() {
   const [newText, setNewText] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // Local state for sliders — immediate UI feedback
+  const [localFontSize, setLocalFontSize] = useState(14);
+  const [localOpacity, setLocalOpacity] = useState(0.2);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync from settings when loaded
+  useEffect(() => {
+    if (settings?.site?.theme?.xinghui?.danmakuFontSize != null) {
+      setLocalFontSize(settings.site.theme.xinghui.danmakuFontSize);
+    }
+    if (settings?.site?.theme?.xinghui?.danmakuOpacity != null) {
+      setLocalOpacity(settings.site.theme.xinghui.danmakuOpacity);
+    }
+  }, [settings]);
+
   const danmakuList: string[] =
     settings?.site?.theme?.xinghui?.danmakuList ?? [];
-  const danmakuFontSize: number =
-    settings?.site?.theme?.xinghui?.danmakuFontSize ?? 14;
-  const danmakuOpacity: number =
-    settings?.site?.theme?.xinghui?.danmakuOpacity ?? 0.2;
 
-  const saveThemeConfig = async (patch: Record<string, unknown>) => {
-    if (!settings || saving) return;
-    setSaving(true);
-    try {
-      await saveSettings({
-        ...settings,
-        site: {
-          ...settings.site,
-          theme: {
-            ...settings.site?.theme,
-            xinghui: {
-              ...settings.site?.theme?.xinghui,
-              ...patch,
+  const saveThemeConfig = useCallback(
+    async (patch: Record<string, unknown>) => {
+      if (!settings) return;
+      setSaving(true);
+      try {
+        await saveSettings({
+          ...settings,
+          site: {
+            ...settings.site,
+            theme: {
+              ...settings.site?.theme,
+              xinghui: {
+                ...settings.site?.theme?.xinghui,
+                ...patch,
+              },
             },
           },
-        },
-      });
-      toast.success("已保存");
-    } catch (err) {
-      console.error("[admin/danmaku] save failed:", err);
-      toast.error("保存失败，请重试");
-    } finally {
-      setSaving(false);
-    }
+        });
+      } catch (err) {
+        console.error("[admin/danmaku] save failed:", err);
+        toast.error("保存失败，请重试");
+      } finally {
+        setSaving(false);
+      }
+    },
+    [settings, saveSettings],
+  );
+
+  // Debounced save for sliders
+  const debouncedSave = useCallback(
+    (patch: Record<string, unknown>) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        saveThemeConfig(patch);
+      }, 500);
+    },
+    [saveThemeConfig],
+  );
+
+  const handleFontSizeChange = (value: number) => {
+    setLocalFontSize(value);
+    debouncedSave({ danmakuFontSize: value });
+  };
+
+  const handleOpacityChange = (value: number) => {
+    setLocalOpacity(value);
+    debouncedSave({ danmakuOpacity: value });
   };
 
   const handleAdd = () => {
@@ -54,12 +88,14 @@ function DanmakuAdminPage() {
     if (danmakuList.includes(text)) return toast.error("该文案已存在");
     saveThemeConfig({ danmakuList: [...danmakuList, text] });
     setNewText("");
+    toast.success("已添加");
   };
 
   const handleRemove = (idx: number) => {
     if (!confirm("确定删除这条弹幕？")) return;
     const newList = danmakuList.filter((_, i) => i !== idx);
     saveThemeConfig({ danmakuList: newList });
+    toast.success("已删除");
   };
 
   const handleEdit = (idx: number, value: string) => {
@@ -89,22 +125,19 @@ function DanmakuAdminPage() {
         {/* Font size */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs text-muted-foreground">
-              字号大小
-            </label>
-            <span className="text-xs font-mono font-bold">{danmakuFontSize}px</span>
+            <label className="text-xs text-muted-foreground">字号大小</label>
+            <span className="text-xs font-mono font-bold">
+              {localFontSize}px
+            </span>
           </div>
           <input
             type="range"
             min={10}
             max={40}
             step={1}
-            value={danmakuFontSize}
-            onChange={(e) =>
-              saveThemeConfig({ danmakuFontSize: Number(e.target.value) })
-            }
-            disabled={saving}
-            className="w-full h-1.5 bg-muted rounded-full appearance-none outline-none cursor-pointer accent-indigo-500"
+            value={localFontSize}
+            onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+            className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-indigo-500"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>10px</span>
@@ -115,30 +148,31 @@ function DanmakuAdminPage() {
         {/* Opacity */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs text-muted-foreground">
-              透明度
-            </label>
+            <label className="text-xs text-muted-foreground">透明度</label>
             <span className="text-xs font-mono font-bold">
-              {Math.round(danmakuOpacity * 100)}%
+              {Math.round(localOpacity * 100)}%
             </span>
           </div>
           <input
             type="range"
             min={0}
-            max={1}
-            step={0.05}
-            value={danmakuOpacity}
-            onChange={(e) =>
-              saveThemeConfig({ danmakuOpacity: Number(e.target.value) })
-            }
-            disabled={saving}
-            className="w-full h-1.5 bg-muted rounded-full appearance-none outline-none cursor-pointer accent-indigo-500"
+            max={100}
+            step={5}
+            value={Math.round(localOpacity * 100)}
+            onChange={(e) => handleOpacityChange(Number(e.target.value) / 100)}
+            className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-indigo-500"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>0%</span>
             <span>100%</span>
           </div>
         </div>
+
+        {saving && (
+          <p className="text-xs text-muted-foreground animate-pulse">
+            保存中...
+          </p>
+        )}
       </div>
 
       {/* Add new danmaku */}
@@ -157,7 +191,7 @@ function DanmakuAdminPage() {
             disabled={configLoading || saving}
             className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
           >
-            {saving ? "保存中..." : "添加"}
+            添加
           </button>
         </div>
       </div>
@@ -193,7 +227,7 @@ function DanmakuAdminPage() {
                 <button
                   onClick={() => handleRemove(idx)}
                   disabled={saving}
-                  className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30"
+                  className="text-xs font-mono text-muted-foreground hover:text-red-500 px-2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30"
                 >
                   删除
                 </button>
