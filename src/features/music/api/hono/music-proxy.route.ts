@@ -13,33 +13,46 @@ const musicProxyRoute = new Hono<{ Bindings: Env }>().get("/:id", async (c) => {
   }
 
   const url = `https://music.163.com/song/media/outer/url?id=${songId}.mp3`;
+  const rangeHeader = c.req.header("range");
 
   try {
+    const fetchHeaders: Record<string, string> = {
+      ...NETEASE_HEADERS,
+    };
+    if (rangeHeader) {
+      fetchHeaders["Range"] = rangeHeader;
+    }
+
     const res = await fetch(url, {
-      headers: NETEASE_HEADERS,
+      headers: fetchHeaders,
       redirect: "follow",
       signal: AbortSignal.timeout(15000),
     });
 
-    if (!res.ok) {
+    if (!res.ok && res.status !== 206) {
       return c.text("Failed to fetch audio", 502);
     }
 
     const contentType = res.headers.get("content-type") || "audio/mpeg";
     const contentLength = res.headers.get("content-length");
+    const contentRange = res.headers.get("content-range");
 
     const headers: Record<string, string> = {
       "Content-Type": contentType,
       "Access-Control-Allow-Origin": "*",
+      "Accept-Ranges": "bytes",
       "Cache-Control": "public, max-age=86400",
     };
 
     if (contentLength) {
       headers["Content-Length"] = contentLength;
     }
+    if (contentRange) {
+      headers["Content-Range"] = contentRange;
+    }
 
     return new Response(res.body, {
-      status: 200,
+      status: rangeHeader ? 206 : 200,
       headers,
     });
   } catch (error) {
