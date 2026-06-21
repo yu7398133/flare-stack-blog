@@ -41,7 +41,7 @@ export function LatestChatterCarousel({
 
   if (chatters.length === 0) {
     return (
-      <div className="xh-glass p-6 h-full flex items-center justify-center">
+      <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 h-full flex items-center justify-center">
         <p className="text-slate-400 dark:text-slate-500 text-sm">
           暂无说说
         </p>
@@ -52,7 +52,7 @@ export function LatestChatterCarousel({
   const chatter = chatters[currentIndex];
 
   return (
-    <div className="xh-glass p-5 h-full flex flex-col">
+    <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-[10px] font-mono text-pink-500 dark:text-pink-400 uppercase tracking-widest">

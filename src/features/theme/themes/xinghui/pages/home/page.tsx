@@ -114,7 +114,7 @@ export function HomePage({
           {/* Photo wall big banner */}
           <Link
             to="/photowall"
-            className="xh-glass xh-glass-hover overflow-hidden relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
+            className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-700 hover:scale-[1.02] relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
           >
             <img
               src={latestPhoto.imageUrl}
@@ -139,7 +139,7 @@ export function HomePage({
               <LatestChatterCarousel chatters={chatters} />
             </div>
             <div className="sm:col-span-1 min-h-[120px]">
-              <div className="xh-glass p-5 h-full flex flex-col items-center justify-center gap-3">
+              <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 h-full flex flex-col items-center justify-center gap-3 transition-all duration-700 hover:scale-[1.02]">
                 <button
                   onClick={() => setIsDark(!isDark)}
                   className="w-16 h-16 rounded-full flex items-center justify-center text-3xl hover:scale-110 transition-transform"

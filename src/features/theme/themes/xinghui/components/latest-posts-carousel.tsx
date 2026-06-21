@@ -6,36 +6,41 @@ interface LatestPostsCarouselProps {
   posts: PostItem[];
 }
 
+function formatDate(date: Date | string) {
+  const d = new Date(date);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}.${m}.${day}`;
+}
+
 export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [fade, setFade] = useState(true);
 
-  const goToSlide = useCallback(
-    (index: number) => {
-      if (isTransitioning) return;
-      setIsTransitioning(true);
-      setCurrentIndex(index);
-      setTimeout(() => setIsTransitioning(false), 500);
+  const goTo = useCallback(
+    (idx: number) => {
+      setFade(false);
+      setTimeout(() => {
+        setCurrentIndex(idx);
+        setFade(true);
+      }, 300);
     },
-    [isTransitioning],
+    [],
   );
-
-  const nextSlide = useCallback(() => {
-    goToSlide((currentIndex + 1) % posts.length);
-  }, [currentIndex, posts.length, goToSlide]);
 
   useEffect(() => {
     if (posts.length <= 1) return;
-    const timer = setInterval(nextSlide, 4000);
+    const timer = setInterval(() => {
+      goTo((currentIndex + 1) % posts.length);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [nextSlide, posts.length]);
+  }, [currentIndex, posts.length, goTo]);
 
   if (posts.length === 0) {
     return (
-      <div className="xh-glass p-6 h-full flex items-center justify-center">
-        <p className="text-slate-400 dark:text-slate-500 text-sm">
-          暂无文章
-        </p>
+      <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 h-full flex items-center justify-center min-h-[420px]">
+        <p className="text-slate-400 dark:text-slate-500 text-sm">暂无文章</p>
       </div>
     );
   }
@@ -43,61 +48,72 @@ export function LatestPostsCarousel({ posts }: LatestPostsCarouselProps) {
   const post = posts[currentIndex];
 
   return (
-    <div className="xh-glass overflow-hidden h-full flex flex-col relative group">
-      {/* Background image */}
-      {post.cover && (
-        <div className="absolute inset-0 overflow-hidden">
+    <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden relative group min-h-[420px] h-full flex flex-col">
+      {/* Full-cover background image with fade transition */}
+      <div
+        className="absolute inset-0 z-0 transition-opacity duration-700"
+        style={{ opacity: fade ? 1 : 0 }}
+      >
+        {post.cover && (
           <img
             src={post.cover}
             alt=""
-            className="w-full h-full object-cover blur-md scale-110 opacity-30 dark:opacity-20"
+            className="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/40 to-transparent dark:from-slate-900/80 dark:via-slate-900/40 dark:to-transparent" />
-        </div>
-      )}
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+      </div>
 
-      <div className="relative z-10 p-5 flex flex-col h-full">
-        {/* Header */}
+      {/* Clickable link */}
+      <Link
+        to="/post/$slug"
+        params={{ slug: post.slug }}
+        className="absolute inset-0 z-20"
+        aria-label={`阅读 ${post.title}`}
+      />
+
+      {/* Text content at bottom */}
+      <div className="relative z-10 flex flex-col justify-end p-6 w-full mt-auto h-full pointer-events-none">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">
-            Latest Posts
+          <span className="px-3 py-1 bg-indigo-500/80 backdrop-blur-lg rounded-full text-[10px] text-white font-black uppercase tracking-widest shadow-lg">
+            Latest Insight
           </span>
-          <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 to-transparent" />
-        </div>
-
-        {/* Post content */}
-        <div className="flex-1 flex flex-col justify-center">
-          <Link
-            to="/post/$slug"
-            params={{ slug: post.slug }}
-            className="group/link"
-          >
-            <h3 className="text-base font-bold text-slate-800 dark:text-white group-hover/link:text-indigo-600 dark:group-hover/link:text-indigo-400 transition-colors line-clamp-2 mb-2">
-              {post.title}
-            </h3>
-          </Link>
-          {post.summary && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
-              {post.summary}
-            </p>
+          {post.publishedAt && (
+            <span className="px-2 py-1 bg-black/40 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white/90 font-mono tracking-wider">
+              {formatDate(post.publishedAt)}
+            </span>
           )}
         </div>
+        <h2 className="text-2xl font-bold text-white mb-2 group-hover:-translate-y-1 transition-transform drop-shadow-md">
+          {post.title}
+        </h2>
+        {post.summary && (
+          <p className="text-sm text-gray-300 line-clamp-3 drop-shadow-sm mb-6">
+            {post.summary}
+          </p>
+        )}
+      </div>
 
-        {/* Dots indicator */}
-        <div className="flex items-center justify-center gap-1.5 mt-2">
-          {posts.map((_, idx) => (
+      {/* Dots indicator */}
+      {posts.length > 1 && (
+        <div className="absolute bottom-4 right-6 z-30 flex gap-2">
+          {posts.map((_, i) => (
             <button
-              key={idx}
-              onClick={() => goToSlide(idx)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === currentIndex
-                  ? "w-6 bg-indigo-500"
-                  : "w-1.5 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500"
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+                goTo(i);
+              }}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                i === currentIndex
+                  ? "w-6 bg-indigo-400"
+                  : "w-2 bg-white/40 hover:bg-white/80"
               }`}
+              aria-label={`切换到第 ${i + 1} 篇文章`}
             />
           ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }
