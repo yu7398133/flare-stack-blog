@@ -7,6 +7,11 @@ import {
   popularPostsQuery,
   recentPostsQuery,
 } from "@/features/posts/queries";
+import {
+  recentMomentsQuery,
+  allPhotosQuery,
+  allProjectsQuery,
+} from "@/features/theme/themes/xinghui/queries";
 import { buildCanonicalUrl, canonicalLink } from "@/lib/seo";
 
 const { recentPostsLimit, popularPostsLimit } = theme.config.home;
@@ -18,6 +23,9 @@ export const Route = createFileRoute("/_public/")({
       context.queryClient.ensureQueryData(siteDomainQuery),
       context.queryClient.ensureQueryData(pinnedPostsQuery),
       context.queryClient.ensureQueryData(popularPostsQuery(popularPostsLimit)),
+      context.queryClient.ensureQueryData(recentMomentsQuery(5)),
+      context.queryClient.ensureQueryData(allPhotosQuery),
+      context.queryClient.ensureQueryData(allProjectsQuery),
     ]);
 
     return {
@@ -37,12 +45,18 @@ function HomeRoute() {
   const { data: popularPosts } = useSuspenseQuery(
     popularPostsQuery(popularPostsLimit),
   );
+  const { data: moments } = useSuspenseQuery(recentMomentsQuery(5));
+  const { data: photos } = useSuspenseQuery(allPhotosQuery);
+  const { data: projects } = useSuspenseQuery(allProjectsQuery);
 
   return (
     <theme.HomePage
       posts={posts}
       pinnedPosts={pinnedPosts}
       popularPosts={popularPosts}
+      moments={moments}
+      photos={photos}
+      projects={projects}
     />
   );
 }
