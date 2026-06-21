@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useSystemSetting } from "@/features/config/hooks/use-system-setting";
@@ -24,13 +24,13 @@ function MusicAdminPage() {
   const { settings, isLoading: configLoading, saveSettings } = useSystemSetting();
   const [newId, setNewId] = useState("");
   const [newPlaylistId, setNewPlaylistId] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const musicIds: string[] =
     settings?.site?.theme?.xinghui?.musicIds ?? [];
   const musicPlaylistIds: string[] =
     settings?.site?.theme?.xinghui?.musicPlaylistIds ?? [];
 
-  // Fetch song info from NetEase API
   const { data: songs, isLoading: songsLoading } = useQuery<SongInfo[]>({
     queryKey: ["admin", "music-info", musicIds.join(","), musicPlaylistIds.join(",")],
     queryFn: async () => {
@@ -53,81 +53,70 @@ function MusicAdminPage() {
     enabled: musicIds.length > 0 || musicPlaylistIds.length > 0,
   });
 
-  const updateMusicIds = async (newIds: string[]) => {
-    if (!settings) return;
-    await saveSettings({
-      ...settings,
-      site: {
-        ...settings.site,
-        theme: {
-          ...settings.site?.theme,
-          xinghui: {
-            ...settings.site?.theme?.xinghui,
-            musicIds: newIds,
+  const saveThemeConfig = async (patch: Record<string, unknown>) => {
+    if (!settings || saving) return;
+    setSaving(true);
+    try {
+      await saveSettings({
+        ...settings,
+        site: {
+          ...settings.site,
+          theme: {
+            ...settings.site?.theme,
+            xinghui: {
+              ...settings.site?.theme?.xinghui,
+              ...patch,
+            },
           },
         },
-      },
-    });
-    toast.success("歌曲列表已更新");
-  };
-
-  const updatePlaylistIds = async (newIds: string[]) => {
-    if (!settings) return;
-    await saveSettings({
-      ...settings,
-      site: {
-        ...settings.site,
-        theme: {
-          ...settings.site?.theme,
-          xinghui: {
-            ...settings.site?.theme?.xinghui,
-            musicPlaylistIds: newIds,
-          },
-        },
-      },
-    });
-    toast.success("歌单列表已更新");
+      });
+      toast.success("已保存");
+    } catch (err) {
+      console.error("[admin/music] save failed:", err);
+      toast.error("保存失败，请重试");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleAdd = () => {
     const id = newId.trim();
     if (!id) return toast.error("请输入歌曲ID");
     if (musicIds.includes(id)) return toast.error("该歌曲已存在");
-    updateMusicIds([...musicIds, id]);
+    saveThemeConfig({ musicIds: [...musicIds, id] });
     setNewId("");
   };
 
   const handleRemove = (id: string) => {
     if (!confirm("确定移除这首歌曲?")) return;
-    updateMusicIds(musicIds.filter((i) => i !== id));
+    saveThemeConfig({ musicIds: musicIds.filter((i) => i !== id) });
   };
 
   const handleMoveUp = (idx: number) => {
     if (idx === 0) return;
     const arr = [...musicIds];
     [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
-    updateMusicIds(arr);
+    saveThemeConfig({ musicIds: arr });
   };
 
   const handleMoveDown = (idx: number) => {
     if (idx >= musicIds.length - 1) return;
     const arr = [...musicIds];
     [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
-    updateMusicIds(arr);
+    saveThemeConfig({ musicIds: arr });
   };
 
-  // Playlist handlers
   const handleAddPlaylist = () => {
     const id = newPlaylistId.trim();
     if (!id) return toast.error("请输入歌单ID");
     if (musicPlaylistIds.includes(id)) return toast.error("该歌单已存在");
-    updatePlaylistIds([...musicPlaylistIds, id]);
+    saveThemeConfig({ musicPlaylistIds: [...musicPlaylistIds, id] });
     setNewPlaylistId("");
   };
 
   const handleRemovePlaylist = (id: string) => {
     if (!confirm("确定移除这个歌单?")) return;
-    updatePlaylistIds(musicPlaylistIds.filter((i) => i !== id));
+    saveThemeConfig({ musicPlaylistIds: musicPlaylistIds.filter((i) => i !== id) });
   };
 
   return (
@@ -160,10 +149,10 @@ function MusicAdminPage() {
           />
           <button
             onClick={handleAddPlaylist}
-            disabled={configLoading}
+            disabled={configLoading || saving}
             className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
           >
-            添加歌单
+            {saving ? "保存中..." : "添加歌单"}
           </button>
         </div>
         {musicPlaylistIds.length > 0 && (
@@ -187,7 +176,8 @@ function MusicAdminPage() {
                 </div>
                 <button
                   onClick={() => handleRemovePlaylist(id)}
-                  className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  disabled={saving}
+                  className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30"
                 >
                   删除
                 </button>
@@ -213,10 +203,10 @@ function MusicAdminPage() {
           />
           <button
             onClick={handleAdd}
-            disabled={configLoading}
+            disabled={configLoading || saving}
             className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
           >
-            添加
+            {saving ? "保存中..." : "添加"}
           </button>
         </div>
       </div>
@@ -272,7 +262,8 @@ function MusicAdminPage() {
                             const idx = musicIds.indexOf(song.id);
                             if (idx > 0) handleMoveUp(idx);
                           }}
-                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1"
+                          disabled={saving}
+                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1 disabled:opacity-30"
                         >
                           ↑
                         </button>
@@ -281,13 +272,15 @@ function MusicAdminPage() {
                             const idx = musicIds.indexOf(song.id);
                             if (idx < musicIds.length - 1) handleMoveDown(idx);
                           }}
-                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1"
+                          disabled={saving}
+                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1 disabled:opacity-30"
                         >
                           ↓
                         </button>
                         <button
                           onClick={() => handleRemove(song.id)}
-                          className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 ml-2"
+                          disabled={saving}
+                          className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 ml-2 disabled:opacity-30"
                         >
                           删除
                         </button>
