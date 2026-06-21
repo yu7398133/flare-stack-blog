@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
@@ -19,6 +19,12 @@ export function UserLayout({
   logout,
   children,
 }: UserLayoutProps) {
+  const { siteConfig } = useRouteContext({ from: "__root__" });
+  const avatarUrl =
+    siteConfig.theme?.xinghui?.userAvatar ||
+    siteConfig.theme?.xinghui?.avatar ||
+    "";
+
   if (!isAuthenticated) {
     return (
       <div className="xh-page-bg min-h-screen flex items-center justify-center">
@@ -41,10 +47,10 @@ export function UserLayout({
         {/* User header */}
         <div className="xh-glass p-6 mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {user?.image && (
+            {(avatarUrl || user?.image) && (
               <img
-                src={user.image}
-                alt={user.name}
+                src={avatarUrl || user?.image}
+                alt={user?.name}
                 className="w-12 h-12 rounded-xl object-cover border-2 border-white/50"
               />
             )}

@@ -50,6 +50,19 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       ],
       links: [
         {
+          rel: "preconnect",
+          href: "https://fonts.googleapis.com",
+        },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossOrigin: "anonymous",
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap",
+        },
+        {
           rel: "icon",
           type: "image/svg+xml",
           href: loaderData?.siteConfig?.icons.faviconSvg,
