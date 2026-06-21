@@ -32,6 +32,10 @@ function DanmakuAdminPage() {
 
   const danmakuList: string[] =
     settings?.site?.theme?.xinghui?.danmakuList ?? [];
+  const clickEffect: boolean =
+    settings?.site?.theme?.xinghui?.clickEffect ?? true;
+  const fireflyEffect: boolean =
+    settings?.site?.theme?.xinghui?.fireflyEffect ?? true;
 
   const saveThemeConfig = useCallback(
     async (patch: Record<string, unknown>) => {
@@ -175,6 +179,49 @@ function DanmakuAdminPage() {
             保存中...
           </p>
         )}
+      </div>
+
+      {/* Effect toggles */}
+      <div className="border border-border/30 p-6 space-y-4">
+        <h3 className="text-sm font-mono font-bold">特效开关</h3>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">鼠标点击特效</p>
+            <p className="text-xs text-muted-foreground">点击页面产生粒子动画</p>
+          </div>
+          <button
+            onClick={() => saveThemeConfig({ clickEffect: !clickEffect })}
+            disabled={saving}
+            className={`relative w-12 h-6 rounded-full transition-colors ${
+              clickEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
+            }`}
+          >
+            <div
+              className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                clickEffect ? "translate-x-6" : "translate-x-0.5"
+              }`}
+            />
+          </button>
+        </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">萤火虫特效</p>
+            <p className="text-xs text-muted-foreground">页面背景萤火虫浮动动画</p>
+          </div>
+          <button
+            onClick={() => saveThemeConfig({ fireflyEffect: !fireflyEffect })}
+            disabled={saving}
+            className={`relative w-12 h-6 rounded-full transition-colors ${
+              fireflyEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
+            }`}
+          >
+            <div
+              className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                fireflyEffect ? "translate-x-6" : "translate-x-0.5"
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Add new danmaku */}

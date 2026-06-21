@@ -157,6 +157,12 @@ export function resolveSiteConfig(
         danmakuOpacity:
           config?.site?.theme?.xinghui?.danmakuOpacity ??
           blogConfig.theme.xinghui.danmakuOpacity,
+        clickEffect:
+          config?.site?.theme?.xinghui?.clickEffect ??
+          blogConfig.theme.xinghui.clickEffect,
+        fireflyEffect:
+          config?.site?.theme?.xinghui?.fireflyEffect ??
+          blogConfig.theme.xinghui.fireflyEffect,
       },
     },
   });

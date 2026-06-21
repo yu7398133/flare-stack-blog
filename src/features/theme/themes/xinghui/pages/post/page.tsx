@@ -17,8 +17,10 @@ function formatDate(date: Date | string) {
 }
 
 // Consistent image per post slug (same seed = same image as timeline)
-function getPostCover(slug: string) {
-  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/1200/600`;
+import { getPostCover } from "../../utils/post-cover";
+
+function getPostCoverLocal(slug: string, cover?: string | null) {
+  return getPostCover(slug, cover, 1200, 600);
 }
 
 export function PostPage({ post }: PostPageProps) {
@@ -36,7 +38,7 @@ export function PostPage({ post }: PostPageProps) {
     },
   });
 
-  const coverSrc = post.cover || getPostCover(post.slug);
+  const coverSrc = getPostCoverLocal(post.slug, post.cover);
 
   return (
     <div className="flex flex-col gap-6 xh-animate-in">

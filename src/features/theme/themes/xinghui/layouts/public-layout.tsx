@@ -4,6 +4,8 @@ import type { PublicLayoutProps } from "@/features/theme/contract/layouts";
 import { MusicProvider } from "../components/music-provider";
 import { FloatingPlayer } from "../components/floating-player";
 import { DanmakuBackground } from "../components/danmaku-background";
+import { ClickEffect } from "../components/click-effect";
+import { FireflyEffect } from "../components/firefly-effect";
 import { MobileMenu } from "./mobile-menu";
 import { Navbar } from "./navbar";
 
@@ -74,6 +76,8 @@ export function PublicLayout({
         </div>
 
         <FloatingPlayer />
+        <ClickEffect />
+        <FireflyEffect />
       </div>
     </MusicProvider>
   );

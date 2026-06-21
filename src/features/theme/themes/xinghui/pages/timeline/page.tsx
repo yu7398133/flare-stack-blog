@@ -3,9 +3,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Search, Sparkles, LayoutGrid, ListTree, ArrowUp } from "lucide-react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
-function getPostCover(slug: string) {
-  return `https://picsum.photos/seed/${encodeURIComponent(slug)}/800/500`;
-}
+import { getPostCover } from "../../utils/post-cover";
 
 export function TimelinePageSkeleton() {
   return (
@@ -183,7 +181,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                 >
                   <div className="relative h-28 sm:h-36 overflow-hidden">
                     <img
-                      src={post.cover || getPostCover(post.slug)}
+                      src={getPostCover(post.slug, post.cover)}
                       alt=""
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />

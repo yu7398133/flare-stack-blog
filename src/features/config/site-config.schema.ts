@@ -281,6 +281,10 @@ function createXinghuiThemeSiteConfigSchema() {
     danmakuList: z.array(z.string()).optional(),
     danmakuFontSize: z.number().int().min(10).max(40).optional(),
     danmakuOpacity: z.number().min(0).max(1).optional(),
+    clickEffect: z.boolean().optional(),
+    fireflyEffect: z.boolean().optional(),
+    clickEffect: z.boolean().optional(),
+    fireflyEffect: z.boolean().optional(),
   });
 }
 
@@ -295,6 +299,8 @@ function createXinghuiThemeSiteConfigInputSchema() {
     danmakuList: z.array(z.string()).optional(),
     danmakuFontSize: z.number().int().min(10).max(40).optional(),
     danmakuOpacity: z.number().min(0).max(1).optional(),
+    clickEffect: z.boolean().optional(),
+    fireflyEffect: z.boolean().optional(),
   });
 }
 
@@ -309,6 +315,8 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
     danmakuList: z.array(z.string()).optional(),
     danmakuFontSize: z.number().int().min(10).max(40).optional(),
     danmakuOpacity: z.number().min(0).max(1).optional(),
+    clickEffect: z.boolean().optional(),
+    fireflyEffect: z.boolean().optional(),
   });
 }
 

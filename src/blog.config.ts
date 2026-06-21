@@ -47,6 +47,8 @@ export const blogConfig = {
       ] as string[],
       danmakuFontSize: 14,
       danmakuOpacity: 0.2,
+      clickEffect: true,
+      fireflyEffect: true,
     },
   },
 } as const satisfies SiteConfig;
