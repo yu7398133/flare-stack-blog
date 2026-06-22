@@ -12,8 +12,9 @@ export function PhotoWallPage({
   albums,
   selectedAlbum,
   onAlbumChange,
+  initialAlbum,
 }: PhotoWallPageProps) {
-  const [openAlbum, setOpenAlbum] = useState<string | null>(null);
+  const [openAlbum, setOpenAlbum] = useState<string | null>(initialAlbum || null);
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
     caption?: string;

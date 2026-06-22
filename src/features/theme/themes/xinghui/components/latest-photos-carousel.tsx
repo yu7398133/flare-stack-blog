@@ -69,11 +69,12 @@ export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6
         <div className="absolute inset-0 bg-black/30 dark:bg-black/50 group-hover:bg-black/10 transition-colors duration-500" />
       </div>
 
-      {/* Clickable link */}
+      {/* Clickable link — navigate to specific album */}
       <Link
         to="/photowall"
+        search={photo.album ? { album: photo.album } : undefined}
         className="absolute inset-0 z-20"
-        aria-label="查看照片墙"
+        aria-label={photo.album ? `查看相册: ${photo.album}` : "查看照片墙"}
       />
 
       {/* Text content at bottom */}

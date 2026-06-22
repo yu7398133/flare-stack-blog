@@ -5,4 +5,5 @@ export interface PhotoWallPageProps {
   albums: string[];
   selectedAlbum?: string;
   onAlbumChange: (album: string) => void;
+  initialAlbum?: string;
 }

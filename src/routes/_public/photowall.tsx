@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import theme from "@theme";
 
+const photowallSearchSchema = {
+  album: undefined as string | undefined,
+};
+
 export const Route = createFileRoute("/_public/photowall")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    album: typeof search.album === "string" ? search.album : undefined,
+  }),
   component: PhotoWallRoute,
   loader: async () => {
     const [photosRes, albumsRes] = await Promise.all([
@@ -17,6 +24,7 @@ export const Route = createFileRoute("/_public/photowall")({
 
 function PhotoWallRoute() {
   const { photos: initialPhotos, albums: initialAlbums } = Route.useLoaderData();
+  const { album: albumParam } = Route.useSearch();
   const [selectedAlbum, setSelectedAlbum] = useState<string>("");
   const [photos, setPhotos] = useState(initialPhotos);
   const [albums, setAlbums] = useState(initialAlbums);
@@ -50,6 +58,7 @@ function PhotoWallRoute() {
       albums={albums}
       selectedAlbum={selectedAlbum}
       onAlbumChange={setSelectedAlbum}
+      initialAlbum={albumParam}
     />
   );
 }
