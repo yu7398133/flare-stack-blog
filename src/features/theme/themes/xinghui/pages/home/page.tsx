@@ -123,6 +123,7 @@ export function HomePage({
             postCount={posts.length}
             momentsCount={momentsTotal}
             photosCount={photosList.length}
+            talkCount={talkPosts?.length ?? 0}
           />
         </div>
         <div className="lg:col-span-5 xh-animate-in xh-delay-2">

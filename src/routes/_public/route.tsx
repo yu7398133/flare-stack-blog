@@ -39,8 +39,8 @@ function PublicLayout() {
     { label: "归档", to: "/timeline" as const, id: "timeline" },
     { label: "照片墙", to: "/photowall" as const, id: "photowall" },
     { label: "音乐", to: "/music" as const, id: "music" },
-    { label: "说说", to: "/moments" as const, id: "moments" },
     { label: "杂谈", to: "/talk" as const, id: "talk" },
+    { label: "说说", to: "/moments" as const, id: "moments" },
     { label: "友链", to: "/friend-links" as const, id: "friend-links" },
     { label: "关于", to: "/about" as const, id: "about" },
   ];

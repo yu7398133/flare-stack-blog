@@ -5,12 +5,14 @@ interface ProfileCardProps {
   postCount: number;
   momentsCount: number;
   photosCount: number;
+  talkCount: number;
 }
 
 export function ProfileCard({
   postCount,
   momentsCount,
   photosCount,
+  talkCount,
 }: ProfileCardProps) {
   const { siteConfig } = useRouteContext({ from: "__root__" });
   const navigate = useNavigate();
@@ -48,9 +50,11 @@ export function ProfileCard({
         <div className="flex gap-2 sm:gap-6 w-full md:w-auto justify-between sm:justify-around md:justify-start px-2 sm:px-0">
           <StatItem count={postCount} label="文章" color="text-indigo-600 dark:text-indigo-400" />
           <div className="w-px h-8 md:h-10 bg-slate-300/50 dark:bg-slate-700 hidden md:block" />
-          <StatItem count={momentsCount} label="说说" color="text-purple-600 dark:text-purple-400" />
-          <div className="w-px h-8 md:h-10 bg-slate-300/50 dark:bg-slate-700 hidden md:block" />
           <StatItem count={photosCount} label="照片" color="text-pink-600 dark:text-pink-400" />
+          <div className="w-px h-8 md:h-10 bg-slate-300/50 dark:bg-slate-700 hidden md:block" />
+          <StatItem count={talkCount} label="杂谈" color="text-emerald-600 dark:text-emerald-400" />
+          <div className="w-px h-8 md:h-10 bg-slate-300/50 dark:bg-slate-700 hidden md:block" />
+          <StatItem count={momentsCount} label="说说" color="text-purple-600 dark:text-purple-400" />
         </div>
 
         {/* Social buttons */}
