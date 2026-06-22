@@ -23,11 +23,27 @@ function MusicAdminPage() {
   const queryClient = useQueryClient();
   const { settings, isLoading: configLoading, saveSettings } = useSystemSetting();
   const [newId, setNewId] = useState("");
+  const [newAudioUrl, setNewAudioUrl] = useState("");
   const [newPlaylistId, setNewPlaylistId] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const musicIds: string[] =
+  // musicIds can contain string | { id, audioUrl? }
+  const rawMusicIds: Array<string | { id: string; audioUrl?: string }> =
     settings?.site?.theme?.xinghui?.musicIds ?? [];
+
+  // Normalize to string IDs for API calls and duplicate checks
+  const musicIds: string[] = rawMusicIds.map((item) =>
+    typeof item === "string" ? item : item.id,
+  );
+
+  // Build a lookup map for audioUrl
+  const audioUrlMap: Record<string, string> = Object.fromEntries(
+    rawMusicIds
+      .filter((item): item is { id: string; audioUrl?: string } =>
+        typeof item !== "string" && !!item.audioUrl,
+      )
+      .map((item) => [item.id, item.audioUrl!]),
+  );
   const musicPlaylistIds: string[] =
     settings?.site?.theme?.xinghui?.musicPlaylistIds ?? [];
 
@@ -85,25 +101,32 @@ function MusicAdminPage() {
     const id = newId.trim();
     if (!id) return toast.error("请输入歌曲ID");
     if (musicIds.includes(id)) return toast.error("该歌曲已存在");
-    saveThemeConfig({ musicIds: [...musicIds, id] });
+    const audioUrl = newAudioUrl.trim();
+    const entry = audioUrl ? { id, audioUrl } : id;
+    saveThemeConfig({ musicIds: [...rawMusicIds, entry] });
     setNewId("");
+    setNewAudioUrl("");
   };
 
   const handleRemove = (id: string) => {
     if (!confirm("确定移除这首歌曲?")) return;
-    saveThemeConfig({ musicIds: musicIds.filter((i) => i !== id) });
+    saveThemeConfig({
+      musicIds: rawMusicIds.filter((item) =>
+        typeof item === "string" ? item !== id : item.id !== id,
+      ),
+    });
   };
 
   const handleMoveUp = (idx: number) => {
     if (idx === 0) return;
-    const arr = [...musicIds];
+    const arr = [...rawMusicIds];
     [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
     saveThemeConfig({ musicIds: arr });
   };
 
   const handleMoveDown = (idx: number) => {
-    if (idx >= musicIds.length - 1) return;
-    const arr = [...musicIds];
+    if (idx >= rawMusicIds.length - 1) return;
+    const arr = [...rawMusicIds];
     [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
     saveThemeConfig({ musicIds: arr });
   };
@@ -203,6 +226,13 @@ function MusicAdminPage() {
             className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
+          <input
+            value={newAudioUrl}
+            onChange={(e) => setNewAudioUrl(e.target.value)}
+            placeholder="自定义音频源（可选，留空用网易云）"
+            className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
+            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+          />
           <button
             onClick={handleAdd}
             disabled={configLoading || saving}
@@ -211,6 +241,9 @@ function MusicAdminPage() {
             {saving ? "保存中..." : "添加"}
           </button>
         </div>
+        <p className="text-[11px] text-muted-foreground">
+          自定义音频源：填写 MP3 直链地址，VIP 歌曲可上传到 R2 或其他存储后填入链接
+        </p>
       </div>
 
       {/* Song list */}
@@ -230,6 +263,7 @@ function MusicAdminPage() {
           <div className="space-y-3">
             {songs.map((song) => {
               const isDirectSong = musicIds.includes(song.id);
+              const hasCustomAudio = !!audioUrlMap[song.id];
               return (
                 <div
                   key={song.id}
@@ -252,6 +286,11 @@ function MusicAdminPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-mono font-bold truncate">
                         {song.name}
+                        {hasCustomAudio && (
+                          <span className="ml-2 text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                            自定义源
+                          </span>
+                        )}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {song.artist}
@@ -261,7 +300,9 @@ function MusicAdminPage() {
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => {
-                            const idx = musicIds.indexOf(song.id);
+                            const idx = rawMusicIds.findIndex((item) =>
+                              typeof item === "string" ? item === song.id : item.id === song.id,
+                            );
                             if (idx > 0) handleMoveUp(idx);
                           }}
                           disabled={saving}
@@ -271,8 +312,10 @@ function MusicAdminPage() {
                         </button>
                         <button
                           onClick={() => {
-                            const idx = musicIds.indexOf(song.id);
-                            if (idx < musicIds.length - 1) handleMoveDown(idx);
+                            const idx = rawMusicIds.findIndex((item) =>
+                              typeof item === "string" ? item === song.id : item.id === song.id,
+                            );
+                            if (idx < rawMusicIds.length - 1) handleMoveDown(idx);
                           }}
                           disabled={saving}
                           className="text-xs font-mono text-muted-foreground hover:text-foreground px-1 disabled:opacity-30"
