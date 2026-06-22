@@ -66,8 +66,8 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
         visible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="xh-glass mx-0 mt-0 border-t-0 border-x-0" style={{ borderRadius: 0 }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-3 flex items-center justify-between">
+      <div className="xh-glass mx-0 mt-0 border-t-0 border-x-0 h-16" style={{ borderRadius: 0 }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 h-full flex items-center justify-between">
           {/* Logo */}
           <Link
             to="/"
@@ -163,13 +163,13 @@ function NavLinkItem({ to, label }: { to: string; label: string }) {
       to={to}
       className={`relative py-1.5 text-[15px] font-bold transition-colors ${
         isActive
-          ? "text-indigo-600 dark:text-indigo-400"
-          : "text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400"
+          ? "text-pink-500 dark:text-pink-400"
+          : "text-slate-700 dark:text-slate-200 hover:text-pink-500 dark:hover:text-pink-400"
       }`}
     >
       {label}
       {isActive && (
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full animate-pulse" />
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-pink-500 rounded-full animate-pulse" />
       )}
     </Link>
   );

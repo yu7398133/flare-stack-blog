@@ -1,6 +1,5 @@
 import { ExternalLink, GitBranch, Search } from "lucide-react";
 import { useState, useMemo } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import type { ProjectsPageProps } from "@/features/theme/contract/pages";
 import type { Project } from "@/lib/db/schema/projects.table";
 
@@ -34,7 +33,6 @@ function getProjectIcon(project: Project): string {
 
 export function ProjectsPage({ projects }: ProjectsPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
 
   const filtered = useMemo(() => {
     if (!searchQuery.trim()) return projects;
@@ -53,16 +51,8 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
 
   return (
     <div className="w-full py-10 relative z-10">
-      {/* Back button + header — matches reference site layout */}
+      {/* Header — matches reference site layout */}
       <div className="mb-8 flex flex-col items-center md:items-start">
-        <div className="w-full flex justify-start mb-6">
-          <button
-            onClick={() => navigate({ to: "/" })}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700/50 transition-all shadow-sm"
-          >
-            ← 返回首页
-          </button>
-        </div>
         <div className="text-center md:text-left w-full">
           <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-widest drop-shadow-sm uppercase">
             Projects Matrix
