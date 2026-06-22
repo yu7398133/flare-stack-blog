@@ -105,8 +105,8 @@ export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6
               }}
               className={`h-1.5 rounded-full transition-all duration-500 ${
                 i === currentIndex
-                  ? "w-6 bg-pink-400"
-                  : "w-2 bg-white/40 hover:bg-white/80"
+                  ? "w-6 bg-pink-400 shadow-sm shadow-pink-400/50"
+                  : "w-2 bg-white/70 hover:bg-white shadow-sm"
               }`}
               aria-label="跳转"
             />

@@ -119,8 +119,8 @@ export function LatestChatterCarousel({ posts, interval = 9000, initialDelay = 9
               }}
               className={`h-1.5 rounded-full transition-all duration-500 shadow-sm ${
                 i === currentIndex
-                  ? "w-6 bg-indigo-400"
-                  : "w-2 bg-white/40 hover:bg-white/80"
+                  ? "w-6 bg-indigo-400 shadow-sm shadow-indigo-400/50"
+                  : "w-2 bg-white/70 hover:bg-white shadow-sm"
               }`}
               aria-label="跳转"
             />

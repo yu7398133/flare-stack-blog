@@ -113,8 +113,8 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
               }}
               className={`h-1.5 rounded-full transition-all duration-500 ${
                 i === currentIndex
-                  ? "w-6 bg-indigo-400"
-                  : "w-2 bg-white/40 hover:bg-white/80"
+                  ? "w-6 bg-indigo-400 shadow-sm shadow-indigo-400/50"
+                  : "w-2 bg-white/70 hover:bg-white shadow-sm"
               }`}
               aria-label={`切换到第 ${i + 1} 篇文章`}
             />
