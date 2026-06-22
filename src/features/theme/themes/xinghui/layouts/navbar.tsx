@@ -1,6 +1,6 @@
 import { Link, useRouteContext, useMatchRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Menu, Sun, Moon, RefreshCw, MessageSquare } from "lucide-react";
+import { Menu, Sun, Moon, RefreshCw } from "lucide-react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
 interface NavbarProps {
@@ -97,15 +97,6 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
                 <RefreshCw size={17} />
               </button>
             )}
-
-            {/* Moments (说说) link */}
-            <Link
-              to="/moments"
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/10 transition-all"
-              title="说说"
-            >
-              <MessageSquare size={17} />
-            </Link>
 
             {/* Night mode toggle */}
             <button
