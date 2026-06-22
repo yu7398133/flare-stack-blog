@@ -23,6 +23,9 @@ async function fetchAudioUrl(
       const location = res.headers.get("location");
       if (!location) break;
       currentUrl = location.startsWith("http") ? location : new URL(location, currentUrl).href;
+      if (currentUrl.startsWith("http://")) {
+        currentUrl = currentUrl.replace("http://", "https://");
+      }
       continue;
     }
 
@@ -52,14 +55,18 @@ const musicProxyRoute = new Hono<{ Bindings: Env }>().get("/:id", async (c) => {
       fetchHeaders["Range"] = rangeHeader;
     }
 
+    console.log(`[api/music/proxy] Song ${songId}: fetching ${url}`);
     const res = await fetchAudioUrl(url, fetchHeaders);
+    console.log(`[api/music/proxy] Song ${songId}: response ${res.status} ${res.statusText}`);
 
     if (!res.ok && res.status !== 206) {
+      console.error(`[api/music/proxy] Song ${songId}: fetch returned ${res.status} ${res.statusText} for ${url}`);
       return c.text("Failed to fetch audio", 502);
     }
 
     const contentType = res.headers.get("content-type") || "";
     if (contentType.includes("text/html")) {
+      console.error(`[api/music/proxy] Song ${songId}: got HTML response instead of audio`);
       return c.text("Failed to fetch audio", 502);
     }
 
