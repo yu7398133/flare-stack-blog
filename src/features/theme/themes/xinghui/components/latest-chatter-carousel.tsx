@@ -87,7 +87,7 @@ export function LatestChatterCarousel({ posts, interval = 9000, initialDelay = 9
       {/* Text content */}
       <div className="relative z-10 flex flex-col justify-center p-6 md:p-8 h-full pointer-events-none w-full md:w-[85%]">
         <div className="flex items-end gap-2 mb-2">
-          <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10 shadow-sm">
+          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10 shadow-sm">
             Records
           </span>
           {post.publishedAt && (

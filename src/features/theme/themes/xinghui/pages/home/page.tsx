@@ -170,7 +170,7 @@ export function HomePage({
             >
               <div>
                 <div className="flex items-end gap-2 mb-3">
-                  <span className="text-[10px] font-black text-pink-400 uppercase tracking-widest bg-black/10 dark:bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10 shadow-sm">
+                  <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest bg-black/10 dark:bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10 shadow-sm">
                     Moments
                   </span>
                   {moments && moments.items.length > 0 && (
