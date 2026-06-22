@@ -22,6 +22,7 @@ export function PublicLayout({
 
   const rawMusicIds = siteConfig.theme.xinghui?.musicIds ?? [];
   const musicPlaylistIds = siteConfig.theme.xinghui?.musicPlaylistIds ?? [];
+  const musicResolverUrl = siteConfig.theme.xinghui?.musicResolverUrl || "";
 
   // Normalize musicIds: extract string IDs and build audioUrl map
   const musicIds = rawMusicIds.map((item) =>
@@ -50,7 +51,7 @@ export function PublicLayout({
   }, [homeBgBase]);
 
   return (
-    <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds} audioUrlMap={audioUrlMap}>
+    <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds} audioUrlMap={audioUrlMap} resolverUrl={musicResolverUrl}>
       <div className="xh-page-bg min-h-screen relative">
         <DanmakuBackground />
 

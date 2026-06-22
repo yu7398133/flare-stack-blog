@@ -285,6 +285,7 @@ function createXinghuiThemeSiteConfigSchema() {
       )
       .optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
+    musicResolverUrl: z.string().optional(),
     buildDate: z.string().optional(),
     danmakuList: z.array(z.string()).optional(),
     danmakuFontSize: z.number().int().min(10).max(40).optional(),
@@ -309,6 +310,7 @@ function createXinghuiThemeSiteConfigInputSchema() {
       )
       .optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
+    musicResolverUrl: z.string().optional(),
     buildDate: z.string().optional(),
     danmakuList: z.array(z.string()).optional(),
     danmakuFontSize: z.number().int().min(10).max(40).optional(),
@@ -333,6 +335,7 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
       )
       .optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
+    musicResolverUrl: z.string().optional(),
     buildDate: z.string().optional(),
     danmakuList: z.array(z.string()).optional(),
     danmakuFontSize: z.number().int().min(10).max(40).optional(),

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useSystemSetting } from "@/features/config/hooks/use-system-setting";
 import { CONFIG_KEYS } from "@/features/config/queries";
@@ -32,6 +32,8 @@ function MusicAdminPage() {
   const [newPlaylistId, setNewPlaylistId] = useState("");
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [resolverUrl, setResolverUrl] = useState("");
+  const [resolverSaving, setResolverSaving] = useState(false);
 
   // musicIds can contain string | { id, audioUrl? }
   const rawMusicIds: Array<string | { id: string; audioUrl?: string }> =
@@ -52,6 +54,13 @@ function MusicAdminPage() {
   );
   const musicPlaylistIds: string[] =
     settings?.site?.theme?.xinghui?.musicPlaylistIds ?? [];
+
+  // Sync resolverUrl from settings
+  useEffect(() => {
+    if (settings?.site?.theme?.xinghui?.musicResolverUrl !== undefined) {
+      setResolverUrl(settings.site.theme.xinghui.musicResolverUrl);
+    }
+  }, [settings?.site?.theme?.xinghui?.musicResolverUrl]);
 
   const { data: songs, isLoading: songsLoading } = useQuery<SongInfo[]>({
     queryKey: ["admin", "music-info", musicIds.join(","), musicPlaylistIds.join(",")],
@@ -162,6 +171,34 @@ function MusicAdminPage() {
             Music · {musicPlaylistIds.length} 个歌单 · {songs?.length ?? 0} 首歌曲
           </p>
         </div>
+      </div>
+
+      {/* Music resolver API */}
+      <div className="border border-border/30 p-6 space-y-4">
+        <h3 className="text-sm font-mono font-bold">音乐解析 API</h3>
+        <p className="text-xs text-muted-foreground">
+          部署 music-resolver Worker 后，填入其地址（如 https://music-resolver.xxx.workers.dev），即可自动解析 VIP 歌曲的真实播放链接
+        </p>
+        <div className="flex gap-3">
+          <input
+            value={resolverUrl}
+            onChange={(e) => setResolverUrl(e.target.value)}
+            placeholder="https://your-music-resolver.workers.dev"
+            className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
+          />
+          <button
+            onClick={() => saveThemeConfig({ musicResolverUrl: resolverUrl.trim() })}
+            disabled={resolverSaving}
+            className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
+          >
+            {resolverSaving ? "保存中..." : "保存"}
+          </button>
+        </div>
+        {settings?.site?.theme?.xinghui?.musicResolverUrl && (
+          <p className="text-[11px] text-emerald-500 font-mono">
+            ✓ 已配置：{settings.site.theme.xinghui.musicResolverUrl}
+          </p>
+        )}
       </div>
 
       {/* Playlist section */}

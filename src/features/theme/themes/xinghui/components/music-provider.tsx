@@ -86,9 +86,10 @@ interface MusicProviderProps {
   musicIds: string[];
   musicPlaylistIds?: string[];
   audioUrlMap?: Record<string, string>;
+  resolverUrl?: string;
 }
 
-export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMap }: MusicProviderProps) {
+export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMap, resolverUrl }: MusicProviderProps) {
   const [playlist, setPlaylist] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -112,11 +113,37 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
 
     const fetchMusicData = async () => {
       try {
+        // Step 1: Get song metadata from existing API
         const params = new URLSearchParams();
         if (musicIds.length > 0) params.set("ids", musicIds.join(","));
         if (musicPlaylistIds && musicPlaylistIds.length > 0) params.set("playlistIds", musicPlaylistIds.join(","));
         const res = await fetch(`/api/music?${params.toString()}`);
         const rawResults = await res.json();
+
+        // Step 2: If resolver is configured, resolve audio URLs in parallel
+        let resolvedUrls: Record<string, string> = {};
+        if (resolverUrl) {
+          const allSongs = (rawResults as Array<Record<string, unknown>>).filter(
+            (s) => s && !s.error,
+          );
+          const resolves = await Promise.allSettled(
+            allSongs.map(async (song) => {
+              const songId = String(song.id || "");
+              if (!songId) return null;
+              // Skip if already has a custom audioUrl
+              if (audioUrlMap?.[songId]) return null;
+              const r = await fetch(`${resolverUrl}/song/${songId}`);
+              if (!r.ok) return null;
+              const data = (await r.json()) as Record<string, string>;
+              return data.audioUrl ? { id: songId, url: data.audioUrl } : null;
+            }),
+          );
+          for (const result of resolves) {
+            if (result.status === "fulfilled" && result.value) {
+              resolvedUrls[result.value.id] = result.value.url;
+            }
+          }
+        }
 
         const mergedPlaylist = (rawResults as Array<Record<string, unknown>>)
           .filter((song) => song && !song.error)
@@ -136,6 +163,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                   "",
                 src:
                   audioUrlMap?.[songId] ||
+                  resolvedUrls[songId] ||
                   `/api/music/proxy/${songId}`,
                 lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
               };
@@ -168,7 +196,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
     return () => {
       isMounted = false;
     };
-  }, [musicIds, musicPlaylistIds, audioUrlMap]);
+  }, [musicIds, musicPlaylistIds, audioUrlMap, resolverUrl]);
 
   // Update lyrics when song changes
   useEffect(() => {
