@@ -7,15 +7,7 @@ export function AboutPage() {
   const { siteConfig } = useRouteContext({ from: "__root__" });
   const [activeTab, setActiveTab] = useState<"intro" | "activity">("intro");
 
-  // Fetch about page content
-  const { data: aboutData } = useQuery({
-    queryKey: ["about-page"],
-    queryFn: async () => {
-      const res = await fetch("/api/site-documents/about");
-      if (!res.ok) return null;
-      return res.json();
-    },
-  });
+
 
   // Fetch all posts for activity timeline
   const { data: postsData } = useQuery({
@@ -197,8 +189,8 @@ export function AboutPage() {
         {/* Intro tab */}
         {activeTab === "intro" && (
           <div className="xh-prose prose prose-slate dark:prose-invert prose-base md:prose-lg max-w-none">
-            {aboutData?.content ? (
-              <ContentRenderer content={aboutData.content} />
+            {siteConfig.theme.xinghui?.aboutContent ? (
+              <ContentRenderer content={siteConfig.theme.xinghui.aboutContent} />
             ) : (
               <div className="space-y-4">
                 <p className="text-base text-slate-600 dark:text-slate-400 font-serif leading-relaxed">

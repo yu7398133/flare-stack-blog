@@ -1,5 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Field } from "@/features/config/components/site-settings-fields";
 import type { SystemConfig } from "@/features/config/config.schema";
 
@@ -41,6 +42,19 @@ export function XinghuiThemeSettings() {
         <Input
           {...register("site.theme.xinghui.avatar")}
           placeholder="https://example.com/avatar.jpg"
+        />
+      </Field>
+
+      <Field
+        label="关于页 - 自我介绍"
+        hint="关于页面显示的详细介绍内容，支持 Markdown。留空则使用站点描述。"
+        error={errors.site?.theme?.xinghui?.aboutContent?.message}
+        className="sm:col-span-2"
+      >
+        <Textarea
+          {...register("site.theme.xinghui.aboutContent")}
+          placeholder="写一段详细的自我介绍，支持 Markdown 格式..."
+          rows={8}
         />
       </Field>
 
