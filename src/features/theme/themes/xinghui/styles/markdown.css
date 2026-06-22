@@ -2,6 +2,11 @@
    Xinghui Theme — Markdown Prose Styles
    ======================================== */
 
+/* Root — ensure serif font for body text */
+.xh-prose {
+  font-family: var(--font-serif);
+}
+
 /* Headings */
 .xh-prose h1,
 .xh-prose h2,
