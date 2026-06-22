@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 import theme from "@theme";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 
@@ -10,19 +9,14 @@ export const Route = createFileRoute("/_public/timeline")({
 
 function TimelineRoute() {
   const { data, isLoading } = useQuery<{ items: PostItem[] }>({
-    queryKey: ["posts", "all"],
+    queryKey: ["posts", "all", "article"],
     queryFn: async () => {
-      const res = await fetch("/api/posts?limit=100");
+      const res = await fetch("/api/posts?limit=100&type=article");
       return res.json();
     },
   });
 
-  // Filter out talk posts — timeline only shows regular articles
-  const posts = useMemo(() => {
-    return (data?.items || []).filter((post) => post.type !== "talk");
-  }, [data?.items]);
-
   if (isLoading) return <theme.TimelinePageSkeleton />;
 
-  return <theme.TimelinePage posts={posts} />;
+  return <theme.TimelinePage posts={data?.items || []} />;
 }

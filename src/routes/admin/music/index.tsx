@@ -171,7 +171,10 @@ function MusicAdminPage() {
       <div className="border border-border/30 p-6 space-y-4">
         <h3 className="text-sm font-mono font-bold">音乐解析 API</h3>
         <p className="text-xs text-muted-foreground">
-          部署 music-resolver Worker 后，填入其地址（如 https://music-resolver.xxx.workers.dev），即可自动解析 VIP 歌曲的真实播放链接
+          部署 music-resolver Worker 后，填入其地址，即可自动解析 VIP 歌曲的真实播放链接
+        </p>
+        <p className="text-[11px] font-mono text-muted-foreground">
+          播放优先级：自定义音频源 → 解析 API → 网易云代理（默认）
         </p>
         <div className="flex gap-3">
           <input

@@ -195,13 +195,7 @@ export function HomePage({
                   </p>
                 )}
               </div>
-              {moments && moments.total > 0 && (
-                <div className="flex items-center gap-2 mt-4">
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                    共 {moments.total} 条
-                  </span>
-                </div>
-              )}
+
             </Link>
           </div>
         </div>
