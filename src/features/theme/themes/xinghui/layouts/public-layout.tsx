@@ -6,6 +6,7 @@ import { FloatingPlayer } from "../components/floating-player";
 import { DanmakuBackground } from "../components/danmaku-background";
 import { ClickEffect } from "../components/click-effect";
 import { FireflyEffect } from "../components/firefly-effect";
+import { WindyGrass } from "../components/windy-grass";
 import { MobileMenu } from "./mobile-menu";
 import { Navbar } from "./navbar";
 
@@ -78,6 +79,7 @@ export function PublicLayout({
         <FloatingPlayer />
         <ClickEffect />
         <FireflyEffect />
+        <WindyGrass />
       </div>
     </MusicProvider>
   );

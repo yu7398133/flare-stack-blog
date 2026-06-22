@@ -1,116 +1,97 @@
-import { useEffect, useRef, useCallback } from "react";
-import { useRouteContext } from "@tanstack/react-router";
+"use client";
+
+import { useEffect, useState } from "react";
 
 interface Firefly {
   id: number;
-  x: number;
-  y: number;
+  top: string;
+  left: string;
   size: number;
-  vx: number;
-  vy: number;
-  phase: number;
-  speed: number;
-  hue: number;
+  breatheDuration: number;
+  breatheDelay: number;
+  floatDuration: number;
+  floatDelay: number;
+  floatPath: string;
 }
 
 export function FireflyEffect() {
-  const { siteConfig } = useRouteContext({ from: "__root__" });
-  const enabled = siteConfig.theme.xinghui?.fireflyEffect ?? true;
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const firefliesRef = useRef<Firefly[]>([]);
-  const animRef = useRef<number>(0);
-
-  const initFireflies = useCallback(() => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const count = Math.floor((w * h) / 40000); // density-based
-    const flies: Firefly[] = [];
-    for (let i = 0; i < Math.max(count, 20); i++) {
-      flies.push({
-        id: i,
-        x: Math.random() * w,
-        y: Math.random() * h,
-        size: 2 + Math.random() * 3,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.008 + Math.random() * 0.015,
-        hue: 40 + Math.random() * 30, // amber to yellow-green
-      });
-    }
-    firefliesRef.current = flies;
-  }, []);
-
-  const animate = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    canvas.width = w;
-    canvas.height = h;
-    ctx.clearRect(0, 0, w, h);
-
-    for (const f of firefliesRef.current) {
-      f.phase += f.speed;
-      const opacity = ((Math.sin(f.phase) + 1) / 2) * 0.7;
-
-      f.x += f.vx + Math.sin(f.phase * 0.7) * 0.3;
-      f.y += f.vy + Math.cos(f.phase * 0.5) * 0.3;
-
-      // Wrap around
-      if (f.x < -20) f.x = w + 20;
-      if (f.x > w + 20) f.x = -20;
-      if (f.y < -20) f.y = h + 20;
-      if (f.y > h + 20) f.y = -20;
-
-      // Drift
-      f.vx += (Math.random() - 0.5) * 0.01;
-      f.vy += (Math.random() - 0.5) * 0.01;
-      f.vx = Math.max(-0.8, Math.min(0.8, f.vx));
-      f.vy = Math.max(-0.8, Math.min(0.8, f.vy));
-
-      // Draw glow
-      const glowSize = f.size * 4;
-      const gradient = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, glowSize);
-      gradient.addColorStop(0, `hsla(${f.hue}, 90%, 70%, ${opacity})`);
-      gradient.addColorStop(0.4, `hsla(${f.hue}, 85%, 60%, ${opacity * 0.5})`);
-      gradient.addColorStop(1, `hsla(${f.hue}, 80%, 50%, 0)`);
-
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, glowSize, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw core
-      ctx.fillStyle = `hsla(${f.hue}, 95%, 80%, ${opacity})`;
-      ctx.shadowColor = `hsla(${f.hue}, 90%, 70%, 0.8)`;
-      ctx.shadowBlur = f.size * 3;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, f.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    animRef.current = requestAnimationFrame(animate);
-  }, []);
+  const [flies, setFlies] = useState<Firefly[]>([]);
 
   useEffect(() => {
-    if (!enabled) return;
-    initFireflies();
-    animRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animRef.current);
-  }, [enabled, initFireflies, animate]);
-
-  if (!enabled) return null;
+    const generated: Firefly[] = Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      size: 3 + Math.random() * 4,
+      breatheDuration: 3 + Math.random() * 5,
+      breatheDelay: Math.random() * -10,
+      floatDuration: 15 + Math.random() * 20,
+      floatDelay: Math.random() * -20,
+      floatPath: `xh-float${Math.floor(Math.random() * 4) + 1}`,
+    }));
+    setFlies(generated);
+  }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-[1]"
-      style={{ width: "100vw", height: "100vh" }}
-    />
+    <div className="fixed inset-0 w-full h-full pointer-events-none z-10 overflow-hidden mix-blend-screen">
+      <style>{`
+        @keyframes xh-fireflyBreathe {
+          0%, 100% {
+            opacity: 0;
+            transform: scale(0.3);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px 3px rgba(100, 255, 150, 0.8), 0 0 20px 6px rgba(50, 255, 100, 0.4);
+          }
+        }
+
+        @keyframes xh-float1 {
+          0%, 100% { transform: translate(0, 0); }
+          33% { transform: translate(10vw, -15vh); }
+          66% { transform: translate(-5vw, -20vh); }
+        }
+        @keyframes xh-float2 {
+          0%, 100% { transform: translate(0, 0); }
+          33% { transform: translate(-12vw, 10vh); }
+          66% { transform: translate(8vw, 15vh); }
+        }
+        @keyframes xh-float3 {
+          0%, 100% { transform: translate(0, 0); }
+          33% { transform: translate(15vw, 15vh); }
+          66% { transform: translate(-10vw, 5vh); }
+        }
+        @keyframes xh-float4 {
+          0%, 100% { transform: translate(0, 0); }
+          33% { transform: translate(-15vw, -10vh); }
+          66% { transform: translate(10vw, -15vh); }
+        }
+      `}</style>
+
+      {flies.map((fly) => (
+        <div
+          key={fly.id}
+          className="absolute"
+          style={{
+            top: fly.top,
+            left: fly.left,
+            animation: `${fly.floatPath} ${fly.floatDuration}s ease-in-out infinite`,
+            animationDelay: `${fly.floatDelay}s`,
+          }}
+        >
+          <div
+            className="rounded-full"
+            style={{
+              width: `${fly.size}px`,
+              height: `${fly.size}px`,
+              backgroundColor: "rgba(200, 255, 200, 0.9)",
+              animation: `xh-fireflyBreathe ${fly.breatheDuration}s ease-in-out infinite`,
+              animationDelay: `${fly.breatheDelay}s`,
+            }}
+          />
+        </div>
+      ))}
+    </div>
   );
 }

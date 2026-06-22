@@ -1,115 +1,96 @@
-import { useEffect, useRef, useCallback } from "react";
-import { useRouteContext } from "@tanstack/react-router";
-
-interface Ripple {
-  id: number;
-  x: number;
-  y: number;
-  radius: number;
-  maxRadius: number;
-  life: number;
-  maxLife: number;
-  color: string;
-}
-
-const RIPPLE_COLORS = [
-  "rgba(99, 102, 241, 0.6)",   // indigo
-  "rgba(139, 92, 246, 0.5)",   // violet
-  "rgba(168, 85, 247, 0.4)",   // purple
-];
+"use client";
+import { useEffect, useRef } from "react";
 
 export function ClickEffect() {
-  const { siteConfig } = useRouteContext({ from: "__root__" });
-  const enabled = siteConfig.theme.xinghui?.clickEffect ?? true;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ripplesRef = useRef<Ripple[]>([]);
-  const animRef = useRef<number>(0);
-  const counterRef = useRef(0);
 
-  const animate = useCallback(() => {
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let ripples: any[] = [];
 
-    ripplesRef.current = ripplesRef.current
-      .map((r) => ({
-        ...r,
-        radius: r.radius + (r.maxRadius - r.radius) * 0.08,
-        life: r.life - 1,
-      }))
-      .filter((r) => r.life > 0);
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", resize);
+    resize();
 
-    for (const r of ripplesRef.current) {
-      const progress = 1 - r.life / r.maxLife;
-      const alpha = 1 - progress;
-      const lineWidth = 2 * (1 - progress * 0.5);
+    class Ripple {
+      x: number;
+      y: number;
+      r: number;
+      maxR: number;
+      opacity: number;
+      velocity: number;
 
-      ctx.beginPath();
-      ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-      ctx.strokeStyle = r.color.replace(/[\d.]+\)$/, `${alpha})`);
-      ctx.lineWidth = lineWidth;
-      ctx.stroke();
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.r = 0;
+        this.maxR = 60;
+        this.opacity = 0.6;
+        this.velocity = 2.5;
+      }
 
-      // Inner ring
-      if (r.radius > 10) {
+      update() {
+        this.r += this.velocity;
+        this.velocity *= 0.96;
+        this.opacity -= 0.015;
+      }
+
+      draw() {
+        if (!ctx) return;
         ctx.beginPath();
-        ctx.arc(r.x, r.y, r.radius * 0.6, 0, Math.PI * 2);
-        ctx.strokeStyle = r.color.replace(/[\d.]+\)$/, `${alpha * 0.5})`);
-        ctx.lineWidth = lineWidth * 0.6;
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(129, 140, 248, ${this.opacity})`;
+        ctx.lineWidth = 2;
         ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(129, 140, 248, ${this.opacity * 0.3})`;
+        ctx.fill();
       }
     }
-
-    ctx.globalAlpha = 1;
-
-    if (ripplesRef.current.length > 0) {
-      animRef.current = requestAnimationFrame(animate);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!enabled) return;
 
     const handleClick = (e: MouseEvent) => {
-      // Create 3 concentric ripples
-      for (let i = 0; i < 3; i++) {
-        counterRef.current++;
-        ripplesRef.current.push({
-          id: counterRef.current,
-          x: e.clientX,
-          y: e.clientY,
-          radius: 5 + i * 8,
-          maxRadius: 80 + i * 40,
-          life: 50 + i * 15,
-          maxLife: 50 + i * 15,
-          color: RIPPLE_COLORS[i % RIPPLE_COLORS.length],
-        });
-      }
-
-      if (!animRef.current || ripplesRef.current.length <= 3) {
-        animRef.current = requestAnimationFrame(animate);
-      }
+      ripples.push(new Ripple(e.clientX, e.clientY));
     };
 
-    document.addEventListener("click", handleClick);
+    window.addEventListener("click", handleClick);
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "rgba(129, 140, 248, 0.5)";
+
+      for (let i = 0; i < ripples.length; i++) {
+        ripples[i].update();
+        ripples[i].draw();
+        if (ripples[i].opacity <= 0) {
+          ripples.splice(i, 1);
+          i--;
+        }
+      }
+      requestAnimationFrame(animate);
+    };
+    animate();
+
     return () => {
-      document.removeEventListener("click", handleClick);
-      cancelAnimationFrame(animRef.current);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("click", handleClick);
     };
-  }, [enabled, animate]);
-
-  if (!enabled) return null;
+  }, []);
 
   return (
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-[9999]"
-      style={{ width: "100vw", height: "100vh" }}
     />
   );
 }
