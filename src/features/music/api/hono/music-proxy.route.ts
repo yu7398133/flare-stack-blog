@@ -6,35 +6,6 @@ const NETEASE_HEADERS = {
   Referer: "https://music.163.com/",
 };
 
-async function fetchAudioUrl(
-  url: string,
-  headers: Record<string, string>,
-  maxRedirects = 5,
-): Promise<Response> {
-  let currentUrl = url;
-  for (let i = 0; i <= maxRedirects; i++) {
-    const res = await fetch(currentUrl, {
-      headers,
-      redirect: "manual",
-      signal: AbortSignal.timeout(15000),
-    });
-
-    if (res.status === 301 || res.status === 302 || res.status === 303 || res.status === 307 || res.status === 308) {
-      const location = res.headers.get("location");
-      if (!location) break;
-      currentUrl = location.startsWith("http") ? location : new URL(location, currentUrl).href;
-      if (currentUrl.startsWith("http://")) {
-        currentUrl = currentUrl.replace("http://", "https://");
-      }
-      continue;
-    }
-
-    return res;
-  }
-
-  return new Response(null, { status: 502, statusText: "Too many redirects" });
-}
-
 const musicProxyRoute = new Hono<{ Bindings: Env }>().get("/:id", async (c) => {
   const songId = c.req.param("id");
   if (!songId) {
@@ -55,18 +26,36 @@ const musicProxyRoute = new Hono<{ Bindings: Env }>().get("/:id", async (c) => {
       fetchHeaders["Range"] = rangeHeader;
     }
 
-    console.log(`[api/music/proxy] Song ${songId}: fetching ${url}`);
-    const res = await fetchAudioUrl(url, fetchHeaders);
-    console.log(`[api/music/proxy] Song ${songId}: response ${res.status} ${res.statusText}`);
+    // Follow redirects manually, converting HTTP to HTTPS
+    let currentUrl = url;
+    let res: Response | null = null;
+    for (let i = 0; i < 5; i++) {
+      res = await fetch(currentUrl, {
+        headers: fetchHeaders,
+        redirect: "manual",
+        signal: AbortSignal.timeout(15000),
+      });
 
-    if (!res.ok && res.status !== 206) {
-      console.error(`[api/music/proxy] Song ${songId}: fetch returned ${res.status} ${res.statusText} for ${url}`);
+      if (res.status >= 300 && res.status < 400) {
+        const location = res.headers.get("location");
+        if (!location) break;
+        currentUrl = location.startsWith("http")
+          ? location
+          : new URL(location, currentUrl).href;
+        if (currentUrl.startsWith("http://")) {
+          currentUrl = currentUrl.replace("http://", "https://");
+        }
+        continue;
+      }
+      break;
+    }
+
+    if (!res || (!res.ok && res.status !== 206)) {
       return c.text("Failed to fetch audio", 502);
     }
 
     const contentType = res.headers.get("content-type") || "";
     if (contentType.includes("text/html")) {
-      console.error(`[api/music/proxy] Song ${songId}: got HTML response instead of audio`);
       return c.text("Failed to fetch audio", 502);
     }
 
