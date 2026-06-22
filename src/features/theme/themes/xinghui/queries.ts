@@ -24,9 +24,9 @@ export const XINGHUI_KEYS = {
 export function recentMomentsQuery(limit = 5) {
   return queryOptions({
     queryKey: [...XINGHUI_KEYS.moments, limit],
+    staleTime: 0,
     queryFn: async () => {
       if (isSSR) {
-        // During SSR, return empty data — will be fetched client-side
         return { items: [], total: 0 };
       }
       const res = await fetch(`/api/moments?limit=${limit}`);
@@ -48,6 +48,7 @@ export function recentMomentsQuery(limit = 5) {
 export function recentTalkPostsQuery(limit = 5) {
   return queryOptions({
     queryKey: [...XINGHUI_KEYS.talk, limit],
+    staleTime: 0,
     queryFn: async () => {
       if (isSSR) return { items: [], nextCursor: null };
       const res = await fetch(
@@ -71,6 +72,7 @@ export function recentTalkPostsQuery(limit = 5) {
 
 export const allPhotosQuery = queryOptions({
   queryKey: XINGHUI_KEYS.photos,
+  staleTime: 0,
   queryFn: async () => {
     if (isSSR) return [];
     const res = await fetch("/api/photos");
@@ -89,6 +91,7 @@ export const allPhotosQuery = queryOptions({
 
 export const allProjectsQuery = queryOptions({
   queryKey: XINGHUI_KEYS.projects,
+  staleTime: 0,
   queryFn: async () => {
     if (isSSR) return [];
     const res = await fetch("/api/projects");
