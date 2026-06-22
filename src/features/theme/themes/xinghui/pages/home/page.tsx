@@ -224,11 +224,7 @@ export function HomePage({
 
       {/* Bottom: Site Dashboard */}
       <div className="xh-animate-in xh-delay-5">
-        <SiteDashboard
-          momentsCount={momentsTotal}
-          photosCount={photosList.length}
-          projectsCount={projectsList.length}
-        />
+        <SiteDashboard />
       </div>
     </div>
   );

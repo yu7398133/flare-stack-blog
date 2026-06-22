@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouteContext } from "@tanstack/react-router";
 
-interface SiteDashboardProps {
-  momentsCount: number;
-  photosCount: number;
-  projectsCount: number;
-}
-
 const TECH_BADGES = [
   { name: "TanStack", color: "text-orange-500", svg: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>' },
   { name: "Hono", color: "text-orange-400", svg: '<circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>' },
@@ -14,11 +8,7 @@ const TECH_BADGES = [
   { name: "D1", color: "text-blue-500", svg: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>' },
 ];
 
-export function SiteDashboard({
-  momentsCount,
-  photosCount,
-  projectsCount,
-}: SiteDashboardProps) {
+export function SiteDashboard() {
   const { siteConfig } = useRouteContext({ from: "__root__" });
   const [timeStr, setTimeStr] = useState("");
   const [uptimeStr, setUptimeStr] = useState("");
@@ -48,11 +38,7 @@ export function SiteDashboard({
     return () => clearInterval(timer);
   }, [START_DATE]);
 
-  const stats = [
-    { label: "杂谈", value: momentsCount, icon: "✨" },
-    { label: "照片", value: photosCount, icon: "📸" },
-    { label: "项目", value: projectsCount, icon: "🚀" },
-  ];
+
 
   return (
     <div className="xh-glass overflow-hidden flex flex-col md:flex-row items-stretch h-auto md:h-20 group">
@@ -74,19 +60,6 @@ export function SiteDashboard({
               {uptimeStr}
             </span>
           </span>
-        </div>
-
-        {/* Stats */}
-        <div className="flex items-center gap-4">
-          {stats.map((s) => (
-            <div key={s.label} className="flex items-center gap-1">
-              <span>{s.icon}</span>
-              <span className="font-black">{s.value}</span>
-              <span className="text-slate-400 dark:text-slate-500 text-[10px]">
-                {s.label}
-              </span>
-            </div>
-          ))}
         </div>
 
         {/* Tech stack badges — matching reference site size */}
