@@ -21,29 +21,36 @@ export function HomePage({
   projects,
 }: HomePageProps) {
   const { siteConfig } = useRouteContext({ from: "__root__" });
+  // Collect talk post slugs to exclude them from the articles carousel
+  const talkSlugs = useMemo(() => {
+    const slugs = new Set<string>();
+    for (const p of talkPosts ?? []) slugs.add(p.slug);
+    return slugs;
+  }, [talkPosts]);
+
   const allPosts = useMemo(() => {
     const seen = new Set<string>();
     const result: PostItem[] = [];
     for (const post of pinnedPosts ?? []) {
-      if (!seen.has(post.slug)) {
+      if (!seen.has(post.slug) && !talkSlugs.has(post.slug)) {
         seen.add(post.slug);
         result.push(post);
       }
     }
     for (const post of popularPosts ?? []) {
-      if (!seen.has(post.slug)) {
+      if (!seen.has(post.slug) && !talkSlugs.has(post.slug)) {
         seen.add(post.slug);
         result.push(post);
       }
     }
     for (const post of posts) {
-      if (!seen.has(post.slug)) {
+      if (!seen.has(post.slug) && !talkSlugs.has(post.slug)) {
         seen.add(post.slug);
         result.push(post);
       }
     }
     return result;
-  }, [posts, pinnedPosts, popularPosts]);
+  }, [posts, pinnedPosts, popularPosts, talkSlugs]);
 
   const topPosts = allPosts.slice(0, 5);
   const momentsTotal = moments?.total ?? 0;
