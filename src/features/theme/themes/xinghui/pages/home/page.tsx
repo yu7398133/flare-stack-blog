@@ -68,23 +68,23 @@ export function HomePage({
   }, [searchQuery, allPosts]);
 
   return (
-    <div className="flex flex-col gap-6 relative">
-      {/* Search bar */}
-      <div className="xh-animate-in">
-        <div className="relative max-w-3xl mx-auto w-full group">
+    <div className="flex flex-col relative">
+      {/* Search bar — matching reference site size & spacing */}
+      <div className="xh-animate-in mb-10">
+        <div className="relative max-w-2xl mx-auto w-full group">
           <Search
-            size={22}
-            className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10"
+            size={20}
+            className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10 drop-shadow-sm"
           />
           <input
             type="text"
             placeholder="搜寻被封存的知识..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/40 dark:border-white/5 rounded-2xl px-8 py-5 pl-16 text-base text-slate-800 dark:text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+            className="w-full bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-3xl pl-14 pr-6 py-4 text-lg text-slate-800 dark:text-slate-200 shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder-slate-500 dark:placeholder-slate-400 font-medium"
           />
           {searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 dark:border-white/10 overflow-hidden z-50">
+            <div className="absolute top-full left-0 right-0 mt-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border border-white/50 dark:border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden z-50">
               {searchResults.map((post) => (
                 <Link
                   key={post.slug}
@@ -118,6 +118,7 @@ export function HomePage({
         </div>
       </div>
 
+      <div className="flex flex-col gap-6">
       {/* Row 1: Profile Card (7 cols) + Cloud Player (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 xh-animate-in xh-delay-1">
@@ -199,6 +200,7 @@ export function HomePage({
       {/* Bottom: Site Dashboard */}
       <div className="xh-animate-in xh-delay-5">
         <SiteDashboard />
+      </div>
       </div>
     </div>
   );
