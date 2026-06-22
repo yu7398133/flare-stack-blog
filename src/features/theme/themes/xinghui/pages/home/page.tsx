@@ -54,7 +54,10 @@ export function HomePage({
 
   const topPosts = allPosts.slice(0, 5);
   const momentsTotal = moments?.total ?? 0;
-  const photosList = photos ?? [];
+  const photosList = useMemo(() => {
+    const list = photos ?? [];
+    return [...list].sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+  }, [photos]);
   const projectsList = projects ?? [];
 
   const latestPhoto = photosList[0];
