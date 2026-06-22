@@ -69,17 +69,17 @@ export function HomePage({
     <div className="flex flex-col gap-6 relative">
       {/* Search bar */}
       <div className="xh-animate-in">
-        <div className="relative max-w-2xl mx-auto w-full group">
+        <div className="relative max-w-3xl mx-auto w-full group">
           <Search
-            size={18}
-            className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10"
+            size={22}
+            className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10"
           />
           <input
             type="text"
             placeholder="搜寻被封存的知识..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/40 dark:border-white/5 rounded-2xl px-6 py-3.5 pl-13 text-sm text-slate-800 dark:text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+            className="w-full bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl border border-white/40 dark:border-white/5 rounded-2xl px-8 py-5 pl-16 text-base text-slate-800 dark:text-white shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
           />
           {searchResults.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 dark:border-white/10 overflow-hidden z-50">
