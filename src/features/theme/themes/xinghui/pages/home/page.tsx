@@ -7,6 +7,7 @@ import { ProfileCard } from "../../components/profile-card";
 import { CloudPlayer } from "../../components/cloud-player";
 import { LyricBar } from "../../components/lyric-bar";
 import { LatestPostsCarousel } from "../../components/latest-posts-carousel";
+import { LatestChatterCarousel } from "../../components/latest-chatter-carousel";
 import { SiteDashboard } from "../../components/site-dashboard";
 
 export function HomePage({
@@ -175,75 +176,46 @@ export function HomePage({
 
           {/* Talk (杂谈) + Moments (说说) side by side — 2:1 ratio matching reference */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Talk (杂谈) preview — 2 cols */}
-            <Link
-              to="/talk"
-              className="sm:col-span-2 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">
-                  ✨ 杂谈
-                </span>
-                <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 to-transparent" />
-              </div>
-              {talkPosts && talkPosts.length > 0 ? (
-                <>
-                  <p className="text-sm font-bold text-slate-800 dark:text-white line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                    {talkPosts[0].title}
-                  </p>
-                  {talkPosts[0].summary && (
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1">
-                      {talkPosts[0].summary}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-2 mt-3">
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                      {talkPosts[0].publishedAt
-                        ? new Date(talkPosts[0].publishedAt).toLocaleDateString("zh-CN")
-                        : ""}
-                    </span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto">
-                      共 {talkPosts.length} 篇 →
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <p className="text-sm text-slate-400 dark:text-slate-500">暂无杂谈，去看看吧 →</p>
-              )}
-            </Link>
+            {/* Talk (杂谈) carousel — 2 cols, cover image background */}
+            <div className="sm:col-span-2 min-h-[220px]">
+              <LatestChatterCarousel posts={talkPosts ?? []} />
+            </div>
 
-            {/* Moments (说说) preview — 1 col */}
+            {/* Moments (说说) — 1 col, text format matching chatter style */}
             <Link
               to="/moments"
-              className="sm:col-span-1 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
+              className="sm:col-span-1 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-mono text-pink-500 dark:text-pink-400 uppercase tracking-widest">
-                  💬 说说
-                </span>
-                <div className="flex-1 h-px bg-gradient-to-r from-pink-500/30 to-transparent" />
-              </div>
-              {moments && moments.items.length > 0 ? (
-                <>
-                  <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                    {moments.items[0].content}
-                  </p>
-                  <div className="flex items-center gap-2 mt-3">
-                    {moments.items[0].mood && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
-                        ✨ {moments.items[0].mood}
-                      </span>
-                    )}
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500">
+              <div>
+                <div className="flex items-end gap-2 mb-3">
+                  <span className="text-[10px] font-black text-pink-400 uppercase tracking-widest bg-black/10 dark:bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10 shadow-sm">
+                    Moments
+                  </span>
+                  {moments && moments.items.length > 0 && (
+                    <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500">
                       {new Date(moments.items[0].createdAt).toLocaleDateString("zh-CN")}
                     </span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto">
-                      共 {moments.total} 条 →
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <p className="text-sm text-slate-400 dark:text-slate-500">暂无说说，去看看吧 →</p>
+                  )}
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-3 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors line-clamp-1">
+                  说说
+                </h3>
+                {moments && moments.items.length > 0 ? (
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed line-clamp-2">
+                    {moments.items[0].content}
+                  </p>
+                ) : (
+                  <p className="text-sm text-slate-400 dark:text-slate-500">
+                    暂无说说，去看看吧 →
+                  </p>
+                )}
+              </div>
+              {moments && moments.total > 0 && (
+                <div className="flex items-center gap-2 mt-4">
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                    共 {moments.total} 条
+                  </span>
+                </div>
               )}
             </Link>
           </div>
