@@ -9,6 +9,7 @@ import {
 } from "@/features/posts/queries";
 import {
   recentMomentsQuery,
+  recentTalkPostsQuery,
   allPhotosQuery,
   allProjectsQuery,
 } from "@/features/theme/themes/xinghui/queries";
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_public/")({
       context.queryClient.ensureQueryData(popularPostsQuery(popularPostsLimit)),
       // Xinghui theme: these return empty on SSR, real data fetched client-side
       context.queryClient.ensureQueryData(recentMomentsQuery(5)),
+      context.queryClient.ensureQueryData(recentTalkPostsQuery(5)),
       context.queryClient.ensureQueryData(allPhotosQuery),
       context.queryClient.ensureQueryData(allProjectsQuery),
     ]);
@@ -47,6 +49,7 @@ function HomeRoute() {
     popularPostsQuery(popularPostsLimit),
   );
   const { data: moments } = useSuspenseQuery(recentMomentsQuery(5));
+  const { data: talkPosts } = useSuspenseQuery(recentTalkPostsQuery(5));
   const { data: photos } = useSuspenseQuery(allPhotosQuery);
   const { data: projects } = useSuspenseQuery(allProjectsQuery);
 
@@ -56,6 +59,7 @@ function HomeRoute() {
       pinnedPosts={pinnedPosts}
       popularPosts={popularPosts}
       moments={moments}
+      talkPosts={talkPosts?.items}
       photos={photos}
       projects={projects}
     />

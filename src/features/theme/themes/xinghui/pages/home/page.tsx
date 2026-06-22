@@ -14,6 +14,7 @@ export function HomePage({
   pinnedPosts,
   popularPosts,
   moments,
+  talkPosts,
   photos,
   projects,
 }: HomePageProps) {
@@ -171,40 +172,80 @@ export function HomePage({
             )}
           </Link>
 
-          {/* Talk (杂谈) preview */}
-          <Link
-            to="/talk"
-            className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">
-                ✨ 杂谈
-              </span>
-              <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 to-transparent" />
-            </div>
-            {moments && moments.items.length > 0 ? (
-              <>
-                <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                  {moments.items[0].content}
-                </p>
-                <div className="flex items-center gap-2 mt-3">
-                  {moments.items[0].mood && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
-                      ✨ {moments.items[0].mood}
-                    </span>
+          {/* Talk (杂谈) + Moments (说说) side by side */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Talk (杂谈) preview */}
+            <Link
+              to="/talk"
+              className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">
+                  ✨ 杂谈
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 to-transparent" />
+              </div>
+              {talkPosts && talkPosts.length > 0 ? (
+                <>
+                  <p className="text-sm font-bold text-slate-800 dark:text-white line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    {talkPosts[0].title}
+                  </p>
+                  {talkPosts[0].summary && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1">
+                      {talkPosts[0].summary}
+                    </p>
                   )}
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                    {new Date(moments.items[0].createdAt).toLocaleDateString("zh-CN")}
-                  </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto">
-                    共 {moments.total} 条 →
-                  </span>
-                </div>
-              </>
-            ) : (
-              <p className="text-sm text-slate-400 dark:text-slate-500">暂无杂谈，去看看吧 →</p>
-            )}
-          </Link>
+                  <div className="flex items-center gap-2 mt-3">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                      {talkPosts[0].publishedAt
+                        ? new Date(talkPosts[0].publishedAt).toLocaleDateString("zh-CN")
+                        : ""}
+                    </span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto">
+                      共 {talkPosts.length} 篇 →
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-slate-400 dark:text-slate-500">暂无杂谈，去看看吧 →</p>
+              )}
+            </Link>
+
+            {/* Moments (说说) preview */}
+            <Link
+              to="/moments"
+              className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-mono text-pink-500 dark:text-pink-400 uppercase tracking-widest">
+                  💬 说说
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-pink-500/30 to-transparent" />
+              </div>
+              {moments && moments.items.length > 0 ? (
+                <>
+                  <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                    {moments.items[0].content}
+                  </p>
+                  <div className="flex items-center gap-2 mt-3">
+                    {moments.items[0].mood && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400">
+                        ✨ {moments.items[0].mood}
+                      </span>
+                    )}
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                      {new Date(moments.items[0].createdAt).toLocaleDateString("zh-CN")}
+                    </span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto">
+                      共 {moments.total} 条 →
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-slate-400 dark:text-slate-500">暂无说说，去看看吧 →</p>
+              )}
+            </Link>
+          </div>
         </div>
       </div>
 

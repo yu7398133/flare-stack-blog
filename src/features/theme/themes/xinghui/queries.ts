@@ -16,6 +16,7 @@ function getBaseUrl(): string {
 
 export const XINGHUI_KEYS = {
   moments: ["xinghui", "moments"] as const,
+  talk: ["xinghui", "talk"] as const,
   photos: ["xinghui", "photos"] as const,
   projects: ["xinghui", "projects"] as const,
 };
@@ -39,6 +40,30 @@ export function recentMomentsQuery(limit = 5) {
           location: string | null;
         }>;
         total: number;
+      }>;
+    },
+  });
+}
+
+export function recentTalkPostsQuery(limit = 5) {
+  return queryOptions({
+    queryKey: [...XINGHUI_KEYS.talk, limit],
+    queryFn: async () => {
+      if (isSSR) return { items: [], nextCursor: null };
+      const res = await fetch(
+        `/api/posts?limit=${limit}&type=talk&publicOnly=true`,
+      );
+      if (!res.ok) return { items: [], nextCursor: null };
+      return res.json() as Promise<{
+        items: Array<{
+          id: number;
+          title: string;
+          slug: string;
+          summary: string | null;
+          publishedAt: string | null;
+          createdAt: string;
+ }>;
+        nextCursor: number | null;
       }>;
     },
   });

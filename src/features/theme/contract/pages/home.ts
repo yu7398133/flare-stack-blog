@@ -30,6 +30,7 @@ export interface HomePageProps {
   pinnedPosts?: Array<PostItem>;
   popularPosts?: Array<PostItem>;
   moments?: { items: Array<MomentItem>; total: number };
+  talkPosts?: Array<PostItem>;
   photos?: Array<PhotoItem>;
   projects?: Array<ProjectItem>;
 }
