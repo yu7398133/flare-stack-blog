@@ -19,6 +19,11 @@ interface SongInfo {
   cover: string;
 }
 
+const SEARCH_SITES = [
+  { name: "爱玩音乐网", url: (q: string) => `https://www.22a5.com/so/${q}.html` },
+  { name: "放屁音乐网", url: (q: string) => `https://www.fangpi.net/s/${q}` },
+];
+
 function MusicAdminPage() {
   const queryClient = useQueryClient();
   const { settings, isLoading: configLoading, saveSettings } = useSystemSetting();
@@ -26,6 +31,7 @@ function MusicAdminPage() {
   const [newAudioUrl, setNewAudioUrl] = useState("");
   const [newPlaylistId, setNewPlaylistId] = useState("");
   const [saving, setSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // musicIds can contain string | { id, audioUrl? }
   const rawMusicIds: Array<string | { id: string; audioUrl?: string }> =
@@ -244,6 +250,37 @@ function MusicAdminPage() {
         <p className="text-[11px] text-muted-foreground">
           自定义音频源：填写 MP3 直链地址，VIP 歌曲可上传到 R2 或其他存储后填入链接
         </p>
+      </div>
+
+      {/* Music search — open in new tab */}
+      <div className="border border-border/30 p-6 space-y-4">
+        <h3 className="text-sm font-mono font-bold">搜索音乐</h3>
+        <p className="text-xs text-muted-foreground">
+          输入歌名，选择站点，新窗口打开搜索结果，找到 MP3 链接后粘贴到上方「自定义音频源」
+        </p>
+        <div className="flex gap-3">
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="输入歌曲名，如 风萤月"
+            className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
+          />
+        </div>
+        {searchQuery.trim() && (
+          <div className="flex flex-wrap gap-2">
+            {SEARCH_SITES.map((site) => (
+              <a
+                key={site.name}
+                href={site.url(encodeURIComponent(searchQuery.trim()))}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 text-xs font-mono border border-border/30 hover:border-foreground/50 hover:bg-foreground/5 transition-colors"
+              >
+                {site.name}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Song list */}
