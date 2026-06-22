@@ -68,6 +68,7 @@ export async function getPostsCursor(
       publicOnly: true,
       tagName: data.tagName,
       excludePinned: data.excludePinned,
+      type: data.type,
     });
 
   const version = await CacheService.getVersion(context, "posts:list");
@@ -75,7 +76,7 @@ export async function getPostsCursor(
     version,
     data.limit ?? 10,
     data.cursor ?? 0,
-    data.tagName ?? "all",
+    data.tagName ?? (data.type ? `type:${data.type}` : "all"),
   );
 
   return await CacheService.get(

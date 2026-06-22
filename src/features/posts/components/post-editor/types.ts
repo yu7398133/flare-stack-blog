@@ -1,11 +1,12 @@
 import type { JSONContent } from "@tiptap/react";
-import type { PostStatus } from "@/lib/db/schema";
+import type { PostStatus, PostType } from "@/lib/db/schema";
 
 export interface PostEditorData {
   title: string;
   summary: string;
   slug: string;
   status: PostStatus;
+  type: PostType;
   readTimeInMinutes: number;
   contentJson: JSONContent | null;
   publishedAt: Date | null;
@@ -27,6 +28,7 @@ export const defaultPostData: PostEditorData = {
   summary: "",
   slug: "",
   status: "draft",
+  type: "article",
   readTimeInMinutes: 1,
   contentJson: null,
   publishedAt: null,

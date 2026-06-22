@@ -17,7 +17,7 @@ import {
   buildPostWhereClause,
 } from "@/features/posts/data/helper";
 import type { PostListItem } from "@/features/posts/schema/posts.schema";
-import type { PostStatus, Tag } from "@/lib/db/schema";
+import type { PostStatus, PostType, Tag } from "@/lib/db/schema";
 import { PostsTable, PostTagsTable, TagsTable } from "@/lib/db/schema";
 
 const DEFAULT_PAGE_SIZE = 12;
@@ -42,6 +42,7 @@ export async function getPosts(
     offset?: number;
     limit?: number;
     status?: PostStatus;
+    type?: PostType;
     publicOnly?: boolean;
     search?: string;
     sortDir?: SortDirection;
@@ -83,6 +84,7 @@ export async function getPostsCount(
   db: DB,
   options: {
     status?: PostStatus;
+    type?: PostType;
     publicOnly?: boolean;
     search?: string;
   } = {},
@@ -108,6 +110,7 @@ export async function getPostsCursor(
     publicOnly?: boolean;
     tagName?: string;
     excludePinned?: boolean;
+    type?: PostType;
   } = {},
 ): Promise<{
   items: Array<PostListItem>;
@@ -119,6 +122,7 @@ export async function getPostsCursor(
     publicOnly,
     tagName,
     excludePinned,
+    type: postType,
   } = options;
 
   // Build base conditions from helper
@@ -158,6 +162,10 @@ export async function getPostsCursor(
 
   if (excludePinned) {
     conditions.push(sql`${PostsTable.pinnedAt} IS NULL`);
+  }
+
+  if (postType) {
+    conditions.push(eq(PostsTable.type, postType));
   }
 
   let query = db

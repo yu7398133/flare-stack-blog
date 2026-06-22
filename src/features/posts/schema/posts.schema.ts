@@ -54,6 +54,7 @@ export const GetPostsCursorInputSchema = z.object({
   limit: z.number().optional(),
   tagName: z.string().optional(),
   excludePinned: z.boolean().optional(),
+  type: z.enum(["article", "talk"]).optional(),
 });
 
 export const FindPostBySlugInputSchema = z.object({
@@ -79,6 +80,7 @@ export const GetPostsInputSchema = z.object({
   offset: z.number().optional(),
   limit: z.number().optional(),
   status: z.custom<PostStatus>().optional(),
+  type: z.enum(["article", "talk"]).optional(),
   publicOnly: z.boolean().optional(),
   search: z.string().optional(),
   sortDir: z.enum(["ASC", "DESC"]).optional(),

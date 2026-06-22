@@ -3,7 +3,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import DatePicker from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { TagSelector } from "@/features/tags/components/tag-selector";
-import { POST_STATUSES } from "@/lib/db/schema";
+import { POST_STATUSES, POST_TYPES } from "@/lib/db/schema";
 import { toLocalDateString } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 import type { PostEditorData } from "./types";
@@ -11,6 +11,11 @@ import type { PostEditorData } from "./types";
 const STATUS_LABELS: Record<PostEditorData["status"], () => string> = {
   draft: m.editor_status_draft,
   published: m.editor_status_published,
+};
+
+const TYPE_LABELS: Record<string, string> = {
+  article: "文章",
+  talk: "杂谈",
 };
 
 interface PostEditorMetadataProps {
@@ -70,6 +75,30 @@ export function PostEditorMetadata({
                 `}
               >
                 {STATUS_LABELS[status]()}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <label className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
+            发布类型
+          </label>
+          <div className="flex items-center gap-4">
+            {POST_TYPES.map((t) => (
+              <button
+                key={t}
+                onClick={() => onPostChange({ type: t })}
+                className={`
+                  text-[10px] font-mono uppercase tracking-wider transition-colors
+                  ${
+                    (post.type || "article") === t
+                      ? "border-b border-foreground font-bold text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }
+                `}
+              >
+                {TYPE_LABELS[t]}
               </button>
             ))}
           </div>

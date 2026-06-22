@@ -1,8 +1,7 @@
-import type { Moment } from "@/lib/db/schema/moments.table";
+import type { PostListItem } from "@/features/posts/schema/posts.schema";
 
 export interface TalkPageProps {
-  moments: Moment[];
-  total: number;
+  posts: PostListItem[];
   hasNextPage: boolean;
   onLoadMore: () => void;
 }

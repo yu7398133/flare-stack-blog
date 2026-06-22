@@ -10,6 +10,7 @@ import {
 import { createdAt, id, updatedAt } from "./helper";
 
 export const POST_STATUSES = ["draft", "published"] as const;
+export const POST_TYPES = ["article", "talk"] as const;
 
 export const PostsTable = sqliteTable(
   "posts",
@@ -25,6 +26,7 @@ export const PostsTable = sqliteTable(
       mode: "json",
     }).$type<JSONContent>(),
     status: text("status", { enum: POST_STATUSES }).notNull().default("draft"),
+    type: text("type", { enum: POST_TYPES }).notNull().default("article"),
     publishedAt: integer("published_at", { mode: "timestamp" }),
     pinnedAt: integer("pinned_at", { mode: "timestamp" }),
     createdAt,
@@ -82,3 +84,4 @@ export const postTagsRelations = relations(PostTagsTable, ({ one }) => ({
 export type Tag = typeof TagsTable.$inferSelect;
 export type Post = typeof PostsTable.$inferSelect;
 export type PostStatus = (typeof POST_STATUSES)[number];
+export type PostType = (typeof POST_TYPES)[number];

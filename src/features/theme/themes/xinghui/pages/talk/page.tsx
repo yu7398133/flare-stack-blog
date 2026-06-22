@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, Clock, Ghost } from "lucide-react";
-import type { Moment } from "@/lib/db/schema/moments.table";
+import type { PostListItem } from "@/features/posts/schema/posts.schema";
 import { getPostCover } from "../../utils/post-cover";
 
 function timeAgo(date: Date | string) {
@@ -11,51 +11,45 @@ function timeAgo(date: Date | string) {
   if (diffInSeconds < 60) return "刚刚";
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} 分钟前`;
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} 小时前`;
-  return d.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\//g, ".");
+  return d
+    .toLocaleDateString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .replace(/\//g, ".");
 }
 
 function formatDate(date: Date | string) {
   const d = new Date(date);
-  return d.toLocaleString("zh-CN", {
+  return d.toLocaleDateString("zh-CN", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
   });
 }
 
 interface TalkPageProps {
-  moments: Moment[];
-  total: number;
+  posts: PostListItem[];
   hasNextPage: boolean;
   onLoadMore: () => void;
 }
 
-export function TalkPage({ moments, total, hasNextPage, onLoadMore }: TalkPageProps) {
+export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const processedMoments = useMemo(() => {
-    if (!searchQuery.trim()) return moments;
+  const filteredPosts = useMemo(() => {
+    if (!searchQuery.trim()) return posts;
     const q = searchQuery.trim().toLowerCase();
-    return moments.filter(
-      (m) =>
-        (m.content || "").toLowerCase().includes(q) ||
-        (m.location || "").toLowerCase().includes(q) ||
-        (m.mood || "").toLowerCase().includes(q),
+    return posts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        (p.summary || "").toLowerCase().includes(q),
     );
-  }, [moments, searchQuery]);
+  }, [posts, searchQuery]);
 
-  const renderCover = (moment: Moment) => {
-    const images: string[] = (() => {
-      try {
-        return moment.images ? JSON.parse(moment.images as string) : [];
-      } catch {
-        return [];
-      }
-    })();
-    const cover = images[0] || getPostCover(String(moment.id), null, 400, 250);
+  const renderCover = (post: PostListItem) => {
+    const cover = getPostCover(post.slug, null, 400, 250);
     return (
       <div className="w-full aspect-video rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 relative group flex-shrink-0">
         <img
@@ -98,45 +92,55 @@ export function TalkPage({ moments, total, hasNextPage, onLoadMore }: TalkPagePr
       </div>
 
       {/* Talk entries */}
-      {processedMoments.length > 0 ? (
+      {filteredPosts.length > 0 ? (
         <div className="flex flex-col gap-5">
-          {processedMoments.map((moment) => (
+          {filteredPosts.map((post) => (
             <Link
-              key={moment.id}
-              to="/moments"
+              key={post.id}
+              to="/post/$slug"
+              params={{ slug: post.slug }}
               className="group flex flex-col md:flex-row gap-4 md:gap-6 bg-white/60 dark:bg-slate-800/50 backdrop-blur-xl rounded-3xl shadow-lg border border-white/40 dark:border-white/10 p-5 md:p-6 transition-all hover:shadow-2xl hover:scale-[1.01] xh-animate-in"
             >
               {/* Cover */}
               <div className="md:w-64 lg:w-80 shrink-0">
-                {renderCover(moment)}
+                {renderCover(post)}
               </div>
 
               {/* Content */}
               <div className="flex-1 min-w-0 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    {moment.mood && (
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 font-bold">
-                        ✨ {moment.mood}
-                      </span>
-                    )}
+                  <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    {post.title}
+                  </h2>
+                  {post.summary && (
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">
+                      {post.summary}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 mt-3">
+                  {post.publishedAt && (
                     <span className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500 font-mono">
                       <Clock size={11} />
-                      {formatDate(moment.createdAt)}
-                    </span>
-                  </div>
-                  <p className="text-slate-800 dark:text-slate-200 text-sm md:text-base leading-relaxed line-clamp-4 font-medium">
-                    {moment.content}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 mt-3">
-                  {moment.location && (
-                    <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/10 truncate max-w-[200px]">
-                      📍 {moment.location}
+                      {formatDate(post.publishedAt)}
                     </span>
                   )}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex gap-1.5">
+                      {post.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag.id}
+                          className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-auto">
-                    {timeAgo(moment.createdAt)}
+                    {post.publishedAt
+                      ? timeAgo(post.publishedAt)
+                      : timeAgo(post.createdAt)}
                   </span>
                 </div>
               </div>
@@ -148,7 +152,11 @@ export function TalkPage({ moments, total, hasNextPage, onLoadMore }: TalkPagePr
           <div className="flex flex-col items-center text-center px-10 py-16 bg-white/40 dark:bg-slate-800/30 backdrop-blur-3xl rounded-[40px] border border-white/30 dark:border-white/10 shadow-xl max-w-lg">
             <div className="w-20 h-20 bg-indigo-500/10 rounded-3xl flex items-center justify-center mb-6 relative">
               <div className="absolute inset-0 bg-indigo-500/20 blur-2xl rounded-full animate-pulse" />
-              <Ghost size={40} className="text-indigo-500 relative z-10" strokeWidth={1.5} />
+              <Ghost
+                size={40}
+                className="text-indigo-500 relative z-10"
+                strokeWidth={1.5}
+              />
             </div>
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">
               {searchQuery ? "没找到相关内容" : "杂谈空空如也"}

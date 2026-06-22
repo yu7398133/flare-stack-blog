@@ -1,6 +1,6 @@
 import type { SQL } from "drizzle-orm";
 import { and, asc, desc, eq, like, sql } from "drizzle-orm";
-import type { PostStatus } from "@/lib/db/schema";
+import type { PostStatus, PostType } from "@/lib/db/schema";
 import { PostsTable } from "@/lib/db/schema";
 
 export type SortField = "publishedAt" | "updatedAt";
@@ -8,6 +8,7 @@ export type SortDirection = "ASC" | "DESC";
 
 export function buildPostWhereClause(options: {
   status?: PostStatus;
+  type?: PostType;
   publicOnly?: boolean; // For public pages - checks publishedAt <= now
   search?: string;
 }) {
@@ -15,6 +16,10 @@ export function buildPostWhereClause(options: {
 
   if (options.status) {
     whereClauses.push(eq(PostsTable.status, options.status));
+  }
+
+  if (options.type) {
+    whereClauses.push(eq(PostsTable.type, options.type));
   }
 
   // For public pages, also filter by publishedAt

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import theme from "@theme";
-import type { Moment } from "@/lib/db/schema/moments.table";
+import type { PostListItem } from "@/features/posts/schema/posts.schema";
 
 export const Route = createFileRoute("/_public/talk")({
   component: TalkRoute,
@@ -12,10 +12,16 @@ function TalkRoute() {
   const [page, setPage] = useState(0);
   const limit = 20;
 
-  const { data, isLoading } = useQuery<{ items: Moment[]; total: number }>({
+  const { data, isLoading } = useQuery<{
+    items: PostListItem[];
+    nextCursor: number | null;
+  }>({
     queryKey: ["talk", page],
     queryFn: async () => {
-      const res = await fetch(`/api/moments?limit=${limit}&offset=${page * limit}`);
+      const offset = page * limit;
+      const res = await fetch(
+        `/api/posts?limit=${limit}&offset=${offset}&type=talk&publicOnly=true`,
+      );
       return res.json();
     },
   });
@@ -26,14 +32,12 @@ function TalkRoute() {
 
   if (isLoading) return <theme.TalkPageSkeleton />;
 
-  const moments = data?.items || [];
-  const total = data?.total || 0;
-  const hasNextPage = moments.length < total;
+  const posts = data?.items || [];
+  const hasNextPage = data?.nextCursor !== null;
 
   return (
     <theme.TalkPage
-      moments={moments}
-      total={total}
+      posts={posts}
       hasNextPage={hasNextPage}
       onLoadMore={handleLoadMore}
     />
