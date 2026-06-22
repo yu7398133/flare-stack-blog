@@ -105,24 +105,6 @@ async function fetchSongDetail(songId: string): Promise<SongResult> {
 
     const artistName = artists?.[0]?.name || "未知歌手";
 
-    // Resolve the outer URL to get the actual HTTPS CDN URL
-    let audioUrl = `https://music.163.com/song/media/outer/url?id=${songId}.mp3`;
-    try {
-      const outerRes = await fetch(audioUrl, {
-        headers: NETEASE_HEADERS,
-        redirect: "manual",
-        signal: AbortSignal.timeout(8000),
-      });
-      const location = outerRes.headers.get("location");
-      if (location) {
-        audioUrl = location.startsWith("http")
-          ? location.replace("http://", "https://")
-          : new URL(location, audioUrl).href.replace("http://", "https://");
-      }
-    } catch {
-      /* fallback to outer URL */
-    }
-
     return {
       id: songId,
       name: (songData.name as string) || "未知歌曲",
@@ -130,7 +112,7 @@ async function fetchSongDetail(songId: string): Promise<SongResult> {
       author: artistName,
       cover: (album?.picUrl as string) || "",
       pic: (album?.picUrl as string) || "",
-      url: audioUrl,
+      url: `https://music.163.com/song/media/outer/url?id=${songId}.mp3`,
       lrc: lrcText,
     };
   } catch (error) {
