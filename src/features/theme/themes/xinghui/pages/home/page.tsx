@@ -169,7 +169,7 @@ export function HomePage({
             {/* Moments (说说) — 1 col, text format matching chatter style */}
             <Link
               to="/moments"
-              className="sm:col-span-1 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 md:p-8 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
+              className="sm:col-span-1 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 md:p-8 flex flex-col justify-center h-full transition-all duration-700 hover:scale-[1.02] group"
             >
               <div>
                 <div className="flex items-end gap-2 mb-2">
