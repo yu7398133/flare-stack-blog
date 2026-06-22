@@ -80,68 +80,57 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
         </div>
       </div>
 
-      {/* Masonry waterfall layout */}
+      {/* Waterfall layout with timeline-style cards */}
       {filteredPosts.length > 0 ? (
         <div className="columns-2 lg:columns-3 gap-3 md:gap-6 space-y-3 md:space-y-6">
-          {filteredPosts.map((post) => {
-            const cover = getPostCover(post.slug, post.cover, 400, 250);
-            return (
-              <div key={post.id} className="break-inside-avoid">
+            {filteredPosts.map((post) => {
+              const cover = getPostCover(post.slug, post.cover, 400, 250);
+              return (
+                <div key={post.id} className="break-inside-avoid">
                 <Link
                   to="/post/$slug"
                   params={{ slug: post.slug }}
-                  className="block rounded-2xl md:rounded-[32px] bg-white/40 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/50 dark:border-white/5 shadow-md md:shadow-xl hover:shadow-2xl transition-all duration-500 group relative overflow-hidden"
+                  className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-transform duration-300"
                 >
-                  {/* Cover image */}
-                  <div className="w-full h-28 md:h-52 overflow-hidden relative">
+                  <div className="relative h-28 sm:h-36 overflow-hidden">
                     <img
                       src={cover}
                       alt=""
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <span className="absolute bottom-2 left-2 text-white/90 text-[10px] font-mono font-bold bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded">
+                      {post.publishedAt
+                        ? new Date(post.publishedAt).toLocaleDateString("zh-CN")
+                        : ""}
+                    </span>
                   </div>
-
-                  {/* Content */}
-                  <div className="p-3 md:p-7">
-                    <div className="flex items-center justify-between mb-2 md:mb-4">
-                      {post.publishedAt && (
-                        <div className="text-[8px] md:text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider md:tracking-[0.2em] bg-indigo-500/5 dark:bg-indigo-400/10 px-1.5 py-0.5 md:px-3 md:py-1 rounded-md md:rounded-lg border border-indigo-500/10">
-                          {new Date(post.publishedAt).toLocaleDateString("zh-CN")}
-                        </div>
-                      )}
-                    </div>
-
-                    <h3 className="text-sm md:text-xl font-bold text-slate-800 dark:text-white mb-1.5 md:mb-4 leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 md:line-clamp-none">
+                  <div className="p-3 md:p-4 flex-1 flex flex-col">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mb-1 md:mb-2 line-clamp-2 group-hover:text-indigo-500 transition-colors">
                       {post.title}
                     </h3>
-
                     {post.summary && (
-                      <div className="text-[10px] md:text-sm text-slate-600 dark:text-slate-300 leading-snug md:leading-relaxed line-clamp-4 md:line-clamp-5 opacity-90 font-medium italic">
+                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-2 flex-1">
                         {post.summary}
-                      </div>
+                      </p>
                     )}
-
-                    {/* Tags */}
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="mt-3 md:mt-6 flex flex-wrap gap-1 md:gap-2">
-                        {post.tags.slice(0, 4).map((tag) => (
-                          <span
-                            key={tag.id}
-                            className="text-[8px] md:text-[9px] font-black text-slate-500 dark:text-slate-400 bg-slate-500/5 dark:bg-white/5 px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-md border border-slate-500/10 dark:border-white/5 transition-all group-hover:bg-indigo-500/10 group-hover:text-indigo-500"
-                          >
-                            #{tag.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {post.tags?.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag.id}
+                          className="text-[8px] md:text-[10px] font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 px-1.5 py-0.5 rounded"
+                        >
+                          #{tag.name}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </Link>
-              </div>
-            );
-          })}
+                </div>
+              );
+            })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-16">
