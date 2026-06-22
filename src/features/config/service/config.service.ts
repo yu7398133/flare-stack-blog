@@ -145,6 +145,9 @@ export function resolveSiteConfig(
         musicPlaylistIds:
           config?.site?.theme?.xinghui?.musicPlaylistIds ??
           blogConfig.theme.xinghui.musicPlaylistIds,
+        musicResolverUrl:
+          config?.site?.theme?.xinghui?.musicResolverUrl ??
+          "",
         buildDate:
           config?.site?.theme?.xinghui?.buildDate ??
           blogConfig.theme.xinghui.buildDate,
