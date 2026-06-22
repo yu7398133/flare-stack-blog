@@ -83,7 +83,7 @@ export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6
             Photo Wall
           </span>
         </div>
-        <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 underline decoration-pink-400 drop-shadow-md">
+        <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 drop-shadow-md">
           {photo.title || "照片墙"}
         </h3>
         {photo.description && (
