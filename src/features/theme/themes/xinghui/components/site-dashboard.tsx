@@ -7,6 +7,13 @@ interface SiteDashboardProps {
   projectsCount: number;
 }
 
+const TECH_BADGES = [
+  { name: "TanStack", color: "text-orange-500", svg: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>' },
+  { name: "Hono", color: "text-orange-400", svg: '<circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>' },
+  { name: "Cloudflare", color: "text-amber-500", svg: '<path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>' },
+  { name: "D1", color: "text-blue-500", svg: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>' },
+];
+
 export function SiteDashboard({
   momentsCount,
   photosCount,
@@ -56,8 +63,8 @@ export function SiteDashboard({
         <div className="absolute left-0 right-0 top-1/2 h-px bg-black/50" />
       </div>
 
-      {/* Middle: Status info */}
-      <div className="flex-1 px-4 py-3 md:py-0 flex flex-wrap items-center justify-between gap-3 text-xs font-bold text-slate-600 dark:text-slate-300">
+      {/* Middle & Right: Status info */}
+      <div className="flex-1 px-6 py-3 md:py-0 flex flex-wrap items-center justify-between gap-4 text-xs md:text-sm font-bold text-slate-600 dark:text-slate-300">
         {/* Running time */}
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -79,6 +86,26 @@ export function SiteDashboard({
                 {s.label}
               </span>
             </div>
+          ))}
+        </div>
+
+        {/* Tech stack badges */}
+        <div className="hidden md:flex gap-2">
+          {TECH_BADGES.map((badge) => (
+            <span
+              key={badge.name}
+              className="px-2 py-1 bg-white/50 dark:bg-slate-700/50 rounded-md shadow-sm flex items-center gap-1 border border-white/40 dark:border-slate-600 text-[10px]"
+            >
+              <svg
+                className={`w-3.5 h-3.5 ${badge.color}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                dangerouslySetInnerHTML={{ __html: badge.svg }}
+              />
+              {badge.name}
+            </span>
           ))}
         </div>
       </div>
