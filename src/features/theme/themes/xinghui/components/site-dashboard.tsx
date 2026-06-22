@@ -89,18 +89,16 @@ export function SiteDashboard({
           ))}
         </div>
 
-        {/* Tech stack badges */}
-        <div className="hidden md:flex gap-2">
+        {/* Tech stack badges — matching reference site size */}
+        <div className="hidden md:flex gap-1.5">
           {TECH_BADGES.map((badge) => (
             <span
               key={badge.name}
-              className="px-2 py-1 bg-white/50 dark:bg-slate-700/50 rounded-md shadow-sm flex items-center gap-1 border border-white/40 dark:border-slate-600 text-[10px]"
+              className="px-2.5 py-1.5 bg-white/50 dark:bg-slate-700/50 rounded-lg shadow-sm flex items-center gap-1.5 border border-white/40 dark:border-slate-600 text-[11px] font-bold"
             >
               <svg
-                className={`w-3.5 h-3.5 ${badge.color}`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+                className={`w-4 h-4 ${badge.color}`}
+                fill="currentColor"
                 viewBox="0 0 24 24"
                 dangerouslySetInnerHTML={{ __html: badge.svg }}
               />
