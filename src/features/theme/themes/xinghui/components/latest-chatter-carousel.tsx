@@ -1,10 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 import { getPostCover } from "../utils/post-cover";
 
 interface LatestChatterCarouselProps {
   posts: PostItem[];
+  interval?: number;
+  initialDelay?: number;
 }
 
 function formatDate(date: Date | string) {
@@ -15,15 +17,17 @@ function formatDate(date: Date | string) {
   return `${y}.${m}.${day}`;
 }
 
-export function LatestChatterCarousel({ posts }: LatestChatterCarouselProps) {
+export function LatestChatterCarousel({ posts, interval = 9000, initialDelay = 9000 }: LatestChatterCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
+  const indexRef = useRef(0);
 
   const goTo = useCallback(
     (idx: number) => {
       setFade(false);
       setTimeout(() => {
         setCurrentIndex(idx);
+        indexRef.current = idx;
         setFade(true);
       }, 300);
     },
@@ -32,11 +36,15 @@ export function LatestChatterCarousel({ posts }: LatestChatterCarouselProps) {
 
   useEffect(() => {
     if (posts.length <= 1) return;
-    const timer = setInterval(() => {
-      goTo((currentIndex + 1) % posts.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [currentIndex, posts.length, goTo]);
+    const startTimer = setTimeout(() => {
+      const timer = setInterval(() => {
+        const next = (indexRef.current + 1) % posts.length;
+        goTo(next);
+      }, interval);
+      return () => clearInterval(timer);
+    }, initialDelay);
+    return () => clearTimeout(startTimer);
+  }, [posts.length, goTo, interval, initialDelay]);
 
   if (posts.length === 0) {
     return (

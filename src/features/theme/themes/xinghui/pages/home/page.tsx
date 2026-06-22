@@ -8,6 +8,7 @@ import { CloudPlayer } from "../../components/cloud-player";
 import { LyricBar } from "../../components/lyric-bar";
 import { LatestPostsCarousel } from "../../components/latest-posts-carousel";
 import { LatestChatterCarousel } from "../../components/latest-chatter-carousel";
+import { LatestPhotosCarousel } from "../../components/latest-photos-carousel";
 import { SiteDashboard } from "../../components/site-dashboard";
 
 export function HomePage({
@@ -140,45 +141,18 @@ export function HomePage({
       {/* Row 2: Posts Carousel (4 cols) + Right panel (8 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-4 xh-animate-in xh-delay-3 min-h-[280px]">
-          <LatestPostsCarousel posts={topPosts} />
+          <LatestPostsCarousel posts={topPosts} interval={9000} initialDelay={3000} />
         </div>
 
         <div className="lg:col-span-8 flex flex-col gap-6">
-          {/* Photo wall banner */}
-          <Link
-            to="/photowall"
-            className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-700 hover:scale-[1.02] relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0"
-          >
-            {latestPhoto || userAvatar ? (
-              <>
-                <img
-                  src={userAvatar || latestPhoto?.imageUrl}
-                  alt={latestPhoto?.title || ""}
-                  className="w-full h-full absolute inset-0 object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/30 dark:bg-black/50 group-hover:bg-black/10 transition-colors duration-500" />
-                <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 right-6">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2 underline decoration-pink-400">
-                    {latestPhoto?.title || "照片墙"}
-                  </h3>
-                  <p className="text-white/90 text-sm sm:text-lg line-clamp-1">
-                    {latestPhoto?.description || "点击查看照片墙"}
-                  </p>
-                </div>
-              </>
-            ) : (
-              <div className="w-full h-full min-h-[200px] flex items-center justify-center">
-                <span className="text-4xl">📸</span>
-              </div>
-            )}
-          </Link>
+          {/* Photo wall carousel — latest 5 photos */}
+          <LatestPhotosCarousel photos={photosList.slice(0, 5)} interval={9000} initialDelay={6000} />
 
           {/* Talk (杂谈) + Moments (说说) side by side — 2:1 ratio matching reference */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Talk (杂谈) carousel — 2 cols, cover image background */}
             <div className="sm:col-span-2 min-h-[220px]">
-              <LatestChatterCarousel posts={talkPosts ?? []} />
+              <LatestChatterCarousel posts={talkPosts ?? []} interval={9000} initialDelay={9000} />
             </div>
 
             {/* Moments (说说) — 1 col, text format matching chatter style */}
