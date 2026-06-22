@@ -24,13 +24,14 @@ function MusicAdminPage() {
   const { settings, isLoading: configLoading, saveSettings } = useSystemSetting();
   const [newId, setNewId] = useState("");
   const [newAudioUrl, setNewAudioUrl] = useState("");
+  const [newVip, setNewVip] = useState(false);
   const [newPlaylistId, setNewPlaylistId] = useState("");
   const [saving, setSaving] = useState(false);
   const [resolverUrl, setResolverUrl] = useState("");
   const [resolverSaving, setResolverSaving] = useState(false);
 
-  // musicIds can contain string | { id, audioUrl? }
-  const rawMusicIds: Array<string | { id: string; audioUrl?: string }> =
+  // musicIds can contain string | { id, audioUrl?, vip? }
+  const rawMusicIds: Array<string | { id: string; audioUrl?: string; vip?: boolean }> =
     settings?.site?.theme?.xinghui?.musicIds ?? [];
 
   // Normalize to string IDs for API calls and duplicate checks
@@ -45,6 +46,15 @@ function MusicAdminPage() {
         typeof item !== "string" && !!item.audioUrl,
       )
       .map((item) => [item.id, item.audioUrl!]),
+  );
+
+  // Build a lookup map for vip status
+  const vipMap: Record<string, boolean> = Object.fromEntries(
+    rawMusicIds
+      .filter((item): item is { id: string; vip?: boolean } =>
+        typeof item !== "string" && !!item.vip,
+      )
+      .map((item) => [item.id, true]),
   );
   const musicPlaylistIds: string[] =
     settings?.site?.theme?.xinghui?.musicPlaylistIds ?? [];
@@ -111,10 +121,11 @@ function MusicAdminPage() {
     if (!id) return toast.error("请输入歌曲ID");
     if (musicIds.includes(id)) return toast.error("该歌曲已存在");
     const audioUrl = newAudioUrl.trim();
-    const entry = audioUrl ? { id, audioUrl } : id;
+    const entry = audioUrl ? { id, audioUrl } : newVip ? { id, vip: true } : id;
     saveThemeConfig({ musicIds: [...rawMusicIds, entry] });
     setNewId("");
     setNewAudioUrl("");
+    setNewVip(false);
   };
 
   const handleRemove = (id: string) => {
@@ -137,6 +148,19 @@ function MusicAdminPage() {
     if (idx >= rawMusicIds.length - 1) return;
     const arr = [...rawMusicIds];
     [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
+    saveThemeConfig({ musicIds: arr });
+  };
+
+  const handleToggleVip = (id: string) => {
+    const arr = rawMusicIds.map((item) => {
+      if (typeof item === "string") {
+        return item === id ? { id, vip: true } : item;
+      }
+      if (item.id === id) {
+        return { ...item, vip: !item.vip };
+      }
+      return item;
+    });
     saveThemeConfig({ musicIds: arr });
   };
 
@@ -273,6 +297,15 @@ function MusicAdminPage() {
             className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
+          <label className="flex items-center gap-2 px-3 border border-border/30 cursor-pointer hover:border-foreground/30 transition-colors">
+            <input
+              type="checkbox"
+              checked={newVip}
+              onChange={(e) => setNewVip(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <span className="text-xs font-mono">VIP</span>
+          </label>
           <button
             onClick={handleAdd}
             disabled={configLoading || saving}
@@ -282,7 +315,7 @@ function MusicAdminPage() {
           </button>
         </div>
         <p className="text-[11px] text-muted-foreground">
-          自定义音频源：填写 MP3 直链地址，VIP 歌曲可上传到 R2 或其他存储后填入链接
+          勾选 VIP：该歌曲将通过解析 API 获取真实播放链接，无需自定义音频源
         </p>
       </div>
 
@@ -306,6 +339,7 @@ function MusicAdminPage() {
             {songs.map((song) => {
               const isDirectSong = musicIds.includes(song.id);
               const hasCustomAudio = !!audioUrlMap[song.id];
+              const isVip = !!vipMap[song.id];
               return (
                 <div
                   key={song.id}
@@ -333,6 +367,11 @@ function MusicAdminPage() {
                             自定义源
                           </span>
                         )}
+                        {isVip && !hasCustomAudio && (
+                          <span className="ml-2 text-[10px] font-mono text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                            VIP
+                          </span>
+                        )}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {song.artist}
@@ -340,6 +379,17 @@ function MusicAdminPage() {
                     </div>
                     {isDirectSong && (
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleToggleVip(song.id)}
+                          disabled={saving}
+                          className={`text-xs font-mono px-2 py-1 disabled:opacity-30 transition-colors ${
+                            isVip
+                              ? "text-amber-500 hover:text-amber-600 bg-amber-500/10"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {isVip ? "VIP ✓" : "VIP"}
+                        </button>
                         <button
                           onClick={() => {
                             const idx = rawMusicIds.findIndex((item) =>

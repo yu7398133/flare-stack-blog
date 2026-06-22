@@ -6,13 +6,38 @@ const NETEASE_HEADERS = {
   Referer: "https://music.163.com/",
 };
 
+async function fetchAudioUrl(
+  url: string,
+  headers: Record<string, string>,
+  maxRedirects = 5,
+): Promise<Response> {
+  let currentUrl = url;
+  for (let i = 0; i <= maxRedirects; i++) {
+    const res = await fetch(currentUrl, {
+      headers,
+      redirect: "manual",
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (res.status === 301 || res.status === 302 || res.status === 303 || res.status === 307 || res.status === 308) {
+      const location = res.headers.get("location");
+      if (!location) break;
+      currentUrl = location.startsWith("http") ? location : new URL(location, currentUrl).href;
+      continue;
+    }
+
+    return res;
+  }
+
+  return new Response(null, { status: 502, statusText: "Too many redirects" });
+}
+
 const musicProxyRoute = new Hono<{ Bindings: Env }>().get("/:id", async (c) => {
   const songId = c.req.param("id");
   if (!songId) {
     return c.text("Missing song ID", 400);
   }
 
-  // Support proxying a custom URL (from resolver API)
   const customUrl = c.req.query("url");
   const url = customUrl
     ? decodeURIComponent(customUrl)
@@ -27,22 +52,22 @@ const musicProxyRoute = new Hono<{ Bindings: Env }>().get("/:id", async (c) => {
       fetchHeaders["Range"] = rangeHeader;
     }
 
-    const res = await fetch(url, {
-      headers: fetchHeaders,
-      redirect: "follow",
-      signal: AbortSignal.timeout(15000),
-    });
+    const res = await fetchAudioUrl(url, fetchHeaders);
 
     if (!res.ok && res.status !== 206) {
       return c.text("Failed to fetch audio", 502);
     }
 
-    const contentType = res.headers.get("content-type") || "audio/mpeg";
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("text/html")) {
+      return c.text("Failed to fetch audio", 502);
+    }
+
     const contentLength = res.headers.get("content-length");
     const contentRange = res.headers.get("content-range");
 
     const headers: Record<string, string> = {
-      "Content-Type": contentType,
+      "Content-Type": contentType || "audio/mpeg",
       "Access-Control-Allow-Origin": "*",
       "Accept-Ranges": "bytes",
       "Cache-Control": "public, max-age=86400",

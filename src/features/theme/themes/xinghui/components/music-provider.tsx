@@ -86,10 +86,11 @@ interface MusicProviderProps {
   musicIds: string[];
   musicPlaylistIds?: string[];
   audioUrlMap?: Record<string, string>;
+  vipMap?: Record<string, boolean>;
   resolverUrl?: string;
 }
 
-export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMap, resolverUrl }: MusicProviderProps) {
+export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMap, vipMap, resolverUrl }: MusicProviderProps) {
   const [playlist, setPlaylist] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -121,6 +122,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
         const rawResults = await res.json();
 
         // Step 2: If resolver is configured, resolve audio URLs in parallel
+        // For VIP songs, always use resolver (skip outer URL)
         let resolvedUrls: Record<string, string> = {};
         if (resolverUrl) {
           const allSongs = (rawResults as Array<Record<string, unknown>>).filter(
@@ -130,8 +132,9 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
             allSongs.map(async (song) => {
               const songId = String(song.id || "");
               if (!songId) return null;
-              // Skip if already has a custom audioUrl
               if (audioUrlMap?.[songId]) return null;
+              const isVip = vipMap?.[songId] === true;
+              if (!isVip) return null;
               const r = await fetch(`${resolverUrl}/song/${songId}`);
               if (!r.ok) return null;
               const data = (await r.json()) as Record<string, string>;
@@ -198,7 +201,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
     return () => {
       isMounted = false;
     };
-  }, [musicIds, musicPlaylistIds, audioUrlMap, resolverUrl]);
+  }, [musicIds, musicPlaylistIds, audioUrlMap, vipMap, resolverUrl]);
 
   // Update lyrics when song changes
   useEffect(() => {

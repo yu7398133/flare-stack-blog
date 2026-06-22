@@ -280,7 +280,7 @@ function createXinghuiThemeSiteConfigSchema() {
       .array(
         z.union([
           z.string(),
-          z.object({ id: z.string(), audioUrl: z.string().optional() }),
+          z.object({ id: z.string(), audioUrl: z.string().optional(), vip: z.boolean().optional() }),
         ]),
       )
       .optional(),
@@ -305,7 +305,7 @@ function createXinghuiThemeSiteConfigInputSchema() {
       .array(
         z.union([
           z.string(),
-          z.object({ id: z.string(), audioUrl: z.string().optional() }),
+          z.object({ id: z.string(), audioUrl: z.string().optional(), vip: z.boolean().optional() }),
         ]),
       )
       .optional(),
@@ -330,7 +330,7 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
       .array(
         z.union([
           z.string(),
-          z.object({ id: z.string(), audioUrl: z.string().optional() }),
+          z.object({ id: z.string(), audioUrl: z.string().optional(), vip: z.boolean().optional() }),
         ]),
       )
       .optional(),

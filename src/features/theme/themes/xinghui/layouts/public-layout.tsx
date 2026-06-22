@@ -24,7 +24,7 @@ export function PublicLayout({
   const musicPlaylistIds = siteConfig.theme.xinghui?.musicPlaylistIds ?? [];
   const musicResolverUrl = siteConfig.theme.xinghui?.musicResolverUrl || "";
 
-  // Normalize musicIds: extract string IDs and build audioUrl map
+  // Normalize musicIds: extract string IDs and build audioUrl/vip maps
   const musicIds = rawMusicIds.map((item) =>
     typeof item === "string" ? item : item.id,
   );
@@ -35,6 +35,14 @@ export function PublicLayout({
           typeof item !== "string" && !!item.audioUrl,
       )
       .map((item) => [item.id, item.audioUrl!]),
+  );
+  const vipMap = Object.fromEntries(
+    rawMusicIds
+      .filter(
+        (item): item is { id: string; vip?: boolean } =>
+          typeof item !== "string" && !!item.vip,
+      )
+      .map((item) => [item.id, true]),
   );
   const homeBgBase = siteConfig.theme.xinghui?.homeBg;
 
@@ -51,7 +59,7 @@ export function PublicLayout({
   }, [homeBgBase]);
 
   return (
-    <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds} audioUrlMap={audioUrlMap} resolverUrl={musicResolverUrl}>
+    <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds} audioUrlMap={audioUrlMap} vipMap={vipMap} resolverUrl={musicResolverUrl}>
       <div className="xh-page-bg min-h-screen relative">
         <DanmakuBackground />
 
