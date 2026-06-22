@@ -163,13 +163,13 @@ function NavLinkItem({ to, label }: { to: string; label: string }) {
       to={to}
       className={`relative py-1.5 text-[15px] font-bold transition-colors ${
         isActive
-          ? "text-blue-500 dark:text-blue-400"
-          : "text-slate-700 dark:text-slate-200 hover:text-blue-500 dark:hover:text-blue-400"
+          ? "text-indigo-500 dark:text-indigo-400"
+          : "text-slate-700 dark:text-slate-200 hover:text-indigo-500 dark:hover:text-indigo-400"
       }`}
     >
       {label}
       {isActive && (
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full animate-pulse" />
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full animate-pulse" />
       )}
     </Link>
   );

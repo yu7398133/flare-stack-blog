@@ -172,12 +172,12 @@ export function HomePage({
             )}
           </Link>
 
-          {/* Talk (杂谈) + Moments (说说) side by side */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Talk (杂谈) preview */}
+          {/* Talk (杂谈) + Moments (说说) side by side — 2:1 ratio matching reference */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Talk (杂谈) preview — 2 cols */}
             <Link
               to="/talk"
-              className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
+              className="sm:col-span-2 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
             >
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 uppercase tracking-widest">
@@ -211,10 +211,10 @@ export function HomePage({
               )}
             </Link>
 
-            {/* Moments (说说) preview */}
+            {/* Moments (说说) preview — 1 col */}
             <Link
               to="/moments"
-              className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
+              className="sm:col-span-1 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 flex flex-col justify-between transition-all duration-700 hover:scale-[1.02] group"
             >
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[10px] font-mono text-pink-500 dark:text-pink-400 uppercase tracking-widest">
