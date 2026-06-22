@@ -166,10 +166,10 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                   "",
                 src:
                   audioUrlMap?.[songId] ?
-                    `/api/music/proxy/${songId}?url=${encodeURIComponent(audioUrlMap[songId])}` :
+                    audioUrlMap[songId] :
                   resolvedUrls[songId] ?
-                    `/api/music/proxy/${songId}?url=${encodeURIComponent(resolvedUrls[songId])}` :
-                  `/api/music/proxy/${songId}`,
+                    resolvedUrls[songId] :
+                  (song.url as string) || `https://music.163.com/song/media/outer/url?id=${songId}.mp3`,
                 lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
               };
             },
@@ -367,7 +367,6 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
           ref={audioRef}
           src={currentSong.src}
           preload="auto"
-          crossOrigin="anonymous"
         />
       )}
     </MusicContext.Provider>
