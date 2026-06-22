@@ -84,8 +84,8 @@ function AdminLayout() {
               />
             </Link>
             <div className="h-4 w-px bg-border/40" />
-            <Link
-              to="/"
+            <a
+              href="/"
               className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-mono font-medium text-muted-foreground hover:text-foreground transition-colors group"
             >
               <span>{m.admin_layout_back_to_site()}</span>
@@ -94,7 +94,7 @@ function AdminLayout() {
                 strokeWidth={1.5}
                 className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
               />
-            </Link>
+            </a>
           </div>
         </header>
 
