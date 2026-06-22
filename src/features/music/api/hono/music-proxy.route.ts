@@ -12,7 +12,11 @@ const musicProxyRoute = new Hono<{ Bindings: Env }>().get("/:id", async (c) => {
     return c.text("Missing song ID", 400);
   }
 
-  const url = `https://music.163.com/song/media/outer/url?id=${songId}.mp3`;
+  // Support proxying a custom URL (from resolver API)
+  const customUrl = c.req.query("url");
+  const url = customUrl
+    ? decodeURIComponent(customUrl)
+    : `https://music.163.com/song/media/outer/url?id=${songId}.mp3`;
   const rangeHeader = c.req.header("range");
 
   try {

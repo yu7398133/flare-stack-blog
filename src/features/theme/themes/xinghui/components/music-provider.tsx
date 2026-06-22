@@ -162,8 +162,10 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                   (song.pic as string) ||
                   "",
                 src:
-                  audioUrlMap?.[songId] ||
-                  resolvedUrls[songId] ||
+                  audioUrlMap?.[songId] ?
+                    `/api/music/proxy/${songId}?url=${encodeURIComponent(audioUrlMap[songId])}` :
+                  resolvedUrls[songId] ?
+                    `/api/music/proxy/${songId}?url=${encodeURIComponent(resolvedUrls[songId])}` :
                   `/api/music/proxy/${songId}`,
                 lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
               };
