@@ -65,7 +65,7 @@ export function ProfileCard({
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-white/50 dark:bg-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-white/80 dark:hover:bg-white/20 transition-all border border-white/30 dark:border-white/5"
+              className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-white/50 dark:bg-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-white/80 dark:hover:bg-white/20 transition-all border border-white/30 dark:border-white/5"
               title={link.platform}
             >
               <SocialIcon platform={link.platform} />
