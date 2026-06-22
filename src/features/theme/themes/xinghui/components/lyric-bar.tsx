@@ -37,7 +37,7 @@ export function LyricBar() {
   ];
 
   return (
-    <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl px-5 py-4 flex items-center justify-between h-16 group hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-700">
+    <div className="rounded-3xl bg-white/40 dark:bg-slate-900/80 dark:backdrop-blur-xl dark:border-white/5 shadow-xl px-5 py-4 flex items-center justify-between h-16 group hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-700">
       {/* Audio wave visualization */}
       <div className="flex items-end justify-center gap-1 h-8 w-16">
         {waves.map((wave, index) => (

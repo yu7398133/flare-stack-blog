@@ -1,35 +1,28 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useRouteContext } from "@tanstack/react-router";
 
-interface Particle {
+interface Ripple {
   id: number;
   x: number;
   y: number;
-  size: number;
-  color: string;
-  vx: number;
-  vy: number;
+  radius: number;
+  maxRadius: number;
   life: number;
   maxLife: number;
-  type: "circle" | "heart";
+  color: string;
 }
 
-const COLORS = [
-  "#6366f1",
-  "#8b5cf6",
-  "#a78bfa",
-  "#818cf8",
-  "#c084fc",
-  "#f472b6",
-  "#fb7185",
-  "#e879f9",
+const RIPPLE_COLORS = [
+  "rgba(99, 102, 241, 0.6)",   // indigo
+  "rgba(139, 92, 246, 0.5)",   // violet
+  "rgba(168, 85, 247, 0.4)",   // purple
 ];
 
 export function ClickEffect() {
   const { siteConfig } = useRouteContext({ from: "__root__" });
   const enabled = siteConfig.theme.xinghui?.clickEffect ?? true;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
+  const ripplesRef = useRef<Ripple[]>([]);
   const animRef = useRef<number>(0);
   const counterRef = useRef(0);
 
@@ -43,37 +36,38 @@ export function ClickEffect() {
     canvas.height = window.innerHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    particlesRef.current = particlesRef.current
-      .map((p) => ({
-        ...p,
-        x: p.x + p.vx,
-        y: p.y + p.vy,
-        vy: p.vy + 0.12,
-        life: p.life - 1,
-        size: p.size * 0.98,
+    ripplesRef.current = ripplesRef.current
+      .map((r) => ({
+        ...r,
+        radius: r.radius + (r.maxRadius - r.radius) * 0.08,
+        life: r.life - 1,
       }))
-      .filter((p) => p.life > 0);
+      .filter((r) => r.life > 0);
 
-    for (const p of particlesRef.current) {
-      const alpha = p.life / p.maxLife;
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = p.color;
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur = p.size * 2;
+    for (const r of ripplesRef.current) {
+      const progress = 1 - r.life / r.maxLife;
+      const alpha = 1 - progress;
+      const lineWidth = 2 * (1 - progress * 0.5);
 
-      if (p.type === "heart") {
-        drawHeart(ctx, p.x, p.y, p.size * 0.8);
-      } else {
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+      ctx.strokeStyle = r.color.replace(/[\d.]+\)$/, `${alpha})`);
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+
+      // Inner ring
+      if (r.radius > 10) {
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.arc(r.x, r.y, r.radius * 0.6, 0, Math.PI * 2);
+        ctx.strokeStyle = r.color.replace(/[\d.]+\)$/, `${alpha * 0.5})`);
+        ctx.lineWidth = lineWidth * 0.6;
+        ctx.stroke();
       }
     }
 
     ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
 
-    if (particlesRef.current.length > 0) {
+    if (ripplesRef.current.length > 0) {
       animRef.current = requestAnimationFrame(animate);
     }
   }, []);
@@ -82,27 +76,22 @@ export function ClickEffect() {
     if (!enabled) return;
 
     const handleClick = (e: MouseEvent) => {
-      const count = 12;
-      for (let i = 0; i < count; i++) {
+      // Create 3 concentric ripples
+      for (let i = 0; i < 3; i++) {
         counterRef.current++;
-        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
-        const speed = 2 + Math.random() * 4;
-        const isHeart = Math.random() > 0.6;
-        particlesRef.current.push({
+        ripplesRef.current.push({
           id: counterRef.current,
           x: e.clientX,
           y: e.clientY,
-          size: isHeart ? 8 + Math.random() * 6 : 3 + Math.random() * 5,
-          color: COLORS[Math.floor(Math.random() * COLORS.length)],
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 1,
-          life: 40 + Math.random() * 30,
-          maxLife: 40 + Math.random() * 30,
-          type: isHeart ? "heart" : "circle",
+          radius: 5 + i * 8,
+          maxRadius: 80 + i * 40,
+          life: 50 + i * 15,
+          maxLife: 50 + i * 15,
+          color: RIPPLE_COLORS[i % RIPPLE_COLORS.length],
         });
       }
 
-      if (!animRef.current || particlesRef.current.length <= count) {
+      if (!animRef.current || ripplesRef.current.length <= 3) {
         animRef.current = requestAnimationFrame(animate);
       }
     };
@@ -123,19 +112,4 @@ export function ClickEffect() {
       style={{ width: "100vw", height: "100vh" }}
     />
   );
-}
-
-function drawHeart(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.beginPath();
-  const s = size;
-  ctx.moveTo(0, s * 0.3);
-  ctx.bezierCurveTo(0, -s * 0.3, -s, -s * 0.3, -s, s * 0.1);
-  ctx.bezierCurveTo(-s, s * 0.6, 0, s, 0, s * 1.2);
-  ctx.bezierCurveTo(0, s, s, s * 0.6, s, s * 0.1);
-  ctx.bezierCurveTo(s, -s * 0.3, 0, -s * 0.3, 0, s * 0.3);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
 }
