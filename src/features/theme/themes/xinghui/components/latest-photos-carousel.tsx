@@ -12,6 +12,7 @@ export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const indexRef = useRef(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   const goTo = useCallback(
     (idx: number) => {
@@ -28,13 +29,15 @@ export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6
   useEffect(() => {
     if (photos.length <= 1) return;
     const startTimer = setTimeout(() => {
-      const timer = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         const next = (indexRef.current + 1) % photos.length;
         goTo(next);
       }, interval);
-      return () => clearInterval(timer);
     }, initialDelay);
-    return () => clearTimeout(startTimer);
+    return () => {
+      clearTimeout(startTimer);
+      clearInterval(intervalRef.current);
+    };
   }, [photos.length, goTo, interval, initialDelay]);
 
   if (photos.length === 0) {

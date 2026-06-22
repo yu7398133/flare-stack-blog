@@ -21,6 +21,7 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const indexRef = useRef(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   const goTo = useCallback(
     (idx: number) => {
@@ -34,16 +35,19 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
     [],
   );
 
+  // First slide visible immediately, delay only affects auto-rotation
   useEffect(() => {
     if (posts.length <= 1) return;
     const startTimer = setTimeout(() => {
-      const timer = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         const next = (indexRef.current + 1) % posts.length;
         goTo(next);
       }, interval);
-      return () => clearInterval(timer);
     }, initialDelay);
-    return () => clearTimeout(startTimer);
+    return () => {
+      clearTimeout(startTimer);
+      clearInterval(intervalRef.current);
+    };
   }, [posts.length, goTo, interval, initialDelay]);
 
   if (posts.length === 0) {
@@ -58,7 +62,6 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
 
   return (
     <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden relative group min-h-[420px] h-full flex flex-col">
-      {/* Full-cover background image with fade transition */}
       <div
         className="absolute inset-0 z-0 transition-opacity duration-700"
         style={{ opacity: fade ? 1 : 0 }}
@@ -71,7 +74,6 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
       </div>
 
-      {/* Clickable link */}
       <Link
         to="/post/$slug"
         params={{ slug: post.slug }}
@@ -79,7 +81,6 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
         aria-label={`阅读 ${post.title}`}
       />
 
-      {/* Text content at bottom */}
       <div className="relative z-10 flex flex-col justify-end p-6 w-full mt-auto h-full pointer-events-none">
         <div className="flex items-center gap-2 mb-3">
           <span className="px-3 py-1 bg-indigo-500/80 backdrop-blur-lg rounded-full text-[10px] text-white font-black uppercase tracking-widest shadow-lg">
@@ -101,7 +102,6 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
         )}
       </div>
 
-      {/* Dots indicator */}
       {posts.length > 1 && (
         <div className="absolute bottom-4 right-6 z-30 flex gap-2">
           {posts.map((_, i) => (

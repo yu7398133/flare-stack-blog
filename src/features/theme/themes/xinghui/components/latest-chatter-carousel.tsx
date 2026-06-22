@@ -21,6 +21,7 @@ export function LatestChatterCarousel({ posts, interval = 9000, initialDelay = 9
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const indexRef = useRef(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   const goTo = useCallback(
     (idx: number) => {
@@ -37,13 +38,15 @@ export function LatestChatterCarousel({ posts, interval = 9000, initialDelay = 9
   useEffect(() => {
     if (posts.length <= 1) return;
     const startTimer = setTimeout(() => {
-      const timer = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         const next = (indexRef.current + 1) % posts.length;
         goTo(next);
       }, interval);
-      return () => clearInterval(timer);
     }, initialDelay);
-    return () => clearTimeout(startTimer);
+    return () => {
+      clearTimeout(startTimer);
+      clearInterval(intervalRef.current);
+    };
   }, [posts.length, goTo, interval, initialDelay]);
 
   if (posts.length === 0) {
