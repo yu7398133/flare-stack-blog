@@ -20,8 +20,21 @@ export function PublicLayout({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { siteConfig } = useRouteContext({ from: "__root__" });
 
-  const musicIds = siteConfig.theme.xinghui?.musicIds ?? [];
+  const rawMusicIds = siteConfig.theme.xinghui?.musicIds ?? [];
   const musicPlaylistIds = siteConfig.theme.xinghui?.musicPlaylistIds ?? [];
+
+  // Normalize musicIds: extract string IDs and build audioUrl map
+  const musicIds = rawMusicIds.map((item) =>
+    typeof item === "string" ? item : item.id,
+  );
+  const audioUrlMap = Object.fromEntries(
+    rawMusicIds
+      .filter(
+        (item): item is { id: string; audioUrl?: string } =>
+          typeof item !== "string" && !!item.audioUrl,
+      )
+      .map((item) => [item.id, item.audioUrl!]),
+  );
   const homeBgBase = siteConfig.theme.xinghui?.homeBg;
 
   const [bgUrl, setBgUrl] = useState<string | undefined>(() => {
@@ -37,7 +50,7 @@ export function PublicLayout({
   }, [homeBgBase]);
 
   return (
-    <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds}>
+    <MusicProvider musicIds={musicIds} musicPlaylistIds={musicPlaylistIds} audioUrlMap={audioUrlMap}>
       <div className="xh-page-bg min-h-screen relative">
         <DanmakuBackground />
 

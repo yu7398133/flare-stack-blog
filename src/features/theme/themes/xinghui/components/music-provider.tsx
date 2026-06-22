@@ -85,9 +85,10 @@ interface MusicProviderProps {
   children: ReactNode;
   musicIds: string[];
   musicPlaylistIds?: string[];
+  audioUrlMap?: Record<string, string>;
 }
 
-export function MusicProvider({ children, musicIds, musicPlaylistIds }: MusicProviderProps) {
+export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMap }: MusicProviderProps) {
   const [playlist, setPlaylist] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -118,22 +119,27 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds }: MusicPro
         const rawResults = await res.json();
 
         const mergedPlaylist = (rawResults as Array<Record<string, unknown>>)
-          .filter((song) => song && song.url && !song.error)
+          .filter((song) => song && !song.error)
           .map(
-            (song): Song => ({
-              id: (song.id as string) || Math.random().toString(),
-              title: (song.name as string) || "未知歌曲",
-              artist:
-                (song.artist as string) ||
-                (song.author as string) ||
-                "未知歌手",
-              cover:
-                (song.cover as string) ||
-                (song.pic as string) ||
-                "",
-              src: `/api/music/proxy/${song.id}`,
-              lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
-            }),
+            (song): Song => {
+              const songId = (song.id as string) || Math.random().toString();
+              return {
+                id: songId,
+                title: (song.name as string) || "未知歌曲",
+                artist:
+                  (song.artist as string) ||
+                  (song.author as string) ||
+                  "未知歌手",
+                cover:
+                  (song.cover as string) ||
+                  (song.pic as string) ||
+                  "",
+                src:
+                  audioUrlMap?.[songId] ||
+                  `/api/music/proxy/${songId}`,
+                lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
+              };
+            },
           );
 
         if (isMounted) {
@@ -162,7 +168,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds }: MusicPro
     return () => {
       isMounted = false;
     };
-  }, [musicIds, musicPlaylistIds]);
+  }, [musicIds, musicPlaylistIds, audioUrlMap]);
 
   // Update lyrics when song changes
   useEffect(() => {

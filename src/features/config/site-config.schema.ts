@@ -276,7 +276,14 @@ function createXinghuiThemeSiteConfigSchema() {
     avatar: createBackgroundImageRefSchema(),
     userAvatar: createBackgroundImageRefSchema().optional(),
     aboutContent: z.string().optional(),
-    musicIds: z.array(z.string()).optional(),
+    musicIds: z
+      .array(
+        z.union([
+          z.string(),
+          z.object({ id: z.string(), audioUrl: z.string().optional() }),
+        ]),
+      )
+      .optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
     danmakuList: z.array(z.string()).optional(),
@@ -293,7 +300,14 @@ function createXinghuiThemeSiteConfigInputSchema() {
     avatar: createBackgroundImageRefSchema().optional(),
     userAvatar: createBackgroundImageRefSchema().optional(),
     aboutContent: z.string().optional(),
-    musicIds: z.array(z.string()).optional(),
+    musicIds: z
+      .array(
+        z.union([
+          z.string(),
+          z.object({ id: z.string(), audioUrl: z.string().optional() }),
+        ]),
+      )
+      .optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
     danmakuList: z.array(z.string()).optional(),
@@ -310,7 +324,14 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
     avatar: createBackgroundImageRefFormSchema(messages).optional(),
     userAvatar: createBackgroundImageRefFormSchema(messages).optional(),
     aboutContent: z.string().optional(),
-    musicIds: z.array(z.string()).optional(),
+    musicIds: z
+      .array(
+        z.union([
+          z.string(),
+          z.object({ id: z.string(), audioUrl: z.string().optional() }),
+        ]),
+      )
+      .optional(),
     musicPlaylistIds: z.array(z.string()).optional(),
     buildDate: z.string().optional(),
     danmakuList: z.array(z.string()).optional(),
