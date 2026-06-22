@@ -122,7 +122,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
         const rawResults = await res.json();
 
         // Step 2: If resolver is configured, resolve audio URLs in parallel
-        // For VIP songs, always use resolver (skip outer URL)
+        // Auto-detect VIP songs from API fee field (fee=1 means VIP)
         let resolvedUrls: Record<string, string> = {};
         if (resolverUrl) {
           const allSongs = (rawResults as Array<Record<string, unknown>>).filter(
@@ -133,7 +133,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
               const songId = String(song.id || "");
               if (!songId) return null;
               if (audioUrlMap?.[songId]) return null;
-              const isVip = vipMap?.[songId] === true;
+              const isVip = vipMap?.[songId] === true || (song.fee === 1);
               if (!isVip) return null;
               const r = await fetch(`${resolverUrl}/song/${songId}`);
               if (!r.ok) return null;

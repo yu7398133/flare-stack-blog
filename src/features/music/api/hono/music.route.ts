@@ -16,6 +16,7 @@ type SongResult = {
   url?: string;
   lrc?: string;
   error?: string;
+  fee?: number;
 };
 
 /**
@@ -114,6 +115,7 @@ async function fetchSongDetail(songId: string): Promise<SongResult> {
       pic: (album?.picUrl as string) || "",
       url: `https://music.163.com/song/media/outer/url?id=${songId}.mp3`,
       lrc: lrcText,
+      fee: songData.fee as number,
     };
   } catch (error) {
     console.error(`[api/music] Failed to fetch song ${songId}:`, error);

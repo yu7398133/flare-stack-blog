@@ -17,6 +17,7 @@ interface SongInfo {
   name: string;
   artist: string;
   cover: string;
+  fee?: number;
 }
 
 function MusicAdminPage() {
@@ -76,13 +77,14 @@ function MusicAdminPage() {
       const res = await fetch(`/api/music?${params.toString()}`);
       if (!res.ok) return [];
       const data = await res.json();
-      return (data as Array<Record<string, unknown>>)
+        return (data as Array<Record<string, unknown>>)
         .filter((s) => s && !s.error)
         .map((s) => ({
           id: String(s.id),
           name: String(s.name || s.title || "未知"),
           artist: String(s.artist || s.author || "未知"),
           cover: String(s.cover || s.pic || ""),
+          fee: s.fee as number | undefined,
         }));
     },
     enabled: musicIds.length > 0 || musicPlaylistIds.length > 0,
@@ -339,7 +341,7 @@ function MusicAdminPage() {
             {songs.map((song) => {
               const isDirectSong = musicIds.includes(song.id);
               const hasCustomAudio = !!audioUrlMap[song.id];
-              const isVip = !!vipMap[song.id];
+              const isVip = !!vipMap[song.id] || song.fee === 1;
               return (
                 <div
                   key={song.id}
@@ -389,6 +391,9 @@ function MusicAdminPage() {
                           }`}
                         >
                           {isVip ? "VIP ✓" : "VIP"}
+                          {song.fee === 1 && !vipMap[song.id] && (
+                            <span className="ml-1 text-[9px] opacity-60">auto</span>
+                          )}
                         </button>
                         <button
                           onClick={() => {
