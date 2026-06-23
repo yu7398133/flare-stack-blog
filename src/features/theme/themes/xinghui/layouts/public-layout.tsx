@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouteContext } from "@tanstack/react-router";
 import type { PublicLayoutProps } from "@/features/theme/contract/layouts";
 import { MusicProvider } from "../components/music-provider";
@@ -46,11 +46,13 @@ export function PublicLayout({
   );
   const homeBgBase = siteConfig.theme.xinghui?.homeBg;
 
-  const [bgUrl, setBgUrl] = useState<string | undefined>(() => {
-    if (!homeBgBase) return undefined;
+  const [bgUrl, setBgUrl] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!homeBgBase) return;
     const sep = homeBgBase.includes("?") ? "&" : "?";
-    return `${homeBgBase}${sep}_t=${Date.now()}`;
-  });
+    setBgUrl(`${homeBgBase}${sep}_t=${Date.now()}`);
+  }, [homeBgBase]);
 
   const refreshBg = useCallback(() => {
     if (!homeBgBase) return;
