@@ -18,7 +18,19 @@ export const Route = createFileRoute("/_public")({
   component: PublicLayout,
   errorComponent: ({ error }) => <ErrorPage error={error} />,
   headers: () => {
-    return CACHE_CONTROL.public;
+    return {
+      ...CACHE_CONTROL.public,
+      "Content-Security-Policy": [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "img-src 'self' data: blob: https: http:",
+        "font-src 'self' https://fonts.gstatic.com",
+        "connect-src 'self' https: wss:",
+        "media-src 'self' https: http:",
+        "frame-src 'none'",
+      ].join("; "),
+    };
   },
   head: ({ loaderData }) => ({
     links: (loaderData?.preloadImages ?? []).map((href) => ({
