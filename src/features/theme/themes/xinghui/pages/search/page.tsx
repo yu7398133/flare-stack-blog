@@ -31,6 +31,8 @@ export function SearchPage({
           <input
             ref={inputRef}
             type="text"
+            id="search-input"
+            name="q"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="搜索文章..."

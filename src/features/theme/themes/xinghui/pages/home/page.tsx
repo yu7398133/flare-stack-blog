@@ -88,6 +88,8 @@ export function HomePage({
           />
           <input
             type="text"
+            id="home-search"
+            name="q"
             placeholder="搜寻被封存的知识..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

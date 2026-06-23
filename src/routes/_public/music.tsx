@@ -92,20 +92,20 @@ function MusicPage() {
   const getPlayModeIcon = () => {
     switch (playMode) {
       case "loop":
-        return "🔁";
+        return <Repeat size={18} className="text-slate-500 hover:text-indigo-500 md:w-5 md:h-5" />;
       case "single":
-        return "🔂";
+        return <RefreshCcw size={18} className="text-indigo-500 md:w-5 md:h-5" />;
       case "random":
-        return "🔀";
+        return <Shuffle size={18} className="text-slate-500 hover:text-indigo-500 md:w-5 md:h-5" />;
       default:
-        return "🔁";
+        return <Repeat size={18} className="text-slate-500 md:w-5 md:h-5" />;
     }
   };
 
   if (isLoading || !currentSong) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-        <div className="text-5xl xh-spin-slow">💿</div>
+        <Disc3 size={48} className="text-indigo-500 animate-spin" />
         <span className="text-sm text-slate-500 dark:text-slate-400 font-mono tracking-widest">
           唤醒音频引擎中...
         </span>
@@ -206,21 +206,25 @@ function MusicPage() {
             <div className="flex items-center gap-3 md:gap-4 lg:gap-6">
               <button
                 onClick={prevSong}
-                className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 text-xl md:text-2xl"
+                className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 transition-transform hover:scale-110"
               >
-                ⏮
+                <SkipBack size={24} className="md:w-7 md:h-7" fill="currentColor" />
               </button>
               <button
                 onClick={togglePlay}
-                className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center bg-indigo-500 text-white rounded-full hover:scale-105 shadow-xl shadow-indigo-500/40 text-xl md:text-2xl"
+                className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center bg-indigo-500 text-white rounded-full hover:scale-105 shadow-xl shadow-indigo-500/40"
               >
-                {isPlaying ? "⏸" : "▶"}
+                {isPlaying ? (
+                  <Pause size={28} className="md:w-8 md:h-8" fill="currentColor" />
+                ) : (
+                  <Play size={28} className="md:w-8 md:h-8 ml-1" fill="currentColor" />
+                )}
               </button>
               <button
                 onClick={nextSong}
-                className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 text-xl md:text-2xl"
+                className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 transition-transform hover:scale-110"
               >
-                ⏭
+                <SkipForward size={24} className="md:w-7 md:h-7" fill="currentColor" />
               </button>
             </div>
             <div
@@ -246,9 +250,13 @@ function MusicPage() {
               <button
                 onClick={() => setShowVolumeSlider(!showVolumeSlider)}
                 onDoubleClick={toggleMute}
-                className="p-2 text-slate-500 hover:text-indigo-500 text-base"
+                className={`p-2 rounded-full transition-all ${showVolumeSlider ? "bg-indigo-500 text-white shadow-lg" : "text-slate-500 hover:text-indigo-500"}`}
               >
-                {isMuted || volume === 0 ? "🔇" : "🔊"}
+                {isMuted || volume === 0 ? (
+                  <VolumeX size={18} className="md:w-5 md:h-5" />
+                ) : (
+                  <Volume2 size={18} className="md:w-5 md:h-5" />
+                )}
               </button>
             </div>
           </div>
@@ -326,7 +334,7 @@ function MusicPage() {
                       )
                     ) : (
                       <div className="flex flex-col items-center gap-3 md:gap-4">
-                        <span className="text-4xl animate-spin">💿</span>
+                        <Disc3 size={32} className="text-indigo-500/40 animate-spin" />
                         <p className="text-base md:text-xl font-black text-indigo-500 animate-pulse">
                           {currentLyric || "正在捕获灵魂旋律..."}
                         </p>
@@ -340,9 +348,7 @@ function MusicPage() {
                 {/* Search */}
                 <div className="relative w-full max-w-md mx-auto group mb-4 md:mb-8 shrink-0">
                   <div className="absolute inset-0 bg-indigo-500/5 blur-xl group-focus-within:bg-indigo-500/10 transition-all rounded-full" />
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-slate-400 group-focus-within:text-indigo-500 transition-colors text-sm md:text-base">
-                    🔍
-                  </span>
+                  <Search className="w-4 h-4 md:w-5 md:h-5 absolute left-4 top-1/2 -translate-y-1/2 z-10 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                   <input
                     type="text"
                     placeholder="搜索音轨..."
@@ -355,7 +361,7 @@ function MusicPage() {
                       onClick={() => setSearchQuery("")}
                       className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-black/10 rounded-full transition-colors"
                     >
-                      <span className="text-slate-500 text-xs">✕</span>
+                      <X size={14} className="text-slate-500" />
                     </button>
                   )}
                 </div>
