@@ -5,16 +5,19 @@ import type {
   SortDirection,
   SortField,
   StatusFilter,
+  TypeFilter,
 } from "@/features/posts/components/post-manager/types";
 import {
   SORT_DIRECTIONS,
   SORT_FIELDS,
   STATUS_FILTERS,
+  TYPE_FILTERS,
 } from "@/features/posts/components/post-manager/types";
 
 const searchSchema = z.object({
   page: z.number().int().positive().optional().default(1).catch(1),
   status: z.enum(STATUS_FILTERS).optional().default("ALL").catch("ALL"),
+  type: z.enum(TYPE_FILTERS).optional().default("ALL").catch("ALL"),
   sortDir: z.enum(SORT_DIRECTIONS).optional().default("DESC").catch("DESC"),
   sortBy: z
     .enum(SORT_FIELDS)
@@ -34,7 +37,7 @@ export const Route = createFileRoute("/admin/posts/")({
 
 function PostManagerPage() {
   const navigate = useNavigate();
-  const { page, status, sortDir, sortBy, search } = Route.useSearch();
+  const { page, status, type, sortDir, sortBy, search } = Route.useSearch();
 
   const updateSearch = (updates: Partial<PostsSearchParams>) => {
     navigate({
@@ -42,6 +45,7 @@ function PostManagerPage() {
       search: {
         page: updates.page ?? 1,
         status: updates.status ?? status,
+        type: updates.type ?? type,
         sortDir: updates.sortDir ?? sortDir,
         sortBy: updates.sortBy ?? sortBy,
         search: updates.search ?? search,
@@ -54,7 +58,11 @@ function PostManagerPage() {
   };
 
   const handleStatusChange = (newStatus: StatusFilter) => {
-    updateSearch({ status: newStatus });
+    updateSearch({ status: newStatus, page: 1 });
+  };
+
+  const handleTypeChange = (newType: TypeFilter) => {
+    updateSearch({ type: newType, page: 1 });
   };
 
   const handleSortUpdate = (update: {
@@ -77,6 +85,7 @@ function PostManagerPage() {
       search: {
         page: 1,
         status: "ALL",
+        type: "ALL",
         sortDir: "DESC",
         sortBy: "updatedAt",
         search: "",
@@ -88,11 +97,13 @@ function PostManagerPage() {
     <PostManager
       page={page}
       status={status}
+      type={type}
       sortDir={sortDir}
       sortBy={sortBy}
       search={search}
       onPageChange={handlePageChange}
       onStatusChange={handleStatusChange}
+      onTypeChange={handleTypeChange}
       onSortUpdate={handleSortUpdate}
       onSearchChange={handleSearchChange}
       onResetFilters={handleResetFilters}

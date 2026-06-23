@@ -19,6 +19,7 @@ import type {
   SortDirection,
   SortField,
   StatusFilter,
+  TypeFilter,
 } from "./types";
 
 // Re-export types for external use
@@ -29,16 +30,20 @@ export {
   type SortField,
   STATUS_FILTERS,
   type StatusFilter,
+  TYPE_FILTERS,
+  type TypeFilter,
 } from "./types";
 
 interface PostManagerProps {
   page: number;
   status: StatusFilter;
+  type: TypeFilter;
   sortDir: SortDirection;
   sortBy: SortField;
   search: string;
   onPageChange: (page: number) => void;
   onStatusChange: (status: StatusFilter) => void;
+  onTypeChange: (type: TypeFilter) => void;
   onSortUpdate: (update: { dir?: SortDirection; sortBy?: SortField }) => void;
   onSearchChange: (search: string) => void;
   onResetFilters: () => void;
@@ -47,11 +52,13 @@ interface PostManagerProps {
 export function PostManager({
   page,
   status,
+  type: postType,
   sortDir,
   sortBy,
   search,
   onPageChange,
   onStatusChange,
+  onTypeChange,
   onSortUpdate,
   onSearchChange,
   onResetFilters,
@@ -82,6 +89,7 @@ export function PostManager({
   const { posts, totalCount, totalPages, isPending, error } = usePosts({
     page,
     status,
+    type: postType,
     sortDir,
     sortBy,
     search: debouncedSearch,
@@ -151,6 +159,8 @@ export function PostManager({
           onSearchChange={setSearchInput}
           status={status}
           onStatusChange={onStatusChange}
+          postType={postType}
+          onTypeChange={onTypeChange}
           sortDir={sortDir}
           sortBy={sortBy}
           onSortUpdate={onSortUpdate}

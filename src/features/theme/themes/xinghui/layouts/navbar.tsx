@@ -111,11 +111,11 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
             {!isLoading && (
               user ? (
                 <Link
-                  to="/profile"
+                  to="/admin"
                   className="w-9 h-9 rounded-xl overflow-hidden border-2 border-white/50 hover:border-indigo-400 transition-colors"
                 >
-                  {(siteConfig.theme.xinghui?.userAvatar || user.image) ? (
-                    <img src={siteConfig.theme.xinghui?.userAvatar || user.image} alt={user.name} className="w-full h-full object-cover" />
+                  {(siteConfig.theme.xinghui?.userAvatar || siteConfig.theme.xinghui?.avatar || user.image) ? (
+                    <img src={siteConfig.theme.xinghui?.userAvatar || siteConfig.theme.xinghui?.avatar || user.image} alt={user.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
                       {user.name?.charAt(0).toUpperCase()}

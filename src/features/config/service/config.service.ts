@@ -105,9 +105,13 @@ export function resolveSiteConfig(
         homeBg:
           config?.site?.theme?.xinghui?.homeBg ?? blogConfig.theme.xinghui.homeBg,
         avatar:
-          config?.site?.theme?.xinghui?.avatar ?? blogConfig.theme.xinghui.avatar,
+          config?.site?.theme?.xinghui?.userAvatar ??
+          config?.site?.theme?.xinghui?.avatar ??
+          blogConfig.theme.xinghui.avatar,
         userAvatar:
-          config?.site?.theme?.xinghui?.userAvatar ?? "",
+          config?.site?.theme?.xinghui?.userAvatar ??
+          config?.site?.theme?.xinghui?.avatar ??
+          "",
         musicIds:
           config?.site?.theme?.xinghui?.musicIds ??
           blogConfig.theme.xinghui.musicIds,

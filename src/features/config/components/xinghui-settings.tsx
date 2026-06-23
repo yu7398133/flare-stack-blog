@@ -25,22 +25,11 @@ export function XinghuiThemeSettings() {
 
       <Field
         label="用户头像 URL"
-        hint="同时用于导航栏头像和首页照片墙横幅"
+        hint="用于导航栏、首页个人卡片、侧边栏等所有头像显示位置"
         error={errors.site?.theme?.xinghui?.userAvatar?.message}
       >
         <Input
           {...register("site.theme.xinghui.userAvatar")}
-          placeholder="https://example.com/avatar.jpg"
-        />
-      </Field>
-
-      <Field
-        label="个人卡片头像 URL"
-        hint="首页个人资料卡片和侧边栏的头像"
-        error={errors.site?.theme?.xinghui?.avatar?.message}
-      >
-        <Input
-          {...register("site.theme.xinghui.avatar")}
           placeholder="https://example.com/avatar.jpg"
         />
       </Field>

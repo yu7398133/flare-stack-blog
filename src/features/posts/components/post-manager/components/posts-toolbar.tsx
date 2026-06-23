@@ -3,14 +3,16 @@ import { Button } from "@/components/ui/button";
 import Dropdown from "@/components/ui/dropdown";
 import { Input } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
-import type { SortDirection, SortField, StatusFilter } from "../types";
-import { STATUS_FILTERS } from "../types";
+import type { SortDirection, SortField, StatusFilter, TypeFilter } from "../types";
+import { STATUS_FILTERS, TYPE_FILTERS } from "../types";
 
 interface PostsToolbarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   status: StatusFilter;
   onStatusChange: (status: StatusFilter) => void;
+  postType: TypeFilter;
+  onTypeChange: (type: TypeFilter) => void;
   sortDir: SortDirection;
   sortBy: SortField;
   onSortUpdate: (update: { dir?: SortDirection; sortBy?: SortField }) => void;
@@ -22,6 +24,8 @@ export function PostsToolbar({
   onSearchChange,
   status,
   onStatusChange,
+  postType,
+  onTypeChange,
   sortDir,
   sortBy,
   onSortUpdate,
@@ -29,6 +33,7 @@ export function PostsToolbar({
 }: PostsToolbarProps) {
   const hasActiveFilters =
     status !== "ALL" ||
+    postType !== "ALL" ||
     sortDir !== "DESC" ||
     sortBy !== "updatedAt" ||
     searchTerm !== "";
@@ -106,7 +111,48 @@ export function PostsToolbar({
           }))}
         />
 
-        {/* 2. Sort Dropdown */}
+        {/* 2. Type Filter */}
+        <Dropdown
+          align="left"
+          trigger={
+            <Button
+              variant="outline"
+              size="sm"
+              className={`
+                    h-10 border-border/30 hover:border-foreground
+                    flex items-center gap-2 text-[11px] font-medium transition-all px-4 rounded-none shadow-none
+                    ${
+                      postType !== "ALL"
+                        ? "bg-foreground text-background border-foreground"
+                        : "bg-transparent text-muted-foreground hover:text-foreground"
+                    }
+                `}
+            >
+              <Filter size={14} strokeWidth={1.5} />
+              <span className="uppercase tracking-widest font-mono">
+                {
+                  {
+                    ALL: "类型",
+                    article: "文章",
+                    talk: "杂谈",
+                  }[postType]
+                }
+              </span>
+            </Button>
+          }
+          items={TYPE_FILTERS.map((t) => ({
+            label: {
+              ALL: "全部",
+              article: "文章",
+              talk: "杂谈",
+            }[t],
+            onClick: () => onTypeChange(t),
+            isActive: postType === t,
+            className: "font-mono",
+          }))}
+        />
+
+        {/* 3. Sort Dropdown */}
         <Dropdown
           align="right"
           trigger={

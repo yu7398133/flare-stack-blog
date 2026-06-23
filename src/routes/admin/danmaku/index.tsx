@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { useSystemSetting } from "@/features/config/hooks/use-system-setting";
+import { Check, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/danmaku/")({
   ssr: false,
@@ -15,113 +16,120 @@ function DanmakuAdminPage() {
   const [newText, setNewText] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Local state for sliders — immediate UI feedback
+  // Local state for all editable fields
+  const [localDanmakuList, setLocalDanmakuList] = useState<string[]>([]);
   const [localFontSize, setLocalFontSize] = useState(14);
   const [localOpacity, setLocalOpacity] = useState(0.2);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [localClickEffect, setLocalClickEffect] = useState(true);
+  const [localFireflyEffect, setLocalFireflyEffect] = useState(true);
+  const hasInitialized = useRef(false);
 
-  // Sync from settings when loaded
+  // Sync from settings on first load
   useEffect(() => {
-    if (settings?.site?.theme?.xinghui?.danmakuFontSize != null) {
-      setLocalFontSize(settings.site.theme.xinghui.danmakuFontSize);
-    }
-    if (settings?.site?.theme?.xinghui?.danmakuOpacity != null) {
-      setLocalOpacity(settings.site.theme.xinghui.danmakuOpacity);
+    if (settings && !hasInitialized.current) {
+      hasInitialized.current = true;
+      const xh = settings.site?.theme?.xinghui;
+      setLocalDanmakuList(xh?.danmakuList ?? []);
+      setLocalFontSize(xh?.danmakuFontSize ?? 14);
+      setLocalOpacity(xh?.danmakuOpacity ?? 0.2);
+      setLocalClickEffect(xh?.clickEffect ?? true);
+      setLocalFireflyEffect(xh?.fireflyEffect ?? true);
     }
   }, [settings]);
 
-  const danmakuList: string[] =
-    settings?.site?.theme?.xinghui?.danmakuList ?? [];
-  const clickEffect: boolean =
-    settings?.site?.theme?.xinghui?.clickEffect ?? true;
-  const fireflyEffect: boolean =
-    settings?.site?.theme?.xinghui?.fireflyEffect ?? true;
+  // Check if local state differs from saved settings
+  const isDirty = (() => {
+    if (!settings) return false;
+    const xh = settings.site?.theme?.xinghui;
+    return (
+      JSON.stringify(localDanmakuList) !== JSON.stringify(xh?.danmakuList ?? []) ||
+      localFontSize !== (xh?.danmakuFontSize ?? 14) ||
+      localOpacity !== (xh?.danmakuOpacity ?? 0.2) ||
+      localClickEffect !== (xh?.clickEffect ?? true) ||
+      localFireflyEffect !== (xh?.fireflyEffect ?? true)
+    );
+  })();
 
-  const saveThemeConfig = useCallback(
-    async (patch: Record<string, unknown>) => {
-      if (!settings) return;
-      setSaving(true);
-      try {
-        await saveSettings({
-          data: {
-            ...settings,
-            site: {
-              ...settings.site,
-              theme: {
-                ...settings.site?.theme,
-                xinghui: {
-                  ...settings.site?.theme?.xinghui,
-                  ...patch,
-                },
+  // Unified save
+  const handleSave = useCallback(async () => {
+    if (!settings || saving) return;
+    setSaving(true);
+    try {
+      await saveSettings({
+        data: {
+          ...settings,
+          site: {
+            ...settings.site,
+            theme: {
+              ...settings.site?.theme,
+              xinghui: {
+                ...settings.site?.theme?.xinghui,
+                danmakuList: localDanmakuList,
+                danmakuFontSize: localFontSize,
+                danmakuOpacity: localOpacity,
+                clickEffect: localClickEffect,
+                fireflyEffect: localFireflyEffect,
               },
             },
           },
-        });
-      } catch (err) {
-        console.error("[admin/danmaku] save failed:", err);
-        toast.error("保存失败，请重试");
-      } finally {
-        setSaving(false);
-      }
-    },
-    [settings, saveSettings],
-  );
+        },
+      });
+      toast.success("已保存");
+    } catch (err) {
+      console.error("[admin/danmaku] save failed:", err);
+      toast.error("保存失败，请重试");
+    } finally {
+      setSaving(false);
+    }
+  }, [settings, saving, saveSettings, localDanmakuList, localFontSize, localOpacity, localClickEffect, localFireflyEffect]);
 
-  // Debounced save for sliders
-  const debouncedSave = useCallback(
-    (patch: Record<string, unknown>) => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
-        saveThemeConfig(patch);
-      }, 500);
-    },
-    [saveThemeConfig],
-  );
-
-  const handleFontSizeChange = (value: number) => {
-    setLocalFontSize(value);
-    debouncedSave({ danmakuFontSize: value });
-  };
-
-  const handleOpacityChange = (value: number) => {
-    setLocalOpacity(value);
-    debouncedSave({ danmakuOpacity: value });
-  };
+  // --- Local-only operations ---
 
   const handleAdd = () => {
     const text = newText.trim();
     if (!text) return toast.error("请输入弹幕文案");
-    if (danmakuList.includes(text)) return toast.error("该文案已存在");
-    saveThemeConfig({ danmakuList: [...danmakuList, text] });
+    if (localDanmakuList.includes(text)) return toast.error("该文案已存在");
+    setLocalDanmakuList((prev) => [...prev, text]);
     setNewText("");
-    toast.success("已添加");
   };
 
   const handleRemove = (idx: number) => {
     if (!confirm("确定删除这条弹幕？")) return;
-    const newList = danmakuList.filter((_, i) => i !== idx);
-    saveThemeConfig({ danmakuList: newList });
-    toast.success("已删除");
+    setLocalDanmakuList((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleEdit = (idx: number, value: string) => {
-    const newList = [...danmakuList];
-    newList[idx] = value;
-    saveThemeConfig({ danmakuList: newList });
+    setLocalDanmakuList((prev) => {
+      const newList = [...prev];
+      newList[idx] = value;
+      return newList;
+    });
   };
 
   return (
     <div className="space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      {/* Header */}
+      {/* Header with save button */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-border/30 pb-6">
         <div className="space-y-1">
           <h1 className="text-3xl font-serif font-medium tracking-tight">
             弹幕管理
           </h1>
           <p className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Danmaku · {danmakuList.length} 条弹幕
+            Danmaku · {localDanmakuList.length} 条弹幕
           </p>
         </div>
+        <button
+          onClick={handleSave}
+          disabled={saving || !isDirty || configLoading}
+          className="hidden sm:flex h-11 px-8 items-center gap-2 bg-foreground text-background hover:bg-foreground/90 transition-all font-mono text-[11px] uppercase tracking-[0.2em] font-medium disabled:opacity-50 shadow-lg shadow-foreground/5"
+        >
+          {saving ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <Check size={14} />
+          )}
+          {saving ? "保存中..." : "应用修改"}
+        </button>
       </div>
 
       {/* Appearance settings */}
@@ -142,7 +150,7 @@ function DanmakuAdminPage() {
             max={40}
             step={1}
             value={localFontSize}
-            onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+            onChange={(e) => setLocalFontSize(Number(e.target.value))}
             className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-indigo-500"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground">
@@ -165,7 +173,7 @@ function DanmakuAdminPage() {
             max={100}
             step={5}
             value={Math.round(localOpacity * 100)}
-            onChange={(e) => handleOpacityChange(Number(e.target.value) / 100)}
+            onChange={(e) => setLocalOpacity(Number(e.target.value) / 100)}
             className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-indigo-500"
           />
           <div className="flex justify-between text-[10px] text-muted-foreground">
@@ -173,12 +181,6 @@ function DanmakuAdminPage() {
             <span>100%</span>
           </div>
         </div>
-
-        {saving && (
-          <p className="text-xs text-muted-foreground animate-pulse">
-            保存中...
-          </p>
-        )}
       </div>
 
       {/* Effect toggles */}
@@ -190,15 +192,14 @@ function DanmakuAdminPage() {
             <p className="text-xs text-muted-foreground">点击页面产生粒子动画</p>
           </div>
           <button
-            onClick={() => saveThemeConfig({ clickEffect: !clickEffect })}
-            disabled={saving}
+            onClick={() => setLocalClickEffect((v) => !v)}
             className={`relative w-12 h-6 rounded-full transition-colors ${
-              clickEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
+              localClickEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
             }`}
           >
             <div
               className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                clickEffect ? "translate-x-6" : "translate-x-0.5"
+                localClickEffect ? "translate-x-6" : "translate-x-0.5"
               }`}
             />
           </button>
@@ -209,15 +210,14 @@ function DanmakuAdminPage() {
             <p className="text-xs text-muted-foreground">页面背景萤火虫浮动动画</p>
           </div>
           <button
-            onClick={() => saveThemeConfig({ fireflyEffect: !fireflyEffect })}
-            disabled={saving}
+            onClick={() => setLocalFireflyEffect((v) => !v)}
             className={`relative w-12 h-6 rounded-full transition-colors ${
-              fireflyEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
+              localFireflyEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
             }`}
           >
             <div
               className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                fireflyEffect ? "translate-x-6" : "translate-x-0.5"
+                localFireflyEffect ? "translate-x-6" : "translate-x-0.5"
               }`}
             />
           </button>
@@ -237,7 +237,7 @@ function DanmakuAdminPage() {
           />
           <button
             onClick={handleAdd}
-            disabled={configLoading || saving}
+            disabled={configLoading}
             className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
           >
             添加
@@ -248,19 +248,19 @@ function DanmakuAdminPage() {
       {/* Danmaku list */}
       <div className="border border-border/30 p-6 space-y-4">
         <h3 className="text-sm font-mono font-bold">
-          弹幕列表 · {danmakuList.length} 条
+          弹幕列表 · {localDanmakuList.length} 条
         </h3>
         {configLoading ? (
           <div className="text-center text-muted-foreground text-xs font-mono py-20">
             加载中...
           </div>
-        ) : danmakuList.length === 0 ? (
+        ) : localDanmakuList.length === 0 ? (
           <div className="text-center text-muted-foreground text-xs font-mono py-20">
             暂无弹幕，请添加
           </div>
         ) : (
           <div className="space-y-2">
-            {danmakuList.map((text, idx) => (
+            {localDanmakuList.map((text, idx) => (
               <div
                 key={idx}
                 className="flex items-center gap-3 border border-border/30 p-3 group hover:border-foreground/30 transition-colors"
@@ -275,8 +275,7 @@ function DanmakuAdminPage() {
                 />
                 <button
                   onClick={() => handleRemove(idx)}
-                  disabled={saving}
-                  className="text-xs font-mono text-muted-foreground hover:text-red-500 px-2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30"
+                  className="text-xs font-mono text-muted-foreground hover:text-red-500 px-2 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   删除
                 </button>
@@ -285,6 +284,23 @@ function DanmakuAdminPage() {
           </div>
         )}
       </div>
+
+      {/* Floating save button for mobile */}
+      {isDirty && (
+        <div className="fixed bottom-8 right-6 z-50 sm:hidden animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="h-14 w-14 rounded-full bg-foreground text-background hover:bg-foreground/90 transition-all shadow-2xl flex items-center justify-center p-0"
+          >
+            {saving ? (
+              <Loader2 size={24} className="animate-spin" />
+            ) : (
+              <Check size={24} />
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

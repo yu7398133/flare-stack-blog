@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { useSystemSetting } from "@/features/config/hooks/use-system-setting";
-import { CONFIG_KEYS } from "@/features/config/queries";
+import { Check, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/music/")({
   ssr: false,
@@ -20,64 +20,77 @@ interface SongInfo {
   fee?: number;
 }
 
+type MusicIdEntry = string | { id: string; audioUrl?: string; vip?: boolean };
+
 function MusicAdminPage() {
-  const queryClient = useQueryClient();
   const { settings, isLoading: configLoading, saveSettings } = useSystemSetting();
   const [newId, setNewId] = useState("");
   const [newAudioUrl, setNewAudioUrl] = useState("");
   const [newVip, setNewVip] = useState(false);
   const [newPlaylistId, setNewPlaylistId] = useState("");
   const [saving, setSaving] = useState(false);
-  const [resolverUrl, setResolverUrl] = useState("");
-  const [resolverSaving, setResolverSaving] = useState(false);
 
-  // musicIds can contain string | { id, audioUrl?, vip? }
-  const rawMusicIds: Array<string | { id: string; audioUrl?: string; vip?: boolean }> =
-    settings?.site?.theme?.xinghui?.musicIds ?? [];
+  // Local state for all editable fields
+  const [localMusicIds, setLocalMusicIds] = useState<MusicIdEntry[]>([]);
+  const [localPlaylistIds, setLocalPlaylistIds] = useState<string[]>([]);
+  const [localResolverUrl, setLocalResolverUrl] = useState("");
+  const hasInitialized = useRef(false);
 
-  // Normalize to string IDs for API calls and duplicate checks
-  const musicIds: string[] = rawMusicIds.map((item) =>
+  // Sync from settings on first load
+  useEffect(() => {
+    if (settings && !hasInitialized.current) {
+      hasInitialized.current = true;
+      setLocalMusicIds((settings.site?.theme?.xinghui?.musicIds ?? []) as MusicIdEntry[]);
+      setLocalPlaylistIds(settings.site?.theme?.xinghui?.musicPlaylistIds ?? []);
+      setLocalResolverUrl(settings.site?.theme?.xinghui?.musicResolverUrl ?? "");
+    }
+  }, [settings]);
+
+  // Compute derived values from local state
+  const musicIds: string[] = localMusicIds.map((item) =>
     typeof item === "string" ? item : item.id,
   );
 
-  // Build a lookup map for audioUrl
   const audioUrlMap: Record<string, string> = Object.fromEntries(
-    rawMusicIds
+    localMusicIds
       .filter((item): item is { id: string; audioUrl?: string } =>
         typeof item !== "string" && !!item.audioUrl,
       )
       .map((item) => [item.id, item.audioUrl!]),
   );
 
-  // Build a lookup map for vip status
   const vipMap: Record<string, boolean> = Object.fromEntries(
-    rawMusicIds
+    localMusicIds
       .filter((item): item is { id: string; vip?: boolean } =>
         typeof item !== "string" && !!item.vip,
       )
       .map((item) => [item.id, true]),
   );
-  const musicPlaylistIds: string[] =
-    settings?.site?.theme?.xinghui?.musicPlaylistIds ?? [];
 
-  // Sync resolverUrl from settings
-  useEffect(() => {
-    if (settings?.site?.theme?.xinghui?.musicResolverUrl !== undefined) {
-      setResolverUrl(settings.site.theme.xinghui.musicResolverUrl);
-    }
-  }, [settings?.site?.theme?.xinghui?.musicResolverUrl]);
+  // Check if local state differs from saved settings
+  const isDirty = (() => {
+    if (!settings) return false;
+    const savedMusicIds = JSON.stringify(settings.site?.theme?.xinghui?.musicIds ?? []);
+    const savedPlaylistIds = JSON.stringify(settings.site?.theme?.xinghui?.musicPlaylistIds ?? []);
+    const savedResolverUrl = settings.site?.theme?.xinghui?.musicResolverUrl ?? "";
+    return (
+      savedMusicIds !== JSON.stringify(localMusicIds) ||
+      savedPlaylistIds !== JSON.stringify(localPlaylistIds) ||
+      savedResolverUrl !== localResolverUrl
+    );
+  })();
 
   const { data: songs, isLoading: songsLoading } = useQuery<SongInfo[]>({
-    queryKey: ["admin", "music-info", musicIds.join(","), musicPlaylistIds.join(",")],
+    queryKey: ["admin", "music-info", musicIds.join(","), localPlaylistIds.join(",")],
     queryFn: async () => {
-      if (musicIds.length === 0 && musicPlaylistIds.length === 0) return [];
+      if (musicIds.length === 0 && localPlaylistIds.length === 0) return [];
       const params = new URLSearchParams();
       if (musicIds.length > 0) params.set("ids", musicIds.join(","));
-      if (musicPlaylistIds.length > 0) params.set("playlistIds", musicPlaylistIds.join(","));
+      if (localPlaylistIds.length > 0) params.set("playlistIds", localPlaylistIds.join(","));
       const res = await fetch(`/api/music?${params.toString()}`);
       if (!res.ok) return [];
       const data = await res.json();
-        return (data as Array<Record<string, unknown>>)
+      return (data as Array<Record<string, unknown>>)
         .filter((s) => s && !s.error)
         .map((s) => ({
           id: String(s.id),
@@ -87,10 +100,11 @@ function MusicAdminPage() {
           fee: s.fee as number | undefined,
         }));
     },
-    enabled: musicIds.length > 0 || musicPlaylistIds.length > 0,
+    enabled: musicIds.length > 0 || localPlaylistIds.length > 0,
   });
 
-  const saveThemeConfig = async (patch: Record<string, unknown>) => {
+  // Unified save
+  const handleSave = useCallback(async () => {
     if (!settings || saving) return;
     setSaving(true);
     try {
@@ -103,7 +117,9 @@ function MusicAdminPage() {
               ...settings.site?.theme,
               xinghui: {
                 ...settings.site?.theme?.xinghui,
-                ...patch,
+                musicIds: localMusicIds,
+                musicPlaylistIds: localPlaylistIds,
+                musicResolverUrl: localResolverUrl,
               },
             },
           },
@@ -116,15 +132,17 @@ function MusicAdminPage() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [settings, saving, saveSettings, localMusicIds, localPlaylistIds, localResolverUrl]);
+
+  // --- Local-only operations ---
 
   const handleAdd = () => {
     const id = newId.trim();
     if (!id) return toast.error("请输入歌曲ID");
     if (musicIds.includes(id)) return toast.error("该歌曲已存在");
     const audioUrl = newAudioUrl.trim();
-    const entry = audioUrl ? { id, audioUrl } : newVip ? { id, vip: true } : id;
-    saveThemeConfig({ musicIds: [...rawMusicIds, entry] });
+    const entry: MusicIdEntry = audioUrl ? { id, audioUrl } : newVip ? { id, vip: true } : id;
+    setLocalMusicIds((prev) => [...prev, entry]);
     setNewId("");
     setNewAudioUrl("");
     setNewVip(false);
@@ -132,65 +150,80 @@ function MusicAdminPage() {
 
   const handleRemove = (id: string) => {
     if (!confirm("确定移除这首歌曲?")) return;
-    saveThemeConfig({
-      musicIds: rawMusicIds.filter((item) =>
-        typeof item === "string" ? item !== id : item.id !== id,
-      ),
-    });
+    setLocalMusicIds((prev) =>
+      prev.filter((item) => (typeof item === "string" ? item !== id : item.id !== id)),
+    );
   };
 
   const handleMoveUp = (idx: number) => {
     if (idx === 0) return;
-    const arr = [...rawMusicIds];
-    [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
-    saveThemeConfig({ musicIds: arr });
+    setLocalMusicIds((prev) => {
+      const arr = [...prev];
+      [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+      return arr;
+    });
   };
 
   const handleMoveDown = (idx: number) => {
-    if (idx >= rawMusicIds.length - 1) return;
-    const arr = [...rawMusicIds];
-    [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
-    saveThemeConfig({ musicIds: arr });
+    setLocalMusicIds((prev) => {
+      if (idx >= prev.length - 1) return prev;
+      const arr = [...prev];
+      [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
+      return arr;
+    });
   };
 
   const handleToggleVip = (id: string) => {
-    const arr = rawMusicIds.map((item) => {
-      if (typeof item === "string") {
-        return item === id ? { id, vip: true } : item;
-      }
-      if (item.id === id) {
-        return { ...item, vip: !item.vip };
-      }
-      return item;
-    });
-    saveThemeConfig({ musicIds: arr });
+    setLocalMusicIds((prev) =>
+      prev.map((item) => {
+        if (typeof item === "string") {
+          return item === id ? { id, vip: true } : item;
+        }
+        if (item.id === id) {
+          return { ...item, vip: !item.vip };
+        }
+        return item;
+      }),
+    );
   };
 
   const handleAddPlaylist = () => {
     const id = newPlaylistId.trim();
     if (!id) return toast.error("请输入歌单ID");
-    if (musicPlaylistIds.includes(id)) return toast.error("该歌单已存在");
-    saveThemeConfig({ musicPlaylistIds: [...musicPlaylistIds, id] });
+    if (localPlaylistIds.includes(id)) return toast.error("该歌单已存在");
+    setLocalPlaylistIds((prev) => [...prev, id]);
     setNewPlaylistId("");
   };
 
   const handleRemovePlaylist = (id: string) => {
     if (!confirm("确定移除这个歌单?")) return;
-    saveThemeConfig({ musicPlaylistIds: musicPlaylistIds.filter((i) => i !== id) });
+    setLocalPlaylistIds((prev) => prev.filter((i) => i !== id));
   };
 
   return (
     <div className="space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      {/* Header */}
+      {/* Header with save button */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-border/30 pb-6">
         <div className="space-y-1">
           <h1 className="text-3xl font-serif font-medium tracking-tight">
             音乐管理
           </h1>
           <p className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Music · {musicPlaylistIds.length} 个歌单 · {songs?.length ?? 0} 首歌曲
+            Music · {localPlaylistIds.length} 个歌单 · {songs?.length ?? 0} 首歌曲
           </p>
         </div>
+        <button
+          onClick={handleSave}
+          disabled={saving || !isDirty || configLoading}
+          className="hidden sm:flex h-11 px-8 items-center gap-2 bg-foreground text-background hover:bg-foreground/90 transition-all font-mono text-[11px] uppercase tracking-[0.2em] font-medium disabled:opacity-50 shadow-lg shadow-foreground/5"
+        >
+          {saving ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <Check size={14} />
+          )}
+          {saving ? "保存中..." : "应用修改"}
+        </button>
       </div>
 
       {/* Music resolver API */}
@@ -204,22 +237,15 @@ function MusicAdminPage() {
         </p>
         <div className="flex gap-3">
           <input
-            value={resolverUrl}
-            onChange={(e) => setResolverUrl(e.target.value)}
+            value={localResolverUrl}
+            onChange={(e) => setLocalResolverUrl(e.target.value)}
             placeholder="https://your-music-resolver.workers.dev"
             className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
           />
-          <button
-            onClick={() => saveThemeConfig({ musicResolverUrl: resolverUrl.trim() })}
-            disabled={resolverSaving}
-            className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
-          >
-            {resolverSaving ? "保存中..." : "保存"}
-          </button>
         </div>
-        {settings?.site?.theme?.xinghui?.musicResolverUrl && (
+        {localResolverUrl && (
           <p className="text-[11px] text-emerald-500 font-mono">
-            ✓ 已配置：{settings.site.theme.xinghui.musicResolverUrl}
+            ✓ 已配置：{localResolverUrl}
           </p>
         )}
       </div>
@@ -240,15 +266,15 @@ function MusicAdminPage() {
           />
           <button
             onClick={handleAddPlaylist}
-            disabled={configLoading || saving}
+            disabled={configLoading}
             className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
           >
-            {saving ? "保存中..." : "添加歌单"}
+            添加歌单
           </button>
         </div>
-        {musicPlaylistIds.length > 0 && (
+        {localPlaylistIds.length > 0 && (
           <div className="space-y-2 mt-4">
-            {musicPlaylistIds.map((id) => (
+            {localPlaylistIds.map((id) => (
               <div
                 key={id}
                 className="flex items-center justify-between border border-border/30 p-3 group hover:border-foreground/30 transition-colors"
@@ -267,8 +293,7 @@ function MusicAdminPage() {
                 </div>
                 <button
                   onClick={() => handleRemovePlaylist(id)}
-                  disabled={saving}
-                  className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30"
+                  className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   删除
                 </button>
@@ -310,18 +335,16 @@ function MusicAdminPage() {
           </label>
           <button
             onClick={handleAdd}
-            disabled={configLoading || saving}
+            disabled={configLoading}
             className="px-6 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 disabled:opacity-50 transition-colors"
           >
-            {saving ? "保存中..." : "添加"}
+            添加
           </button>
         </div>
         <p className="text-[11px] text-muted-foreground">
           勾选 VIP：该歌曲将通过解析 API 获取真实播放链接，无需自定义音频源
         </p>
       </div>
-
-
 
       {/* Song list */}
       <div className="border border-border/30 p-6 space-y-4">
@@ -383,46 +406,39 @@ function MusicAdminPage() {
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => handleToggleVip(song.id)}
-                          disabled={saving}
-                          className={`text-xs font-mono px-2 py-1 disabled:opacity-30 transition-colors ${
+                          className={`text-xs font-mono px-2 py-1 transition-colors ${
                             isVip
                               ? "text-amber-500 hover:text-amber-600 bg-amber-500/10"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           {isVip ? "VIP ✓" : "VIP"}
-                          {song.fee === 1 && !vipMap[song.id] && (
-                            <span className="ml-1 text-[9px] opacity-60">auto</span>
-                          )}
                         </button>
                         <button
                           onClick={() => {
-                            const idx = rawMusicIds.findIndex((item) =>
+                            const idx = localMusicIds.findIndex((item) =>
                               typeof item === "string" ? item === song.id : item.id === song.id,
                             );
                             if (idx > 0) handleMoveUp(idx);
                           }}
-                          disabled={saving}
-                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1 disabled:opacity-30"
+                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1"
                         >
                           ↑
                         </button>
                         <button
                           onClick={() => {
-                            const idx = rawMusicIds.findIndex((item) =>
+                            const idx = localMusicIds.findIndex((item) =>
                               typeof item === "string" ? item === song.id : item.id === song.id,
                             );
-                            if (idx < rawMusicIds.length - 1) handleMoveDown(idx);
+                            if (idx < localMusicIds.length - 1) handleMoveDown(idx);
                           }}
-                          disabled={saving}
-                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1 disabled:opacity-30"
+                          className="text-xs font-mono text-muted-foreground hover:text-foreground px-1"
                         >
                           ↓
                         </button>
                         <button
                           onClick={() => handleRemove(song.id)}
-                          disabled={saving}
-                          className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 ml-2 disabled:opacity-30"
+                          className="text-xs font-mono text-muted-foreground hover:text-destructive px-2 ml-2"
                         >
                           删除
                         </button>
@@ -435,6 +451,23 @@ function MusicAdminPage() {
           </div>
         )}
       </div>
+
+      {/* Floating save button for mobile */}
+      {isDirty && (
+        <div className="fixed bottom-8 right-6 z-50 sm:hidden animate-in fade-in zoom-in slide-in-from-bottom-10 duration-500">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="h-14 w-14 rounded-full bg-foreground text-background hover:bg-foreground/90 transition-all shadow-2xl flex items-center justify-center p-0"
+          >
+            {saving ? (
+              <Loader2 size={24} className="animate-spin" />
+            ) : (
+              <Check size={24} />
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,12 +13,14 @@ import type {
   SortDirection,
   SortField,
   StatusFilter,
+  TypeFilter,
 } from "../types";
-import { statusFilterToApi } from "../types";
+import { statusFilterToApi, typeFilterToApi } from "../types";
 
 interface UsePostsOptions {
   page: number;
   status: StatusFilter;
+  type: TypeFilter;
   sortDir: SortDirection;
   sortBy: SortField;
   search: string;
@@ -27,16 +29,19 @@ interface UsePostsOptions {
 export function usePosts({
   page,
   status,
+  type: postType,
   sortDir,
   sortBy,
   search,
 }: UsePostsOptions) {
   const apiStatus = statusFilterToApi(status);
+  const apiType = typeFilterToApi(postType);
 
   const listParams = {
     offset: (page - 1) * ADMIN_ITEMS_PER_PAGE,
     limit: ADMIN_ITEMS_PER_PAGE,
     status: apiStatus,
+    type: apiType,
     sortDir,
     sortBy,
     search: search || undefined,
@@ -44,6 +49,7 @@ export function usePosts({
 
   const countParams = {
     status: apiStatus,
+    type: apiType,
     search: search || undefined,
   };
 

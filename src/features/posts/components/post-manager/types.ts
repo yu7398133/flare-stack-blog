@@ -7,6 +7,10 @@ export type PostListItem = Omit<Post, "contentJson" | "publicContentJson">;
 export const STATUS_FILTERS = ["ALL", "PUBLISHED", "DRAFT"] as const;
 export type StatusFilter = (typeof STATUS_FILTERS)[number];
 
+/** Type filter options for posts list */
+export const TYPE_FILTERS = ["ALL", "article", "talk"] as const;
+export type TypeFilter = (typeof TYPE_FILTERS)[number];
+
 /** Sort fields options */
 export const SORT_FIELDS = ["publishedAt", "updatedAt"] as const;
 export type SortField = (typeof SORT_FIELDS)[number];
@@ -21,4 +25,12 @@ export function statusFilterToApi(
 ): "published" | "draft" | undefined {
   if (filter === "ALL") return undefined;
   return filter === "PUBLISHED" ? "published" : "draft";
+}
+
+/** Convert TypeFilter to API type param */
+export function typeFilterToApi(
+  filter: TypeFilter,
+): "article" | "talk" | undefined {
+  if (filter === "ALL") return undefined;
+  return filter;
 }
