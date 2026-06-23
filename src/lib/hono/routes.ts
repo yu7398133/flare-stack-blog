@@ -21,15 +21,19 @@ import tagsRoute from "@/features/tags/api/hono/tags.list.route";
 import { serverEnv } from "@/lib/env/server.env";
 import { createRateLimiterIdentifier, getExecutionContext } from "./helper";
 import {
+  apiVersionMiddleware,
   baseMiddleware,
   cacheMiddleware,
   rateLimitMiddleware,
+  requestIdMiddleware,
   shieldMiddleware,
   turnstileMiddleware,
 } from "./middlewares";
 
 export const app = new Hono<{ Bindings: Env }>();
 
+app.use("*", requestIdMiddleware);
+app.use("*", apiVersionMiddleware);
 app.get("*", cacheMiddleware);
 
 async function forwardAuthRequest(c: Context<{ Bindings: Env }>) {
@@ -59,6 +63,16 @@ app.route("/", siteDocumentsRoute);
 
 // Export type for RPC client
 export type PublicApiType = typeof publicApi;
+
+/* ================================ Health Check ================================ */
+app.get("/api/health", (c) => {
+  return c.json({
+    status: "ok",
+    version: "1.5.1",
+    timestamp: new Date().toISOString(),
+    requestId: c.get("requestId"),
+  });
+});
 
 /* ================================ 路由开始 ================================ */
 app.get("/stats.js", async (c) => {

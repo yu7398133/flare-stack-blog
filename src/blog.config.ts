@@ -19,14 +19,6 @@ export const blogConfig = {
     webApp512: "/web-app-manifest-512x512.png",
   },
   theme: {
-    default: {
-      navBarName: "XingHuiSama",
-    },
-    fuwari: {
-      homeBg: "https://bu.dusays.com/2026/03/24/69c1e38b4c370.jpg",
-      avatar: "https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg",
-      primaryHue: 250,
-    },
     xinghui: {
       homeBg: "https://www.loliapi.com/acg/pc/",
       avatar: "https://bu.dusays.com/2026/03/24/69c1e38ac1846.jpg",

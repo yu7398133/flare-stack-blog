@@ -6,6 +6,10 @@ const NETEASE_HEADERS = {
   Referer: "https://music.163.com/",
 };
 
+// Cache TTLs
+const SONG_CACHE_TTL = 6 * 60 * 60; // 6 hours for song details
+const PLAYLIST_CACHE_TTL = 60 * 60; // 1 hour for playlist track lists
+
 type SongResult = {
   id: string;
   name?: string;
@@ -19,12 +23,27 @@ type SongResult = {
   fee?: number;
 };
 
+function buildCacheKey(prefix: string, ...parts: string[]): string {
+  return `music:${prefix}:${parts.join(":")}`;
+}
+
 /**
- * Fetch track IDs from a Netease playlist
+ * Fetch track IDs from a Netease playlist (with KV cache)
  */
 async function fetchPlaylistTrackIds(
+  env: Env,
   playlistId: string,
 ): Promise<string[]> {
+  const cacheKey = buildCacheKey("playlist", playlistId);
+
+  // Try cache first
+  try {
+    const cached = await env.KV.get(cacheKey, "json");
+    if (cached && Array.isArray(cached)) {
+      return cached as string[];
+    }
+  } catch {}
+
   try {
     const res = await fetch(
       `https://music.163.com/api/playlist/detail?id=${playlistId}`,
@@ -44,9 +63,18 @@ async function fetchPlaylistTrackIds(
       return [];
     }
 
-    return tracks
+    const trackIds = tracks
       .map((t) => String(t.id ?? ""))
       .filter(Boolean);
+
+    // Cache the result
+    try {
+      await env.KV.put(cacheKey, JSON.stringify(trackIds), {
+        expirationTtl: PLAYLIST_CACHE_TTL,
+      });
+    } catch {}
+
+    return trackIds;
   } catch (error) {
     console.error(
       `[api/music] Failed to fetch playlist ${playlistId}:`,
@@ -57,9 +85,19 @@ async function fetchPlaylistTrackIds(
 }
 
 /**
- * Fetch details for a single song by ID
+ * Fetch details for a single song by ID (with KV cache)
  */
-async function fetchSongDetail(songId: string): Promise<SongResult> {
+async function fetchSongDetail(env: Env, songId: string): Promise<SongResult> {
+  const cacheKey = buildCacheKey("song", songId);
+
+  // Try cache first
+  try {
+    const cached = await env.KV.get(cacheKey, "json");
+    if (cached && typeof cached === "object" && "id" in cached) {
+      return cached as SongResult;
+    }
+  } catch {}
+
   try {
     const [detailRes, lrcRes] = await Promise.all([
       fetch(
@@ -106,7 +144,7 @@ async function fetchSongDetail(songId: string): Promise<SongResult> {
 
     const artistName = artists?.[0]?.name || "未知歌手";
 
-    return {
+    const result: SongResult = {
       id: songId,
       name: (songData.name as string) || "未知歌曲",
       artist: artistName,
@@ -117,6 +155,17 @@ async function fetchSongDetail(songId: string): Promise<SongResult> {
       lrc: lrcText,
       fee: songData.fee as number,
     };
+
+    // Cache the result (only if no error)
+    if (!result.error) {
+      try {
+        await env.KV.put(cacheKey, JSON.stringify(result), {
+          expirationTtl: SONG_CACHE_TTL,
+        });
+      } catch {}
+    }
+
+    return result;
   } catch (error) {
     console.error(`[api/music] Failed to fetch song ${songId}:`, error);
     return { id: songId, error: String(error) };
@@ -141,7 +190,7 @@ const musicRoute = new Hono<{ Bindings: Env }>().get("/", async (c) => {
       .filter(Boolean);
 
     const results = await Promise.all(
-      pIds.map((pid) => fetchPlaylistTrackIds(pid)),
+      pIds.map((pid) => fetchPlaylistTrackIds(c.env, pid)),
     );
     playlistTrackIds = results.flat();
   }
@@ -164,7 +213,7 @@ const musicRoute = new Hono<{ Bindings: Env }>().get("/", async (c) => {
   const limitedIds = allIds.slice(0, 100);
 
   const results = await Promise.all(
-    limitedIds.map((songId) => fetchSongDetail(songId)),
+    limitedIds.map((songId) => fetchSongDetail(c.env, songId)),
   );
 
   return c.json(results);

@@ -4,25 +4,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { AssetUploadField } from "@/features/config/components/asset-upload-field";
 import { Field } from "@/features/config/components/site-settings-fields";
 import { SocialLinksEditor } from "@/features/config/components/social-links-editor";
-import { DefaultThemeSettings } from "@/features/config/components/themes/default-theme-settings";
-import { FuwariThemeSettings } from "@/features/config/components/themes/fuwari-theme-settings";
 import { XinghuiThemeSettings } from "@/features/config/components/xinghui-settings";
 import type { SystemConfig } from "@/features/config/config.schema";
 import { m } from "@/paraglide/messages";
 
 function ThemeSettingsContent() {
-  switch (__THEME_NAME__) {
-    case "default":
-      return <DefaultThemeSettings />;
-    case "fuwari":
-      return <FuwariThemeSettings />;
-    case "xinghui":
-      return <XinghuiThemeSettings />;
-    default: {
-      __THEME_NAME__ satisfies never;
-      return null;
-    }
-  }
+  return <XinghuiThemeSettings />;
 }
 
 function SectionShell({

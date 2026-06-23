@@ -34,7 +34,6 @@ export async function get<T extends z.ZodTypeAny>(
   if (kvData !== null && kvData !== undefined) {
     const result = schema.safeParse(kvData);
     if (result.success) {
-      console.log(JSON.stringify({ message: "cache hit", key: serializedKey }));
       return result.data;
     }
   }
@@ -46,8 +45,6 @@ export async function get<T extends z.ZodTypeAny>(
   context.executionCtx.waitUntil(
     set(context, key, JSON.stringify(data), { ttl }),
   );
-
-  console.log(JSON.stringify({ message: "cache miss", key: serializedKey }));
   return data;
 }
 
@@ -88,9 +85,6 @@ export async function set(
     : undefined;
 
   await context.env.KV.put(serializedKey, value, putOptions)
-    .then(() =>
-      console.log(JSON.stringify({ message: "cache set", key: serializedKey })),
-    )
     .catch((err) =>
       console.error(
         JSON.stringify({

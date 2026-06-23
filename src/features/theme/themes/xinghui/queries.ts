@@ -1,18 +1,9 @@
 import { queryOptions } from "@tanstack/react-query";
 import { isSSR } from "@/lib/utils";
-
-/**
- * Get the base URL for API calls.
- * On SSR (Cloudflare Workers), we need absolute URLs.
- * On client, relative URLs work fine.
- */
-function getBaseUrl(): string {
-  if (!isSSR) return "";
-  // During SSR on Cloudflare Workers, we can't easily get the origin.
-  // Use a known fallback — the API routes are on the same worker.
-  // This is a limitation; the data will be fetched client-side instead.
-  return "";
-}
+import { getRecentMomentsFn } from "@/features/moments/api/moments.api";
+import { getAllPhotosFn } from "@/features/photos/api/photos.api";
+import { getAllProjectsFn } from "@/features/projects/api/projects.api";
+import { getPostsCursorFn } from "@/features/posts/api/posts.public.api";
 
 export const XINGHUI_KEYS = {
   moments: ["xinghui", "moments"] as const,
@@ -27,7 +18,7 @@ export function recentMomentsQuery(limit = 5) {
     staleTime: 0,
     queryFn: async () => {
       if (isSSR) {
-        return { items: [], total: 0 };
+        return await getRecentMomentsFn({ data: { limit } });
       }
       const res = await fetch(`/api/moments?limit=${limit}`);
       if (!res.ok) return { items: [], total: 0 };
@@ -50,7 +41,12 @@ export function recentTalkPostsQuery(limit = 5) {
     queryKey: [...XINGHUI_KEYS.talk, limit],
     staleTime: 0,
     queryFn: async () => {
-      if (isSSR) return { items: [], nextCursor: null };
+      if (isSSR) {
+        const result = await getPostsCursorFn({
+          data: { limit, type: "talk" },
+        });
+        return { items: result.items, nextCursor: result.nextCursor };
+      }
       const res = await fetch(
         `/api/posts?limit=${limit}&type=talk&publicOnly=true`,
       );
@@ -63,7 +59,7 @@ export function recentTalkPostsQuery(limit = 5) {
           summary: string | null;
           publishedAt: string | null;
           createdAt: string;
- }>;
+        }>;
         nextCursor: number | null;
       }>;
     },
@@ -74,7 +70,9 @@ export const allPhotosQuery = queryOptions({
   queryKey: XINGHUI_KEYS.photos,
   staleTime: 0,
   queryFn: async () => {
-    if (isSSR) return [];
+    if (isSSR) {
+      return await getAllPhotosFn();
+    }
     const res = await fetch("/api/photos");
     if (!res.ok) return [];
     return res.json() as Promise<
@@ -93,7 +91,9 @@ export const allProjectsQuery = queryOptions({
   queryKey: XINGHUI_KEYS.projects,
   staleTime: 0,
   queryFn: async () => {
-    if (isSSR) return [];
+    if (isSSR) {
+      return await getAllProjectsFn();
+    }
     const res = await fetch("/api/projects");
     if (!res.ok) return [];
     return res.json() as Promise<

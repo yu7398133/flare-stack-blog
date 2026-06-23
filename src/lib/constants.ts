@@ -31,10 +31,3 @@ export const CACHE_CONTROL = {
   },
 } as const;
 
-export const ADMIN_STATS = {
-  totalViews: 45231,
-  etherStability: 89.4,
-  systemHealth: "STABLE",
-  pendingComments: 12,
-  databaseSize: "1.2 GB",
-};

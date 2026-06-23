@@ -9,11 +9,12 @@ import { useState } from "react";
 import { SideBar } from "@/components/admin/side-bar";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import Toaster from "@/components/ui/toaster";
+import { ErrorPage } from "@/components/common/error-page";
 import { sessionQuery } from "@/features/auth/queries";
 import { CACHE_CONTROL } from "@/lib/constants";
 import { m } from "@/paraglide/messages";
-// 管理后台固定使用 default 主题样式，不随 THEME 变量切换
-import "@/features/theme/themes/default/styles/index.css";
+// 管理后台使用当前主题样式
+import "@/features/theme/themes/xinghui/styles/index.css";
 import "@/styles/admin.css";
 
 export const Route = createFileRoute("/admin")({
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/admin")({
     return { session };
   },
   component: AdminLayout,
+  errorComponent: ({ error }) => <ErrorPage error={error} />,
   loader: () => ({
     title: m.admin_layout_title(),
   }),

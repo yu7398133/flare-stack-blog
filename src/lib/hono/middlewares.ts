@@ -12,8 +12,28 @@ declare module "hono" {
   interface ContextVariableMap {
     db: ReturnType<typeof getDb>;
     auth: ReturnType<typeof getAuth>;
+    requestId: string;
   }
 }
+
+export const requestIdMiddleware = createMiddleware(async (c, next) => {
+  const requestId =
+    c.req.header("cf-ray") ||
+    c.req.header("x-request-id") ||
+    crypto.randomUUID();
+  c.set("requestId", requestId);
+  c.res.headers.set("X-Request-Id", requestId);
+  return next();
+});
+
+const API_VERSION = "1.5.1";
+
+export const apiVersionMiddleware = createMiddleware(async (c, next) => {
+  await next();
+  if (c.req.path.startsWith("/api/")) {
+    c.res.headers.set("X-API-Version", API_VERSION);
+  }
+});
 
 export const baseMiddleware = createMiddleware<{ Bindings: Env }>(
   async (c, next) => {
@@ -71,9 +91,9 @@ export const cacheMiddleware = createMiddleware(async (c, next) => {
 
   const path = c.req.path;
 
-  // 排除需要 session 的 API（如 /api/auth, /api/send）
+  // 排除需要 session 的 API 和 Server Functions
   // 但包含 public API（/api/posts, /api/post, /api/tags, /api/search）
-  const EXCLUDED_PREFIXES = ["/api/auth", "/api/send"];
+  const EXCLUDED_PREFIXES = ["/api/auth", "/api/send", "/_serverFn"];
   if (EXCLUDED_PREFIXES.some((prefix) => path.startsWith(prefix))) {
     return next();
   }

@@ -6,6 +6,7 @@ import {
   Scripts,
   useRouteContext,
 } from "@tanstack/react-router";
+import { ErrorPage } from "@/components/common/error-page";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import theme from "@theme";
 import { ThemeProvider } from "@/components/common/theme-provider";
@@ -122,6 +123,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     };
   },
   shellComponent: RootDocument,
+  errorComponent: ({ error }) => <ErrorPage error={error} />,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {

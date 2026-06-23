@@ -7,6 +7,7 @@ import { AUTH_KEYS } from "@/features/auth/queries";
 import { getThemePreloadImages } from "@/features/theme/site-config.helpers";
 import { authClient } from "@/lib/auth/auth.client";
 import { getLogoutAuthErrorMessage } from "@/lib/auth/auth-errors";
+import { ErrorPage } from "@/components/common/error-page";
 import { CACHE_CONTROL } from "@/lib/constants";
 import { m } from "@/paraglide/messages";
 
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/_public")({
     preloadImages: getThemePreloadImages(context.siteConfig),
   }),
   component: PublicLayout,
+  errorComponent: ({ error }) => <ErrorPage error={error} />,
   headers: () => {
     return CACHE_CONTROL.public;
   },

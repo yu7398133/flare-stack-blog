@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { AdminPagination } from "@/components/admin/admin-pagination";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ExpandableContent } from "@/features/theme/themes/default/components/comments/view/expandable-content";
+import { ExpandableContent } from "@/components/common/expandable-content";
 import type { CommentStatus } from "@/lib/db/schema";
 import { formatDate } from "@/lib/utils";
 import { m } from "@/paraglide/messages";

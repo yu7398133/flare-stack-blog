@@ -4,7 +4,7 @@ import { NullableJsonContentSchema } from "@/features/posts/schema/json-content.
 export const SearchQuerySchema = z.object({
   q: z.string().min(1),
   limit: z.number().optional().default(10),
-  v: z.string(),
+  v: z.string().optional().default(""),
 });
 
 export const UpsertSearchDocSchema = z.object({

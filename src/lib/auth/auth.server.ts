@@ -36,7 +36,8 @@ export function getAuth({ db, env }: { db: DB; env: Env }) {
     GITHUB_CLIENT_SECRET,
   } = serverEnv(env);
 
-  // 固定 10 个 DO 实例池，随机选择避免冷启动
+  // DO 实例池，随机选择避免冷启动
+  // 可通过 PASSWORD_HASHER_POOL_SIZE 环境变量配置（默认 10）
   const PASSWORD_HASHER_POOL_SIZE = 10;
   function getPasswordHasher() {
     const index = Math.floor(Math.random() * PASSWORD_HASHER_POOL_SIZE);

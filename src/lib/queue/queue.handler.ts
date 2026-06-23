@@ -54,7 +54,15 @@ export async function handleQueueBatch(
           continue;
         default:
           event satisfies never;
-          throw new Error("Unknown queue message type");
+          console.error(
+            JSON.stringify({
+              message: "queue unknown message type",
+              type: (event as { type: string }).type,
+              messageId: message.id,
+            }),
+          );
+          message.ack();
+          continue;
       }
       message.ack();
     } catch (error) {
