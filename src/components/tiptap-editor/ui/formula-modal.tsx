@@ -187,7 +187,7 @@ const FormulaModalInternal: React.FC<FormulaModalProps> = ({
             <label className="text-xs uppercase tracking-widest font-mono text-muted-foreground mb-2">
               LaTeX
             </label>
-            <textarea
+            <textarea id="formula-modal-latex" name="formula-modal-latex"
               ref={inputRef}
               value={latex}
               onChange={(e) => setLatex(e.target.value)}

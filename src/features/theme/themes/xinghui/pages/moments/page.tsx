@@ -203,7 +203,7 @@ export function MomentsPage({
       <div className="flex flex-col items-center gap-5 md:gap-6">
         <div className="relative w-full max-w-lg group">
           <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-20 pointer-events-none" />
-          <input
+          <input id="page-search" name="page-search"
             type="text"
             placeholder="搜寻被遗忘的记忆..."
             value={searchQuery}

@@ -87,7 +87,7 @@ export function PhotoWallPage({
                 size={18}
                 className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-slate-500 dark:text-slate-400 group-focus-within:text-indigo-500 transition-colors"
               />
-              <input
+              <input id="page-search" name="page-search"
                 type="text"
                 placeholder="搜索相册名或照片描述..."
                 value={searchQuery}

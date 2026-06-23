@@ -643,7 +643,7 @@ const RejectModal = ({
             <label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
               {m.friend_links_reject_modal_label()}
             </label>
-            <textarea
+            <textarea id="friend-link-moderation-table-reason" name="friend-link-moderation-table-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="w-full bg-transparent border border-border/50 px-3 py-2 text-sm font-sans focus:border-foreground focus:outline-none transition-colors resize-none"

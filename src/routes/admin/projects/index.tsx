@@ -152,13 +152,13 @@ function ProjectsAdminPage() {
       {/* Form */}
       {showForm && (
         <div className="border border-border/30 p-6 space-y-4">
-          <input
+          <input id="index-form" name="index-form"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             placeholder="项目名称"
             className="w-full bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
           />
-          <textarea
+          <textarea id="index-form" name="index-form"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="项目描述"
@@ -166,27 +166,27 @@ function ProjectsAdminPage() {
             className="w-full bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground resize-none"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
+            <input id="index-form" name="index-form"
               value={form.projectUrl}
               onChange={(e) => setForm({ ...form, projectUrl: e.target.value })}
               placeholder="项目链接 (可选)"
               className="bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             />
-            <input
+            <input id="index-form" name="index-form"
               value={form.repoUrl}
               onChange={(e) => setForm({ ...form, repoUrl: e.target.value })}
               placeholder="仓库链接 (可选)"
               className="bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             />
           </div>
-          <input
+          <input id="index-form" name="index-form"
             value={form.techStack}
             onChange={(e) => setForm({ ...form, techStack: e.target.value })}
             placeholder='技术栈 (JSON数组，如 ["React","TailwindCSS"])'
             className="w-full bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
           />
           <div className="flex items-center gap-4">
-            <select
+            <select id="index-form" name="index-form"
               value={form.status}
               onChange={(e) => setForm({ ...form, status: e.target.value as typeof form.status })}
               className="bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none"

@@ -59,7 +59,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
       {/* Comment input */}
       {session ? (
         <div className="space-y-3">
-          <textarea
+          <textarea id="comment-section-comment" name="comment-section-comment"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="写下你的评论..."
@@ -222,7 +222,7 @@ function CommentItem({
       {/* Reply input */}
       {showReplyInput && session && (
         <div className="pl-8 space-y-2">
-          <textarea
+          <textarea id="comment-section-reply" name="comment-section-reply"
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             placeholder="写下你的回复..."

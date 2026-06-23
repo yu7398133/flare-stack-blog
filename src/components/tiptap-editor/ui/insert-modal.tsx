@@ -221,7 +221,7 @@ const InsertModalInternal: React.FC<InsertModalProps> = ({
                   className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground"
                   size={14}
                 />
-                <input
+                <input id="insert-modal-search" name="insert-modal-search"
                   type="text"
                   placeholder={m.editor_insert_search_placeholder()}
                   value={searchQuery}
@@ -290,7 +290,7 @@ const InsertModalInternal: React.FC<InsertModalProps> = ({
             </div>
             <div className="group relative">
               <span className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground font-mono text-sm pointer-events-none group-focus-within:text-foreground transition-colors"></span>
-              <input
+              <input id="insert-modal-inputurl" name="insert-modal-inputurl"
                 type="text"
                 autoFocus={activeType === "LINK"}
                 value={inputUrl}

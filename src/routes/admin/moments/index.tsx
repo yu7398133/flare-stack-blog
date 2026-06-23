@@ -138,7 +138,7 @@ function MomentsAdminPage() {
       {/* Form */}
       {showForm && (
         <div className="border border-border/30 p-6 space-y-4">
-          <textarea
+          <textarea id="index-form" name="index-form"
             value={form.content}
             onChange={(e) => setForm({ ...form, content: e.target.value })}
             placeholder="写点什么..."
@@ -146,19 +146,19 @@ function MomentsAdminPage() {
             className="w-full bg-transparent border border-border/30 p-3 text-sm font-mono focus:outline-none focus:border-foreground resize-none"
           />
           <div className="flex gap-4">
-            <input
+            <input id="index-form" name="index-form"
               value={form.mood}
               onChange={(e) => setForm({ ...form, mood: e.target.value })}
               placeholder="心情 (可选)"
               className="flex-1 bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none focus:border-foreground"
             />
-            <input
+            <input id="index-form" name="index-form"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
               placeholder="位置 (可选)"
               className="flex-1 bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none focus:border-foreground"
             />
-            <select
+            <select id="index-form" name="index-form"
               value={form.visibility}
               onChange={(e) => setForm({ ...form, visibility: e.target.value as "public" | "private" })}
               className="bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none"

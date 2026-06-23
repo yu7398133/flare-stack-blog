@@ -237,7 +237,7 @@ export function TagSelector({
         ))}
 
         {/* Input */}
-        <input
+        <input id="tag-selector-searchterm" name="tag-selector-searchterm"
           ref={inputRef}
           type="text"
           className="flex-1 min-w-20 bg-transparent outline-none placeholder:text-muted-foreground text-sm h-6"

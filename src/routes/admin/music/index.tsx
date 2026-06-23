@@ -239,7 +239,7 @@ function MusicAdminPage() {
           VIP 歌曲会自动尝试通过解析 API 获取可播放地址；非 VIP 歌曲直接使用网易云直链。
         </p>
         <div className="flex gap-3">
-          <input
+          <input id="index-localresolverurl" name="index-localresolverurl"
             value={localResolverUrl}
             onChange={(e) => setLocalResolverUrl(e.target.value)}
             placeholder="https://your-music-resolver.workers.dev"
@@ -260,7 +260,7 @@ function MusicAdminPage() {
           输入网易云音乐歌单ID（从歌单页URL获取，如 music.163.com/playlist?id=<b>9157541613</b>），歌单内所有歌曲会自动加载
         </p>
         <div className="flex gap-3">
-          <input
+          <input id="index-newplaylistid" name="index-newplaylistid"
             value={newPlaylistId}
             onChange={(e) => setNewPlaylistId(e.target.value)}
             placeholder="歌单ID，如 9157541613"
@@ -313,14 +313,14 @@ function MusicAdminPage() {
           输入网易云音乐歌曲ID（从歌曲页URL获取，如 music.163.com/song?id=<b>1809646618</b>）
         </p>
         <div className="flex gap-3">
-          <input
+          <input id="index-newid" name="index-newid"
             value={newId}
             onChange={(e) => setNewId(e.target.value)}
             placeholder="歌曲ID，如 1809646618"
             className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
-          <input
+          <input id="index-newaudiourl" name="index-newaudiourl"
             value={newAudioUrl}
             onChange={(e) => setNewAudioUrl(e.target.value)}
             placeholder="自定义音频源（可选，留空用网易云）"

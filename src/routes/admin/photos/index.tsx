@@ -143,26 +143,26 @@ function PhotosAdminPage() {
       {showForm && (
         <div className="border border-border/30 p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
+            <input id="index-form" name="index-form"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               placeholder="标题"
               className="bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             />
-            <input
+            <input id="index-form" name="index-form"
               value={form.album}
               onChange={(e) => setForm({ ...form, album: e.target.value })}
               placeholder="相册名称 (如: 风景, 城市, 花卉)"
               className="bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             />
           </div>
-          <input
+          <input id="index-form" name="index-form"
             value={form.imageUrl}
             onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
             placeholder="图片URL (https://...)"
             className="w-full bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
           />
-          <textarea
+          <textarea id="index-form" name="index-form"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="描述 (可选)"

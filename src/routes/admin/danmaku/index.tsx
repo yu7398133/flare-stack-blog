@@ -228,7 +228,7 @@ function DanmakuAdminPage() {
       <div className="border border-border/30 p-6 space-y-4">
         <h3 className="text-sm font-mono font-bold">添加弹幕</h3>
         <div className="flex gap-3">
-          <input
+          <input id="index-newtext" name="index-newtext"
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
             placeholder="输入弹幕文案..."
@@ -268,7 +268,7 @@ function DanmakuAdminPage() {
                 <span className="text-xs text-muted-foreground font-mono w-6 text-right shrink-0">
                   {idx + 1}
                 </span>
-                <input
+                <input id="index-text" name="index-text"
                   value={text}
                   onChange={(e) => handleEdit(idx, e.target.value)}
                   className="flex-1 bg-transparent text-sm focus:outline-none border-b border-transparent focus:border-border/50 pb-0.5"

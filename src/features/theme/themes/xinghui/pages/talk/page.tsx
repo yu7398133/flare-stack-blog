@@ -53,7 +53,7 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
       {/* Search + Tags */}
       <div className="flex flex-col items-center gap-5 md:gap-8">
         <div className="relative w-full max-w-lg group">
-          <input
+          <input id="page-search" name="page-search"
             type="text"
             placeholder="搜寻被遗忘的思绪..."
             value={searchQuery}

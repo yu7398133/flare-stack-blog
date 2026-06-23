@@ -66,7 +66,7 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
       {/* Search bar — rounded-full, serif font, matches reference */}
       <div className="mb-12 flex justify-center w-full">
         <div className="relative w-full max-w-lg">
-          <input
+          <input id="page-search" name="page-search"
             type="text"
             placeholder="搜索项目名称、描述或技术栈..."
             value={searchQuery}

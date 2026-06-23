@@ -359,7 +359,7 @@ function MusicPage() {
                 <div className="relative w-full max-w-md mx-auto group mb-4 md:mb-8 shrink-0">
                   <div className="absolute inset-0 bg-indigo-500/5 blur-xl group-focus-within:bg-indigo-500/10 transition-all rounded-full" />
                   <Search className="w-4 h-4 md:w-5 md:h-5 absolute left-4 top-1/2 -translate-y-1/2 z-10 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
-                  <input
+                  <input id="music-search" name="music-search"
                     type="text"
                     placeholder="搜索音轨..."
                     value={searchQuery}

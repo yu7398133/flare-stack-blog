@@ -92,7 +92,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
             size={20}
             className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-20"
           />
-          <input
+          <input id="page-search" name="page-search"
             type="text"
             placeholder="搜寻被封存的知识..."
             value={searchQuery}
