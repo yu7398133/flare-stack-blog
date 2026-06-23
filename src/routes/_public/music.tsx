@@ -1,6 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useMusic } from "../../features/theme/themes/xinghui/components/music-provider";
+import {
+  Disc3,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Repeat,
+  Shuffle,
+  RefreshCcw,
+  Volume2,
+  VolumeX,
+  Search,
+  X,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_public/music")({
   component: MusicPage,
