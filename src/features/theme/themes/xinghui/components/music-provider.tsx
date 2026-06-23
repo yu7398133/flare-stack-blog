@@ -142,7 +142,10 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                   const data = await r.json() as Record<string, unknown>;
                   const items = data.data as Array<Record<string, unknown>> | undefined;
                   if (items && items[0]?.url) {
-                    return { id: songId, url: items[0].url as string };
+                    let audioUrl = items[0].url as string;
+                    // ncmusic-api returns http URLs - upgrade to https for mixed-content safety
+                    if (audioUrl.startsWith("http:")) audioUrl = "https:" + audioUrl.slice(5);
+                    return { id: songId, url: audioUrl };
                   }
                 }
               } catch { /* fall through */ }
