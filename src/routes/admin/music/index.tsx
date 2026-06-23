@@ -233,7 +233,10 @@ function MusicAdminPage() {
           部署 music-resolver Worker 后，填入其地址，即可自动解析 VIP 歌曲的真实播放链接
         </p>
         <p className="text-[11px] font-mono text-muted-foreground">
-          播放优先级：自定义音频源 → 解析 API → 网易云代理（默认）
+          音频源优先级：自定义音频源 > 解析 API（仅 VIP 歌曲） > 网易云直链
+        </p>
+        <p className="text-[11px] font-mono text-muted-foreground">
+          VIP 歌曲会自动尝试通过解析 API 获取可播放地址；非 VIP 歌曲直接使用网易云直链。
         </p>
         <div className="flex gap-3">
           <input
