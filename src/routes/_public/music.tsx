@@ -3,10 +3,6 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useMusic } from "../../features/theme/themes/xinghui/components/music-provider";
 import {
   Disc3,
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
   Repeat,
   Shuffle,
   RefreshCcw,
@@ -222,23 +218,23 @@ function MusicPage() {
                 onClick={prevSong}
                 className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 transition-transform hover:scale-110"
               >
-                <SkipBack size={24} className="md:w-7 md:h-7" fill="currentColor" />
+                <svg className="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
               </button>
               <button
                 onClick={togglePlay}
                 className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center bg-indigo-500 text-white rounded-full hover:scale-105 shadow-xl shadow-indigo-500/40"
               >
                 {isPlaying ? (
-                  <Pause size={28} className="md:w-8 md:h-8" fill="currentColor" />
+                  <svg className="w-5 h-5 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                 ) : (
-                  <Play size={28} className="md:w-8 md:h-8 ml-1" fill="currentColor" />
+                  <svg className="w-5 h-5 md:w-8 md:h-8 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                 )}
               </button>
               <button
                 onClick={nextSong}
                 className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 transition-transform hover:scale-110"
               >
-                <SkipForward size={24} className="md:w-7 md:h-7" fill="currentColor" />
+                <svg className="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
               </button>
             </div>
             <div
