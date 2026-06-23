@@ -133,12 +133,27 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
               const songId = String(song.id || "");
               if (!songId) return null;
               if (audioUrlMap?.[songId]) return null;
+              // Always try to resolve, not just VIP - some non-VIP songs also need resolving
               const isVip = vipMap?.[songId] === true || (song.fee === 1);
+              // Try ncmusic-api format first: /song/url?id=xxx
+              try {
+                const r = await fetch(`${resolverUrl}/song/url?id=${songId}`);
+                if (r.ok) {
+                  const data = await r.json() as Record<string, unknown>;
+                  const items = data.data as Array<Record<string, unknown>> | undefined;
+                  if (items && items[0]?.url) {
+                    return { id: songId, url: items[0].url as string };
+                  }
+                }
+              } catch { /* fall through */ }
+              // Fallback: legacy resolver format /song/xxx
               if (!isVip) return null;
-              const r = await fetch(`${resolverUrl}/song/${songId}`);
-              if (!r.ok) return null;
-              const data = (await r.json()) as Record<string, string>;
-              return data.audioUrl ? { id: songId, url: data.audioUrl } : null;
+              try {
+                const r = await fetch(`${resolverUrl}/song/${songId}`);
+                if (!r.ok) return null;
+                const data = (await r.json()) as Record<string, string>;
+                return data.audioUrl ? { id: songId, url: data.audioUrl } : null;
+              } catch { return null; }
             }),
           );
           for (const result of resolves) {
