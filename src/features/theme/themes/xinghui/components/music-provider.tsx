@@ -137,7 +137,8 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
               const isVip = vipMap?.[songId] === true || (song.fee === 1);
               // Try ncmusic-api format first: /song/url?id=xxx
               try {
-                const r = await fetch(`${resolverUrl}/song/url?id=${songId}`);
+                const baseUrl = resolverUrl.replace(/\/+$/, "");
+                const r = await fetch(`${baseUrl}/song/url?id=${songId}`);
                 if (r.ok) {
                   const data = await r.json() as Record<string, unknown>;
                   const items = data.data as Array<Record<string, unknown>> | undefined;
@@ -152,7 +153,8 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
               // Fallback: legacy resolver format /song/xxx
               if (!isVip) return null;
               try {
-                const r = await fetch(`${resolverUrl}/song/${songId}`);
+                const baseUrl = resolverUrl.replace(/\/+$/, "");
+                const r = await fetch(`${baseUrl}/song/${songId}`);
                 if (!r.ok) return null;
                 const data = (await r.json()) as Record<string, string>;
                 return data.audioUrl ? { id: songId, url: data.audioUrl } : null;
