@@ -6,6 +6,7 @@ import type { PostPageProps } from "@/features/theme/contract/pages";
 import { authClient } from "@/lib/auth/auth.client";
 import { ContentRenderer } from "../../components/content/content-renderer";
 import { CommentSection } from "../../components/comment-section";
+import { SocialIcon } from "../../components/profile-card";
 
 function formatDate(date: Date | string) {
   const d = new Date(date);
@@ -134,6 +135,20 @@ export function PostPage({ post }: PostPageProps) {
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
               {siteConfig.description}
             </p>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              {siteConfig.social?.map((link, i) => (
+                <a
+                  key={i}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-7 h-7 rounded-md bg-white/50 dark:bg-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-white/80 dark:hover:bg-white/20 transition-all border border-white/20 dark:border-white/5"
+                  title={link.platform}
+                >
+                  <SocialIcon platform={link.platform} />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Recommended posts */}
