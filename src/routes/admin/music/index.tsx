@@ -173,6 +173,36 @@ function MusicAdminPage() {
     });
   };
 
+  // Drag-to-reorder
+  const dragIdx = useRef<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+
+  const handleDragStart = (idx: number) => {
+    dragIdx.current = idx;
+  };
+
+  const handleDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    setDragOverIdx(idx);
+  };
+
+  const handleDrop = (idx: number) => {
+    if (dragIdx.current === null || dragIdx.current === idx) return;
+    setLocalMusicIds((prev) => {
+      const arr = [...prev];
+      const [moved] = arr.splice(dragIdx.current!, 1);
+      arr.splice(idx, 0, moved);
+      return arr;
+    });
+    dragIdx.current = null;
+    setDragOverIdx(null);
+  };
+
+  const handleDragEnd = () => {
+    dragIdx.current = null;
+    setDragOverIdx(null);
+  };
+
   const handleToggleVip = (id: string) => {
     setLocalMusicIds((prev) =>
       prev.map((item) => {
@@ -371,9 +401,32 @@ function MusicAdminPage() {
               return (
                 <div
                   key={song.id}
-                  className="border border-border/30 p-4 group hover:border-foreground/30 transition-colors"
+                  draggable={isDirectSong}
+                  onDragStart={() => isDirectSong && handleDragStart(musicIds.indexOf(song.id))}
+                  onDragOver={(e) => isDirectSong && handleDragOver(e, musicIds.indexOf(song.id))}
+                  onDrop={() => isDirectSong && handleDrop(musicIds.indexOf(song.id))}
+                  onDragEnd={handleDragEnd}
+                  className={`border p-4 group hover:border-foreground/30 transition-colors ${
+                    isDirectSong ? "cursor-grab active:cursor-grabbing" : ""
+                  } ${
+                    dragOverIdx === musicIds.indexOf(song.id)
+                      ? "border-foreground/60 bg-foreground/5"
+                      : "border-border/30"
+                  }`}
                 >
                   <div className="flex items-center gap-4">
+                    {isDirectSong && (
+                      <div className="text-muted-foreground/40 cursor-grab active:cursor-grabbing flex-shrink-0" title="拖拽排序">
+                        <svg width="12" height="20" viewBox="0 0 12 20" fill="currentColor">
+                          <circle cx="3" cy="3" r="1.5" />
+                          <circle cx="9" cy="3" r="1.5" />
+                          <circle cx="3" cy="10" r="1.5" />
+                          <circle cx="9" cy="10" r="1.5" />
+                          <circle cx="3" cy="17" r="1.5" />
+                          <circle cx="9" cy="17" r="1.5" />
+                        </svg>
+                      </div>
+                    )}
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted/20 flex-shrink-0">
                       {song.cover ? (
                         <img
