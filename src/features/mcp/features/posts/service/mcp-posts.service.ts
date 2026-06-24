@@ -39,6 +39,7 @@ export function serializeMcpPostListItem(post: {
     readTimeInMinutes: post.readTimeInMinutes,
     slug: post.slug,
     status: post.status,
+    type: post.type,
     summary: post.summary,
     tags: post.tags?.map(serializeTag),
     title: post.title,
@@ -81,6 +82,7 @@ type McpPostUpdateInput = {
   summary?: string | null;
   slug?: string;
   status?: "draft" | "published";
+  type?: "article" | "talk";
   publishedAt?: string | null;
   readTimeInMinutes?: number;
   contentMarkdown?: string;
@@ -127,6 +129,10 @@ export async function toPostUpdateInput(
 
   if (input.status !== undefined) {
     data.status = input.status;
+  }
+
+  if (input.type !== undefined) {
+    data.type = input.type;
   }
 
   if (input.publishedAt !== undefined) {

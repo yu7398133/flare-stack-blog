@@ -266,6 +266,7 @@ export async function getPosts(context: DbContext, data: GetPostsInput) {
     search: data.search,
     sortDir: data.sortDir,
     sortBy: data.sortBy,
+    type: data.type,
   });
 }
 
