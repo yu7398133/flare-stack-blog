@@ -120,9 +120,9 @@ jobs:
 
       - name: Deploy to Cloudflare Workers
         run: |
-          bunx wrangler secret bulk secrets.json
           bun run build
           bun run deploy
+          bunx wrangler secret bulk secrets.json
 
       - name: Purge Cloudflare CDN Cache
         run: |
