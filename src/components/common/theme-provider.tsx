@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { createContext, use, useEffect, useState } from "react";
 import { z } from "zod";
 
-const UserThemeSchema = z.enum(["light", "dark", "system"]).catch("system");
-const _AppThemeSchema = z.enum(["light", "dark"]).catch("light");
+const UserThemeSchema = z.enum(["light", "dark", "system"]).catch("dark");
+const _AppThemeSchema = z.enum(["light", "dark"]).catch("dark");
 
 export type UserTheme = z.infer<typeof UserThemeSchema>;
 export type AppTheme = z.infer<typeof _AppThemeSchema>;
@@ -25,7 +25,7 @@ const setStoredTheme = createClientOnlyFn((theme: UserTheme) => {
 });
 
 const getSystemTheme = createIsomorphicFn()
-  .server((): AppTheme => "light")
+  .server((): AppTheme => "dark")
   .client((): AppTheme => {
     return window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
@@ -56,10 +56,10 @@ const setupPreferredListener = createClientOnlyFn(() => {
 const themeScript = (() => {
   function themeFn() {
     try {
-      const storedTheme = localStorage.getItem("ui-theme") || "system";
+      const storedTheme = localStorage.getItem("ui-theme") || "dark";
       const validTheme = ["light", "dark", "system"].includes(storedTheme)
         ? storedTheme
-        : "system";
+        : "dark";
 
       if (validTheme === "system") {
         const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
