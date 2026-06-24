@@ -47,36 +47,16 @@ export function XinghuiThemeSettings() {
         />
       </Field>
 
-      <Field
-        label="弹幕字号 (px)"
-        hint="弹幕文字大小，范围 10-40"
-        error={errors.site?.theme?.xinghui?.danmakuFontSize?.message}
-      >
-        <Input
-          type="number"
-          min={10}
-          max={40}
-          {...register("site.theme.xinghui.danmakuFontSize", {
-            valueAsNumber: true,
-          })}
-          placeholder="14"
-        />
-      </Field>
+      {/* Danmaku settings moved to /admin/danmaku */}
 
       <Field
-        label="弹幕透明度"
-        hint="弹幕透明度，0 到 1 之间（如 0.2 表示 20%）"
-        error={errors.site?.theme?.xinghui?.danmakuOpacity?.message}
+        label="站点启动时间"
+        hint="用于首页「系统已稳定运行」的起始时间计算，格式：2026-01-01T00:00:00"
+        error={errors.site?.theme?.xinghui?.buildDate?.message}
       >
         <Input
-          type="number"
-          min={0}
-          max={1}
-          step={0.05}
-          {...register("site.theme.xinghui.danmakuOpacity", {
-            valueAsNumber: true,
-          })}
-          placeholder="0.2"
+          {...register("site.theme.xinghui.buildDate")}
+          placeholder="2026-01-01T00:00:00"
         />
       </Field>
     </>
