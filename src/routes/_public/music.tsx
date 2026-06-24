@@ -145,9 +145,9 @@ function MusicPage() {
       </div>
 
       {/* Main: 2 columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 md:h-[calc(100vh-320px)] md:min-h-[600px] md:max-h-[720px]">
+      <div className="flex flex-col md:grid md:grid-cols-12 gap-6 md:gap-8 w-full md:items-stretch md:h-[calc(100vh-320px)] md:min-h-[600px] md:max-h-[720px]">
         {/* ====== Left: Player ====== */}
-        <div className="lg:col-span-5 xh-glass p-6 md:p-10 flex flex-col min-h-[460px] md:min-h-0">
+        <div className="md:col-span-5 xh-glass p-6 md:p-10 flex flex-col relative overflow-hidden shrink-0 min-h-[460px] sm:min-h-[500px] md:min-h-0">
           <div className="flex-1 flex flex-col items-center justify-center py-4 md:py-0">
             {/* Cover disc */}
             <div className="relative w-40 h-40 sm:w-48 sm:h-48 lg:w-64 lg:h-64 flex-shrink-0 mb-6 md:mb-10">
@@ -273,7 +273,7 @@ function MusicPage() {
         </div>
 
         {/* ====== Right: Lyrics / Playlist ====== */}
-        <div className="lg:col-span-7 xh-glass flex flex-col overflow-hidden h-[450px] md:h-auto md:min-h-0">
+        <div className="md:col-span-7 xh-glass flex flex-col overflow-hidden h-[450px] md:h-auto shrink-0">
           {/* Tab switcher */}
           <div className="flex items-center justify-center gap-1 p-1 mt-4 md:mt-6 mx-auto bg-white/50 dark:bg-slate-900/50 rounded-full shadow-inner border border-white/40 w-48 md:w-64 shrink-0">
             <button
