@@ -27,5 +27,19 @@ export function handleRootRequest(
   env: Env,
   ctx: ExecutionContext,
 ) {
-  return getOAuthProvider().fetch(request, env, ctx);
+  const url = new URL(request.url);
+  const path = url.pathname;
+
+  // Only route to OAuthProvider for actual MCP, OAuth, and well-known paths.
+  // Prevents OAuthProvider startsWith match intercepting normal blog URLs.
+  if (
+    path === "/mcp" ||
+    path.startsWith("/mcp/") ||
+    path.startsWith("/oauth/") ||
+    path.startsWith("/.well-known/")
+  ) {
+    return getOAuthProvider().fetch(request, env, ctx);
+  }
+
+  return appWorkerHandler.fetch(request, env, ctx);
 }
