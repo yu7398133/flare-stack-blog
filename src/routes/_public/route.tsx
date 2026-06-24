@@ -19,6 +19,16 @@ export const Route = createFileRoute("/_public")({
   errorComponent: ({ error }) => <ErrorPage error={error} />,
   headers: () => ({
       ...CACHE_CONTROL.public,
+      "Content-Security-Policy": [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+        "img-src 'self' data: blob: https: http:",
+        "font-src 'self' https://cdn.jsdelivr.net data:",
+        "connect-src 'self' https: wss:",
+        "media-src 'self' https: http:",
+        "frame-src 'none'",
+      ].join("; "),
     }),
   head: ({ loaderData }) => ({
     links: (loaderData?.preloadImages ?? []).map((href) => ({
