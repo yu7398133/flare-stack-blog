@@ -5,7 +5,7 @@
 /* Root — ensure serif font for body text */
 .xh-prose {
   font-family: var(--font-serif);
-  color: rgb(71 85 105);
+  color: rgb(30 41 59);
 }
 
 .dark .xh-prose {
