@@ -220,6 +220,7 @@ const CSP_DIRECTIVES = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https: http:",
   "font-src 'self' https://fonts.gstatic.com https://fonts.gstatic.font.im https://cdn.jsdelivr.net data:",
   "connect-src 'self' https: wss:",
@@ -233,5 +234,7 @@ export const cspMiddleware = createMiddleware(async (c, next) => {
   const contentType = c.res.headers.get("Content-Type") || "";
   if (contentType.includes("text/html")) {
     c.res.headers.set("Content-Security-Policy", CSP_DIRECTIVES);
+    // Prevent CDN from caching HTML (avoids stale CSP header)
+    c.res.headers.set("Cache-Control", "public, max-age=0, must-revalidate, no-transform");
   }
 });
