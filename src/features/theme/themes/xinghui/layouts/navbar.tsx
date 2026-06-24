@@ -13,13 +13,13 @@ interface NavbarProps {
 
 export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }: NavbarProps) {
   const { siteConfig } = useRouteContext({ from: "__root__" });
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") === "dark" ||
-        (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    }
-    return false;
-  });
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDark(stored === "dark" || (!stored && prefersDark));
+  }, []);
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
