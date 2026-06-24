@@ -58,7 +58,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         },
         {
           rel: "stylesheet",
-          href: "https://cdn.jsdelivr.net/npm/@chinese-fonts/noto-serif-sc/dist/NotoSerifSC/result.css",
+          href: "https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5/index.css",
         },
         {
           rel: "icon",
