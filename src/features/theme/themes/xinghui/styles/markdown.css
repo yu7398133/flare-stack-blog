@@ -70,11 +70,13 @@
   border-radius: 0 0.75rem 0.75rem 0;
   color: rgb(71 85 105);
   font-size: 1em;
+  font-family: var(--font-mono);
 }
 
 .dark .xh-prose blockquote {
   background: rgb(99 102 241 / 0.1);
   color: rgb(203 213 225);
+  font-family: var(--font-mono);
 }
 
 /* Inline code */
