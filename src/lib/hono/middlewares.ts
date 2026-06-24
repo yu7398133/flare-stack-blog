@@ -219,9 +219,9 @@ export const turnstileMiddleware = createMiddleware<{ Bindings: Env }>(
 const CSP_DIRECTIVES = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
-  "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https: http:",
-  "font-src 'self' https://cdn.jsdelivr.net data:",
+  "font-src 'self' https://fonts.gstatic.com data:",
   "connect-src 'self' https: wss:",
   "media-src 'self' https: http:",
   "frame-src 'none'",
