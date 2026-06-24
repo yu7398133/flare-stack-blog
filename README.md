@@ -47,7 +47,123 @@
 - **SEO 增强** — Canonical URL、Schema.org 结构化数据、RSS / Sitemap / Robots
 - **AI 辅助** — Cloudflare Workers AI 集成
 - **主题系统** — 可扩展的主题模板，支持完整替换所有页面和布局
-- **导入导出** — 支持Markdown导入导出，保留图片以及Frontmatter
+
+
+## 本仓库的修改与扩展（基于上游 [du2333/flare-stack-blog](https://github.com/du2333/flare-stack-blog)）
+
+本仓库克隆自上游项目后，进行了大量功能扩展和定制化改造（共 **159 次提交**），主要涵盖以下方面：
+
+### 🎨 自定义主题 — Xinghui（玻璃拟态）
+
+> 自研 `xinghui` 玻璃拟态主题，完全替换了原有的视觉体系。
+
+- **全新 xinghui 主题**：玻璃拟态（Glassmorphism）设计，毛玻璃效果、半透明层叠、柔和光影
+- **主题注册集成**：将 xinghui 注册到主题系统，支持后台切换
+- **视觉精细化**：导航栏全宽 + 隐藏滚动、首屏字体衬体化（Noto Serif SC）、卡片圆角/间距/颜色逐像素对齐参考站点
+- **动态特效**：点击涟漪（ClickEffect）、萤火虫（FireflyEffect）、风动草（WindyGrass）、弹幕（Danmaku）、水波纹
+
+### 🏠 首页彻底改造
+
+全面对标参考站点，重构了首页布局：
+
+- **个人资料卡（ProfileCard）**：显示头像、统计（文章/照片/说说/杂谈）、社交图标（含 Bilibili）
+- **照片轮播（Photo Carousel）**：最新 5 张照片自动轮播，可点击跳转相册
+- **最新说说 / 杂谈预览**：左右并排布局，LatestChatterCarousel 组件
+- **站点仪表盘（SiteDashboard）**：Flip Clock 实时时钟、运行时间、技术徽章
+- **搜索栏放大**：更醒目的搜索入口
+- **动漫随机背景**：通过 LoliAPI 获取随机插画作为首页/文章封面背景，支持刷新按钮
+
+### 📝 文章 / 杂谈双类型系统
+
+| 改动 | 说明 |
+|------|------|
+| 新增 `type` 字段 | 文章支持 `article`（文章）和 `talk`（杂谈）两种类型 |
+| 管理后台编辑器 | 编辑器新增类型切换开关，发布时选择 |
+| 首页筛选 | 轮播仅显示文章，杂谈以独立卡片展示 |
+| 杂谈独立页面（TalkPage） | 瀑布流（Masonry）布局，与时间线卡片风格一致 |
+| 时间线排除杂谈 | 时间线（Timeline）仅显示文章类型 |
+
+### 🎵 音乐系统深度集成
+
+基于网易云音乐 API 构建了完整的音乐播放体系：
+
+- **浮动音乐播放器（Floating Player）**：全局悬浮，支持播放/暂停/上一首/下一首
+- **独立音乐页面**：仿参考站点的紧凑布局，滚动歌词显示
+- **歌单支持**：管理网易云歌单的增删
+- **VIP 歌曲支持**：通过 music-resolver 代理解析 VIP 歌曲的 CDN 直链，绕过 CORS
+- **自定义音频源**：支持手动输入 VIP 歌曲的直链地址
+- **管理后台**：歌曲/歌单管理界面、拖拽排序、音乐搜索外链
+- **网易云代理**：`/api/music/proxy` 端点，处理 HTTP→HTTPS 重定向，Range 请求支持
+
+### 🖼️ 照片墙系统
+
+- **数据库表**：照片 `photos` 表，支持相册分类
+- **照片墙页面**：网格展示，点击查看详情
+- **首页轮播**：最新 5 张照片自动轮播，带标题和指示器
+- **管理后台**：照片的上传/删除管理界面
+- **MCP 工具**：`photos_list` / `photos_create` / `photos_delete`
+
+### 💬 说说（Moments）系统
+
+- **数据库表**：说说 `moments` 表，支持心情/地点/图片
+- **说说页面**：瀑布流布局展示
+- **首页预览**：最新说说在首页右侧展示
+- **管理后台**：说说的增删管理界面
+- **MCP 工具**：`moments_list` / `moments_create` / `moments_delete`
+
+### 🧩 MCP Server（AI 客户端集成）
+
+扩展了上游的 MCP 能力，支持通过 OAuth 连接任意 AI 客户端（Claude、Cursor 等）管理博客：
+
+- **文章操作**：`posts_list` / `posts_get` / `posts_create_draft` / `posts_update`（含 type 字段）/ `posts_delete` / `posts_set_visibility` / `posts_set_tags`
+- **评论操作**：`comments_list` / `comments_get` / `comments_delete` / `comments_update_status`
+- **友链操作**：`friend_links_list` / `friend_links_approve` / `friend_links_delete`
+- **媒体操作**：`media_list` / `media_get_upload_url`
+- **搜索**：`search_posts`
+- **标签**：`tags_list`
+- **统计**：`analytics_overview`
+- **说说（新增）**：`moments_list` / `moments_create` / `moments_delete`
+- **照片（新增）**：`photos_list` / `photos_create` / `photos_delete`
+- **音乐（新增）**：`music_list` / `music_add_song` / `music_remove_song` / `music_add_playlist` / `music_remove_playlist`
+
+### 🔒 安全增强
+
+- **Content-Security-Policy (CSP)**：添加完整 CSP 头，通过 Hono 中间件全局拦截
+- **字体加载安全**：配置 `font-src` / `style-src` 白名单（Google Fonts → jsDelivr）
+- **可控部署**：支持通过 `ROUTE` 环境变量切换 custom_domain / routes 部署模式
+
+### 🎨 字体系统优化
+
+- **Noto Serif SC 衬线字体**：文章/杂谈正文使用思源宋体，提升中文阅读体验
+- **Google Fonts → jsDelivr**：替换谷歌字体为国内可访问的 jsDelivr CDN，解决加载慢/失败问题
+- **Prose 颜色修复**：修复深/浅双主题下 `xh-prose` 正文颜色（黑色→正确色值）
+
+### 🔧 后台管理增强
+
+- **强制夜间模式**：后台默认使用深色主题，更护眼
+- **新增管理页面**：说说管理、照片管理、项目管理、音乐管理
+- **后台导航**：修复前台/后台切换时强制刷新以正确渲染
+- **自动填充支持**：为所有表单输入添加 id/name 属性
+- **暗色模式变量**：补充后台完整暗色 CSS 变量
+- **弹幕管理**：弹幕的发送/显示控制
+
+### 🌐 全站页面新增
+
+| 页面 | 说明 |
+|------|------|
+| 关于页（About） | 自定义简介内容，可通过后台 `aboutContent` 字段维护 |
+| 友链页（Friend Links） | 展示已审核通过的友情链接，直接查询数据库绕缓存 |
+| 时间线（Timeline） | 按时间线展示所有文章 |
+| 项目墙（Projects） | 项目展示页面 |
+| 杂谈页（TalkPage） | 瀑布流展示杂谈内容 |
+
+### ⚡ 性能与体验优化
+
+- **SSR 数据预取**：首页/照片墙/杂谈等多路由实现 SSR 数据预取，消除闪烁
+- **React 水合修复**：修复导航栏、背景图、主题初始化等 Hydration 错误
+- **图片优化**：LoliAPI 随机插画作为文章封面，picsum seed 保证每篇文章封面唯一
+- **字体加载**：全局字体通过 `<link>` 标签预加载，消除 FOIT（Flash of Invisible Text）
+- **弹幕不阻塞**：所有页面弹幕独立渲染，与主内容并行加载
 
 ## 技术栈
 
