@@ -112,6 +112,8 @@ export function resolveSiteConfig(
           config?.site?.theme?.xinghui?.userAvatar ??
           config?.site?.theme?.xinghui?.avatar ??
           "",
+        aboutContent:
+          config?.site?.theme?.xinghui?.aboutContent ?? "",
         musicIds:
           config?.site?.theme?.xinghui?.musicIds ??
           blogConfig.theme.xinghui.musicIds,
