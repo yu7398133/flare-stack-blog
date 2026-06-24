@@ -24,6 +24,7 @@ import {
   apiVersionMiddleware,
   baseMiddleware,
   cacheMiddleware,
+  cspMiddleware,
   rateLimitMiddleware,
   requestIdMiddleware,
   shieldMiddleware,
@@ -165,6 +166,9 @@ app.route("/api/admin/export", exportDownloadRoute);
 app.route("/api/admin/photos", adminPhotosRoute);
 app.route("/api/admin/moments", adminMomentsRoute);
 app.route("/api/admin/projects", adminProjectsRoute);
+
+// CSP Middleware - catches all HTML responses
+app.all("*", cspMiddleware);
 
 // Router之前的防护
 app.all("*", shieldMiddleware);
