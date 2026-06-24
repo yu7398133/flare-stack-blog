@@ -8,6 +8,10 @@
   color: rgb(71 85 105);
 }
 
+.dark .xh-prose {
+  color: rgb(203 213 225);
+}
+
 /* Headings */
 .xh-prose h1,
 .xh-prose h2,
