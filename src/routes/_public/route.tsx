@@ -22,10 +22,10 @@ export const Route = createFileRoute("/_public")({
       ...CACHE_CONTROL.public,
       "Content-Security-Policy": [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
+        "style-src 'self' 'unsafe-inline'",
         "img-src 'self' data: blob: https: http:",
-        "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net data:",
+        "font-src 'self' https://cdn.jsdelivr.net data:",
         "connect-src 'self' https: wss:",
         "media-src 'self' https: http:",
         "frame-src 'none'",
