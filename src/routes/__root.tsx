@@ -53,16 +53,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       links: [
         {
           rel: "preconnect",
-          href: "https://fonts.googleapis.com",
-        },
-        {
-          rel: "preconnect",
-          href: "https://fonts.gstatic.com",
+          href: "https://cdn.jsdelivr.net",
           crossOrigin: "anonymous",
         },
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap",
+          href: "https://cdn.jsdelivr.net/npm/@chinese-fonts/noto-serif-sc/dist/NotoSerifSC/result.css",
         },
         {
           rel: "icon",
