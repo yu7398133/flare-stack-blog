@@ -1,7 +1,7 @@
 import { useRouteContext } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ContentRenderer } from "../../components/content/content-renderer";
+import { marked } from "marked";
 
 export function AboutPage() {
   const { siteConfig } = useRouteContext({ from: "__root__" });
@@ -190,7 +190,12 @@ export function AboutPage() {
         {activeTab === "intro" && (
           <div className="xh-prose prose prose-slate dark:prose-invert prose-base md:prose-lg max-w-none">
             {siteConfig.theme.xinghui?.aboutContent ? (
-              <ContentRenderer content={siteConfig.theme.xinghui.aboutContent} />
+              <div
+                className="text-base text-slate-600 dark:text-slate-300 font-serif leading-relaxed space-y-4"
+                dangerouslySetInnerHTML={{
+                  __html: marked.parse(siteConfig.theme.xinghui.aboutContent, { async: false }),
+                }}
+              />
             ) : (
               <div className="space-y-4">
                 <p className="text-base text-slate-600 dark:text-slate-400 font-serif leading-relaxed">
