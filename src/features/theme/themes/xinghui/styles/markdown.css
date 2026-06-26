@@ -94,6 +94,7 @@
   color: rgb(71 85 105);
   font-family: var(--font-mono);
   font-size: 0.875em;
+  font-style: normal;
 }
 .dark .xh-prose blockquote {
   background: rgb(99 102 241 / 0.1);
