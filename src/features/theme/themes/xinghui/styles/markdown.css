@@ -75,6 +75,7 @@
   border-radius: 0 0.75rem 0.75rem 0;
   color: rgb(71 85 105);
   font-family: var(--font-mono);
+  font-size: 0.875em;
 }
 
 .dark .xh-prose blockquote {
