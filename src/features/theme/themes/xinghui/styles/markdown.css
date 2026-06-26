@@ -172,6 +172,10 @@
 .xh-prose td {
   font-size: 14px;
 }
+.xh-prose th p,
+.xh-prose td p {
+  margin: 0;
+}
 
 /* HR — vp-doc: 16px vertical margin */
 .xh-prose hr {
