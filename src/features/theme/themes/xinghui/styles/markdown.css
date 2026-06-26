@@ -40,12 +40,14 @@
 }
 
 .xh-prose h1 {
+  font-family: var(--font-serif);
   font-size: 2.25rem;
   margin-top: 0;
   margin-bottom: 0.7rem;
   line-height: 1.5;
 }
 .xh-prose h2 {
+  font-family: var(--font-serif);
   font-size: 1.875rem;
   padding-top: 24px;
   margin: 48px 0 16px;
@@ -57,11 +59,13 @@
   border-bottom-color: rgb(51 65 85 / 0.5);
 }
 .xh-prose h3 {
+  font-family: var(--font-serif);
   font-size: 1.5rem;
   margin: 32px 0 16px;
   line-height: 28px;
 }
 .xh-prose h4 {
+  font-family: var(--font-serif);
   font-size: 1.25rem;
   margin: 24px 0 16px;
   line-height: 24px;
@@ -113,13 +117,17 @@
   border-radius: 4px;
   font-size: 0.875em;
   font-family: ui-monospace, monospace;
+  font-weight: 600;
+  color: rgb(15 23 42);
 }
 .dark .xh-prose code:not(pre code) {
   background: rgb(30 41 59);
+  color: rgb(226 232 240);
 }
 
 /* Code blocks — vp-doc: 16px vertical margin, 20px padding */
 .xh-prose pre {
+  font-family: var(--font-mono);
   margin: 16px 0;
   padding: 20px 0;
   border-radius: 8px;
@@ -129,6 +137,7 @@
   background: var(--code-bg, rgb(248 250 252));
 }
 .dark .xh-prose pre {
+  font-family: var(--font-mono);
   background: var(--code-bg, rgb(30 41 59));
 }
 
