@@ -152,8 +152,9 @@
 }
 .xh-prose th,
 .xh-prose td {
-  padding: 4px 8px;
+  padding: 8px 12px;
   border: 1px solid rgb(226 232 240 / 0.5);
+  min-width: 80px;
 }
 .dark .xh-prose th,
 .dark .xh-prose td {
