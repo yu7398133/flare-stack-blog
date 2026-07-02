@@ -9,6 +9,9 @@
  * across homepage, archive, and post detail pages.
  */
 
+const COVER_CDN = "https://eo-img.loliapi.cn/i/pc/img";
+const COVER_POOL_SIZE = 697; // img1.webp through img697.webp
+
 /**
  * Generate an anime cover image URL from a post slug.
  * Uses a hash to pick from a fixed pool of anime images for consistency.
@@ -19,8 +22,8 @@ export function getPostCoverBySlug(slug: string, _width = 800, _height = 500): s
   for (let i = 0; i < slug.length; i++) {
     hash = ((hash << 5) - hash + slug.charCodeAt(i)) | 0;
   }
-  const idx = Math.abs(hash) % 1000;
-  return `https://t.mwm.moe/fj/?${idx}`;
+  const idx = (Math.abs(hash) % COVER_POOL_SIZE) + 1; // 1-indexed pool
+  return `${COVER_CDN}${idx}.webp`;
 }
 
 /**
