@@ -144,7 +144,16 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                 if (r.ok) {
                   const data = await r.json() as Record<string, unknown>;
                   const d = data.data;
-                  if (typeof d === "string" && d.startsWith("http")) audioUrl = d;
+                  // /song/media/outer/url?id= resolves to a 404 HTML page for VIP
+                  // songs no third-party source carries — skip it so the v1
+                  // fallback can at least return a playable (preview) link.
+                  if (
+                    typeof d === "string" &&
+                    d.startsWith("http") &&
+                    !d.includes("/outer/url?id=")
+                  ) {
+                    audioUrl = d;
+                  }
                 }
               } catch { /* fall through */ }
               // Fallback: /song/url/v1 returns standard-quality links for free
