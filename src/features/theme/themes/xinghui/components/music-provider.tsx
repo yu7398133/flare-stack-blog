@@ -135,10 +135,11 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
               if (audioUrlMap?.[songId]) return null;
               // Always try to resolve, not just VIP - some non-VIP songs also need resolving
               const isVip = vipMap?.[songId] === true || (song.fee === 1);
-              // Try ncmusic-api format first: /song/url?id=xxx
+              // Use ncmusic-api (api-enhanced) /song/url/v1 with level param —
+              // the v1 endpoint is what performs grey/VIP unlock on the server side.
               try {
                 const baseUrl = resolverUrl.replace(/\/+$/, "");
-                const r = await fetch(`${baseUrl}/song/url?id=${songId}`);
+                const r = await fetch(`${baseUrl}/song/url/v1?id=${songId}&level=exhigh`);
                 if (r.ok) {
                   const data = await r.json() as Record<string, unknown>;
                   const items = data.data as Array<Record<string, unknown>> | undefined;
