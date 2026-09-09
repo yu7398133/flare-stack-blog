@@ -135,22 +135,39 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
               if (audioUrlMap?.[songId]) return null;
               // Always try to resolve, not just VIP - some non-VIP songs also need resolving
               const isVip = vipMap?.[songId] === true || (song.fee === 1);
-              // Use ncmusic-api (api-enhanced) /song/url/v1 with level param —
-              // the v1 endpoint is what performs grey/VIP unlock on the server side.
+              // Try grey/VIP unlock first via /song/url/match (UnblockNeteaseMusic).
+              // Its data field is a direct URL string, not an array.
+              let audioUrl: string | null = null;
               try {
                 const baseUrl = resolverUrl.replace(/\/+$/, "");
-                const r = await fetch(`${baseUrl}/song/url/v1?id=${songId}&level=exhigh`);
+                const r = await fetch(`${baseUrl}/song/url/match?id=${songId}`);
                 if (r.ok) {
                   const data = await r.json() as Record<string, unknown>;
-                  const items = data.data as Array<Record<string, unknown>> | undefined;
-                  if (items && items[0]?.url) {
-                    let audioUrl = items[0].url as string;
-                    // ncmusic-api returns http URLs - upgrade to https for mixed-content safety
-                    if (audioUrl.startsWith("http:")) audioUrl = "https:" + audioUrl.slice(5);
-                    return { id: songId, url: audioUrl };
-                  }
+                  const d = data.data;
+                  if (typeof d === "string" && d.startsWith("http")) audioUrl = d;
                 }
               } catch { /* fall through */ }
+              // Fallback: /song/url/v1 returns standard-quality links for free
+              // songs (data is an array of song objects with .url).
+              if (!audioUrl) {
+                try {
+                  const baseUrl = resolverUrl.replace(/\/+$/, "");
+                  const r = await fetch(`${baseUrl}/song/url/v1?id=${songId}&level=exhigh`);
+                  if (r.ok) {
+                    const data = await r.json() as Record<string, unknown>;
+                    const items = data.data as Array<Record<string, unknown>> | undefined;
+                    const u = items?.[0]?.url;
+                    if (typeof u === "string" && u.startsWith("http")) audioUrl = u;
+                  }
+                } catch { /* fall through */ }
+              }
+              if (audioUrl) {
+                // ncmusic-api returns http URLs - upgrade to https for mixed-content safety
+                const secureUrl = audioUrl.startsWith("http:")
+                  ? "https:" + audioUrl.slice(5)
+                  : audioUrl;
+                return { id: songId, url: secureUrl };
+              }
               // Fallback: legacy resolver format /song/xxx
               if (!isVip) return null;
               try {
