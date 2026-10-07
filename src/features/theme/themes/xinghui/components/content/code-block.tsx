@@ -17,11 +17,13 @@ interface CodeBlockProps {
  * so the same look is re-expressed with this fork's Tailwind v4 tokens
  * (`--color-card`, `--color-border`, `--color-primary`) rather than copied.
  *
- * The card surface is spelled `bg-white dark:bg-card` rather than plain
- * `bg-card`: this theme expresses light mode by leaving <html> class-less, so
- * the `html.light { --color-card: … }` override never matches and `--color-card`
- * keeps its dark `@theme` default. An explicit `dark:` pair is what the rest of
- * the theme already relies on and works in all three modes.
+ * The card surface is a translucent veil (`bg-white/50 dark:bg-black/50` plus
+ * `backdrop-blur`) rather than an opaque fill, so the page's glass background
+ * stays visible through it. An opaque `bg-card` was wrong twice over: this
+ * theme expresses light mode by leaving <html> class-less, so
+ * `html.light { --color-card: … }` never matches and `--color-card` keeps its
+ * dark `@theme` default; and any opaque fill would kill the glass effect.
+ * Explicit `dark:` pairs are what the rest of the theme already relies on.
  */
 export function CodeBlock({ code, language, highlightedHtml }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
@@ -34,7 +36,7 @@ export function CodeBlock({ code, language, highlightedHtml }: CodeBlockProps) {
 
   return (
     <div className="not-prose group relative my-6 max-w-full">
-      <div className="shiki-frame shiki-mount relative overflow-hidden rounded-xl border border-black/10 bg-white dark:border-border dark:bg-card transition-colors">
+      <div className="shiki-frame shiki-mount relative overflow-hidden rounded-xl border border-black/10 bg-white/50 backdrop-blur-md dark:border-white/10 dark:bg-black/65 transition-colors">
         {/* Language badge — yields to the copy button on hover */}
         <div className="pointer-events-none absolute right-2 top-2 z-10 rounded-lg bg-primary/10 px-2 py-0.5 font-mono text-xs font-bold uppercase text-primary transition-opacity duration-300 group-hover:opacity-0">
           {language || "plaintext"}
@@ -45,8 +47,8 @@ export function CodeBlock({ code, language, highlightedHtml }: CodeBlockProps) {
           onClick={handleCopy}
           aria-label={copied ? "已复制" : "复制代码"}
           className={cn(
-            "absolute right-2 top-2 z-20 flex size-8 items-center justify-center rounded-lg border border-transparent text-black/50 dark:text-muted-foreground opacity-0 transition-all duration-300",
-            "group-hover:opacity-100 hover:border-black/10 hover:bg-black/5 hover:text-black/80 dark:hover:border-border dark:hover:bg-muted dark:hover:text-foreground",
+            "absolute right-2 top-2 z-20 flex size-8 items-center justify-center rounded-lg border border-transparent text-black/50 dark:text-white/50 opacity-0 transition-all duration-300",
+            "group-hover:opacity-100 hover:border-black/10 hover:bg-black/5 hover:text-black/80 dark:hover:border-white/15 dark:hover:bg-white/10 dark:hover:text-white/90",
             copied &&
               "scale-110 text-green-500 opacity-100 hover:text-green-500",
           )}
