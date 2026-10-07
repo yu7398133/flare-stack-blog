@@ -122,7 +122,7 @@
   border-radius: 4px;
   font-size: 0.875em;
   font-family: ui-monospace, monospace;
-  font-weight: 500;
+  font-weight: 400;
   color: oklch(0.55 0.12 250);
 }
 .dark .xh-prose code:not(pre code) {
