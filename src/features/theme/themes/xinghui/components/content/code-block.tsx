@@ -36,7 +36,7 @@ export function CodeBlock({ code, language, highlightedHtml }: CodeBlockProps) {
 
   return (
     <div className="not-prose group relative my-6 max-w-full">
-      <div className="shiki-frame shiki-mount relative overflow-hidden rounded-xl border border-black/10 bg-white/50 backdrop-blur-md dark:border-white/10 dark:bg-black/33 transition-colors">
+      <div className="shiki-frame shiki-mount relative overflow-hidden rounded-xl border border-black/10 bg-white/25 backdrop-blur-md dark:border-white/10 dark:bg-black/33 transition-colors">
         {/* Language badge — yields to the copy button on hover */}
         <div className="pointer-events-none absolute right-2 top-2 z-10 rounded-lg bg-primary/10 px-2 py-0.5 font-mono text-xs font-bold uppercase text-primary transition-opacity duration-300 group-hover:opacity-0">
           {language || "plaintext"}
