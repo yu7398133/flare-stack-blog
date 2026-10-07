@@ -110,19 +110,24 @@
   line-height: inherit;
 }
 
-/* Inline code — vp-doc */
+/* Inline code — upstream (fuwari) treatment at hue 250: a blue-tinted surface
+   carries the emphasis while the text stays the same blue in both modes, so
+   the colour reads from the background rather than from a strong text colour.
+   Values mirror upstream's
+   `--fuwari-inline-code-bg` / `--fuwari-inline-code-color`
+   (= `--fuwari-btn-regular-bg` / `--fuwari-btn-content`). */
 .xh-prose code:not(pre code) {
-  background: rgb(241 245 249);
+  background: oklch(0.95 0.025 250);
   padding: 3px 6px;
   border-radius: 4px;
   font-size: 0.875em;
   font-family: ui-monospace, monospace;
   font-weight: 500;
-  color: rgb(15 23 42);
+  color: oklch(0.55 0.12 250);
 }
 .dark .xh-prose code:not(pre code) {
-  background: rgb(30 41 59);
-  color: rgb(226 232 240);
+  background: oklch(0.33 0.035 250);
+  color: oklch(0.75 0.1 250);
 }
 
 /* Code blocks — vp-doc: 16px vertical margin, 20px padding */

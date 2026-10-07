@@ -115,4 +115,96 @@
     font-weight: var(--shiki-dark-font-weight) !important;
     text-decoration: var(--shiki-dark-text-decoration) !important;
   }
+
+  /* ========================================
+     Code blocks (upstream-compatible chrome)
+     ========================================
+     Shiki paints its <pre> with an inline `background-color` (light) and a
+     `--shiki-dark-bg` custom property that the dark override above applies.
+     That makes the <pre> an opaque slab sitting on the card, so the card's own
+     surface never shows through and the block reads as a foreign box.
+
+     Drop the background on <pre>, <code> and every descendant span, and let
+     the card own the colour. The spans matter: they fill the block, so
+     resetting only the <pre> would leave the slab visible. Only
+     `background-color` is reset — token colours arrive as `style="color:..."`
+     on the spans, so syntax highlighting is preserved.
+
+     This must sit INSIDE `@layer base`, alongside the override it competes
+     with. Cascade layers invert for `!important` declarations: a layered
+     `!important` beats an unlayered one regardless of specificity, so putting
+     this rule outside the layer would lose even at higher specificity. Inside
+     the same layer, normal specificity decides and the extra compound class
+     (`[0,3,1]` vs `[0,2,1]`) wins — in light and dark alike. */
+  html .shiki-frame.shiki-mount .shiki,
+  html .shiki-frame.shiki-mount .shiki * {
+    background-color: transparent !important;
+  }
+}
+
+/* Shiki pads its own <pre>; the card already provides the padding via the
+   scroll container. Keep the block full-bleed and scrollable instead. */
+.shiki-frame .shiki {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  min-width: 100%;
+  width: fit-content;
+}
+
+.shiki-frame .shiki code {
+  display: block;
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Line numbers, as upstream renders them: a CSS counter on Shiki's per-line
+   `span.line`, right-aligned in a fixed gutter via `direction: rtl`. Shiki
+   emits `class="line"` for every line, so no wrapper or JS is needed.
+   The `.shiki` <pre> carries the counter, hence `counter-reset` on it. */
+.shiki-frame .shiki {
+  counter-reset: line;
+}
+.shiki-frame .shiki .line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 1.5rem;
+  margin-right: 1rem;
+  direction: rtl;
+  text-align: right;
+  color: color-mix(in oklab, var(--color-foreground) 30%, transparent);
+  user-select: none;
+}
+
+/* Thin, theme-aware scrollbars. Previously only referenced (10+ call sites)
+   but never defined, so every `custom-scrollbar` element fell back to the
+   platform default. */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-foreground) 20%, transparent)
+    transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: color-mix(
+    in oklab,
+    var(--color-foreground) 20%,
+    transparent
+  );
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--color-foreground) 35%,
+    transparent
+  );
 }
