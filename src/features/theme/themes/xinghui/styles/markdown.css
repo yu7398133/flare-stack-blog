@@ -110,22 +110,25 @@
   line-height: inherit;
 }
 
-/* Inline code — a faint translucent veil rather than a tinted fill, so it reads
-   as a lifted surface over the glass background instead of a coloured chip.
-   Light mirrors the article container's `bg-white/40` glass, one step stronger
-   so the veil stays visible; dark needs a much deeper veil than the container's
-   `bg-slate-800/50` or the light code text loses contrast against it. */
+/* Inline code — upstream (fuwari) treatment at hue 250: a blue-tinted surface
+   carries the emphasis while the text stays the same blue in both modes, so
+   the colour reads from the background rather than from a strong text colour.
+   Values mirror upstream's
+   `--fuwari-inline-code-bg` / `--fuwari-inline-code-color`
+   (= `--fuwari-btn-regular-bg` / `--fuwari-btn-content`); the surfaces are
+   transparent so the page's glass background still shows through. */
 .xh-prose code:not(pre code) {
-  background: oklch(1 0 0 / 0.62);
+  background: oklch(0.95 0.025 250 / 0.85);
   padding: 3px 6px;
   border-radius: 4px;
   font-size: 0.875em;
   font-family: ui-monospace, monospace;
   font-weight: 400;
-  color: inherit;
+  color: oklch(0.55 0.12 250);
 }
 .dark .xh-prose code:not(pre code) {
-  background: oklch(0 0 0 / 0.65);
+  background: oklch(0.33 0.035 250 / 0.85);
+  color: oklch(0.75 0.1 250);
 }
 
 /* Code blocks — vp-doc: 16px vertical margin, 20px padding */
