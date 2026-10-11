@@ -74,7 +74,7 @@ export const extensions = [
     // rendered element — so a class here outranks the `.xh-prose` rule that is
     // supposed to define inline code, and the editor and the published page
     // drift apart. Inline code is styled by the `.xh-prose` scope in
-    // markdown.css (mono face, 0.875em, weight 600, tinted surface).
+    // markdown.css (mono face, 0.875em, weight 500, tinted surface).
     code: {
       HTMLAttributes: {
         spellCheck: false,

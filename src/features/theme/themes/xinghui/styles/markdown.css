@@ -121,10 +121,11 @@
    `--fuwari-inline-code-bg` / `--fuwari-inline-code-color`
    (= `--fuwari-btn-regular-bg` / `--fuwari-btn-content`); the surfaces are
    transparent so the page's glass background still shows through.
-   Weight 600 is deliberate: at the same size as body text a monospace face reads
-   thinner than the surrounding sans, so inline code needs the extra weight to
-   hold its own. The language badge in code-block.tsx uses the same idea
-   (`font-bold`) for the same reason.
+   Weight 500 rather than 600: the tinted surface and the blue text already carry
+   the emphasis, and at 600 the monospace face read heavier than the body text
+   around it — heavy enough to pull the eye out of the sentence. 500 still sits
+   above the body's 400, which is the lift inline code needs once the surface is
+   doing the distinguishing.
    The family is `--font-mono` rather than the system `ui-monospace` stack so
    inline code and code blocks share one face — with `ui-monospace` first here,
    the two rendered differently wherever Geist Mono was loaded. */
@@ -134,7 +135,7 @@
   border-radius: 4px;
   font-size: 0.875em;
   font-family: var(--font-mono);
-  font-weight: 600;
+  font-weight: 500;
   color: oklch(0.55 0.12 250);
 }
 .dark .xh-prose code:not(pre code) {
