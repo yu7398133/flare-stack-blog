@@ -19,7 +19,11 @@
   line-height: 28px;
 }
 
-/* Headings — vp-doc spacing */
+/* Headings — vp-doc spacing.
+   The scale was shifted down one step (h1 takes the old h2 size, and so on)
+   because the body only ever uses h2-h4, so the old h1 slot sat unused while
+   h2 opened every section at 30px — heavy against 16px body text. h4 is the
+   floor and still clears the body size. */
 .xh-prose h1,
 .xh-prose h2,
 .xh-prose h3,
@@ -41,17 +45,17 @@
 
 .xh-prose h1 {
   font-family: var(--font-serif);
-  font-size: 2.25rem;
+  font-size: 1.875rem;
   margin-top: 0;
   margin-bottom: 0.7rem;
-  line-height: 1.5;
+  line-height: 32px;
 }
 .xh-prose h2 {
   font-family: var(--font-serif);
-  font-size: 1.875rem;
+  font-size: 1.5rem;
   padding-top: 24px;
   margin: 48px 0 16px;
-  line-height: 32px;
+  line-height: 28px;
   border-bottom: 1px solid rgb(226 232 240 / 0.5);
   padding-bottom: 0.3em;
 }
@@ -60,15 +64,15 @@
 }
 .xh-prose h3 {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin: 32px 0 16px;
-  line-height: 28px;
+  line-height: 24px;
 }
 .xh-prose h4 {
   font-family: var(--font-serif);
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   margin: 24px 0 16px;
-  line-height: 24px;
+  line-height: 22px;
 }
 
 /* Links */

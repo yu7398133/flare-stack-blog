@@ -1,4 +1,5 @@
 import type { JSONContent } from "@tiptap/react";
+import { clampHeadingLevel } from "@/features/posts/utils/toc";
 
 function escapeHtmlAttr(s: string): string {
   return s
@@ -113,7 +114,31 @@ export async function markdownToJsonContent(
     `<!DOCTYPE html><html><body>${html}</body></html>`,
   );
 
-  return PMDOMParser.fromSchema(schema)
-    .parse(document.body as unknown as Element)
-    .toJSON() as JSONContent;
+  return clampHeadingNodes(
+    PMDOMParser.fromSchema(schema)
+      .parse(document.body as unknown as Element)
+      .toJSON() as JSONContent,
+  );
+}
+
+/**
+ * Rewrite `#` (and anything past `####`) in body content to the levels an
+ * article is allowed to use, so the stored document is already clean.
+ *
+ * The renderer clamps too, but normalising here keeps the database — and
+ * therefore the outline, the editor and every export — consistent rather than
+ * hiding an invalid level behind a display-time rule.
+ */
+function clampHeadingNodes(node: JSONContent): JSONContent {
+  const next: JSONContent = { ...node };
+
+  if (next.type === "heading") {
+    next.attrs = { ...next.attrs, level: clampHeadingLevel(next.attrs?.level) };
+  }
+
+  if (next.content) {
+    next.content = next.content.map(clampHeadingNodes);
+  }
+
+  return next;
 }

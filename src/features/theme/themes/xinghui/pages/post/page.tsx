@@ -68,7 +68,7 @@ export function PostPage({ post }: PostPageProps) {
 
           <div className="p-6 md:p-10">
             {/* Title */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-4 leading-tight tracking-tight">
+            <h1 className="text-[2rem] font-bold text-slate-900 dark:text-white mb-4 leading-tight tracking-tight">
               {post.title}
             </h1>
 

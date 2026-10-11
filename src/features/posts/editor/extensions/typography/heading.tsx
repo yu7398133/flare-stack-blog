@@ -1,12 +1,12 @@
 import Heading from "@tiptap/extension-heading";
 import { mergeAttributes } from "@tiptap/react";
 import { slugify } from "@/features/posts/utils/content";
+import { clampHeadingLevel } from "@/features/posts/utils/toc";
 
 export const HeadingExtension = Heading.extend({
   renderHTML({ HTMLAttributes, node }) {
-    const level = node.attrs.level as 1 | 2 | 3 | 4;
-    const textContent = node.textContent;
-    const id = slugify(textContent);
+    const level = clampHeadingLevel(node.attrs.level);
+    const id = slugify(node.textContent);
 
     return [
       `h${level}`,

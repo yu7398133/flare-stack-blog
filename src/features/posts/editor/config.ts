@@ -96,7 +96,8 @@ export const extensions = [
     },
   }),
   HeadingExtension.configure({
-    levels: [1, 2, 3, 4],
+    // No level 1: the post title is the page's <h1>, so bodies start at ##.
+    levels: [2, 3, 4],
   }),
   BlockQuoteExtension,
   CodeBlockExtension,
