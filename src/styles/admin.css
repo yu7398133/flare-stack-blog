@@ -84,19 +84,171 @@
 }
 
 /* Post editor list styles: keep list behavior from official TipTap extensions,
-   but style the admin editor explicitly instead of encoding classes into content. */
-.admin-layout .ProseMirror ul {
+   but style the admin editor explicitly instead of encoding classes into content.
+   Scoped to the `.xh-prose` body so these never reach unrelated admin lists. */
+.admin-layout .ProseMirror.xh-prose ul {
   list-style-type: disc;
-  margin: 1rem 0;
+  margin: 16px 0;
   padding-left: 1.25rem;
 }
 
-.admin-layout .ProseMirror ol {
+.admin-layout .ProseMirror.xh-prose ol {
   list-style-type: decimal;
-  margin: 1rem 0;
+  margin: 16px 0;
   padding-left: 1.25rem;
 }
 
-.admin-layout .ProseMirror li {
-  margin: 0.25rem 0;
+.admin-layout .ProseMirror.xh-prose li {
+  margin: 0;
+}
+
+.admin-layout .ProseMirror.xh-prose li + li {
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   Post editor body — the SAME stylesheet the public post page uses
+   ==========================================================================
+   `src/features/theme/themes/xinghui/styles/markdown.css` is imported by
+   `src/routes/admin/route.tsx`, so both surfaces already load `.xh-prose`.
+   The editor root now carries that class (`src/components/tiptap-editor`), and
+   everything below exists to make the admin body agree with the published one.
+
+   Two facts drive this whole block, and both are easy to get wrong:
+
+   1. This file is NOT in a cascade layer, while Tailwind's utilities ARE
+      (`@layer utilities`). Layered rules lose to unlayered ones no matter how
+      specific they are, so every rule here beats a utility — that is why the
+      admin stylesheet can, and must, own markup the editor used to style with
+      utilities.
+   2. Utilities sitting ON the editable element outrank `.xh-prose` element
+      rules (`.text-base` on the root beats `.xh-prose p`). So font size and
+      line-height are decreed HERE, on the root, and NEVER with `text-*` /
+      `leading-*` utilities on the ProseMirror element itself.
+
+   Keep the declarations in this file in step with markdown.css: same values,
+   same order of magnitude. If one moves, move the other. */
+
+/* Body copy. 1rem / 1.75 mirrors the public surface: `post/page.tsx` renders
+   the article under `prose-base md:prose-lg`, but the Tailwind Typography
+   plugin is never registered in `src/styles.css` (`@plugin
+   "@tailwindcss/typography"` is absent, and neither the local build nor the
+   deployed bundle contains a single `.prose` rule), so `prose-base` /
+   `md:prose-lg` emit NOTHING and the public body resolves to the Tailwind
+   `--text-base` default of 1rem. Body text is therefore 16px on the public
+   page, not 18px — do not "fix" this to 18px. */
+.admin-layout .ProseMirror.xh-prose {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+/* Paragraph rhythm. markdown.css fixes the public body at 28px (1.75 x 16px);
+   the editor keeps the same leading so the two measure identically. */
+.admin-layout .ProseMirror.xh-prose p {
+  margin: 16px 0;
+  line-height: 28px;
+}
+
+/* Table cell paragraphs. The published page flattens them: `markdown.css` has
+   `.xh-prose th p, .xh-prose td p { margin: 0 }` at `(0,1,2)`, while the
+   paragraph rule above is `.admin-layout .ProseMirror.xh-prose p` at
+   `(0,3,1)` — higher specificity in an equally unlayered file, so it wins and
+   cells keep full paragraph margins. Measured on the live site: th/td `p`
+   margin is 0 there, and the cell font-size comes from the 14px table rule,
+   which the paragraph inherits. */
+.admin-layout .ProseMirror.xh-prose th p,
+.admin-layout .ProseMirror.xh-prose td p {
+  margin: 0;
+}
+
+/* Block quote paragraphs. Same specificity trap as the table cells, but with
+   the leading as well: `markdown.css` has
+   `.xh-prose blockquote p { margin: 0; line-height: inherit }` at `(0,1,3)`,
+   which the `(0,3,1)` paragraph rule above outranks — so the editor gave quote
+   paragraphs full body margins and 28px leading where the published page uses
+   the quote's own 14px/1.75 metrics (measured live: 24.5px). `inherit` pulls
+   the line-height from the enclosing quote, exactly as the public rule does. */
+.admin-layout .ProseMirror.xh-prose blockquote p {
+  margin: 0;
+  line-height: inherit;
+}
+
+/* Headings. `.xh-prose` already sets family, size and weight; the editor used
+   to lose all three to Tailwind's preflight (headings there are
+   `font-size: inherit; font-weight: inherit`). The margins are lifted to the
+   same scale as the public page so section breaks read the same way. */
+.admin-layout .ProseMirror.xh-prose h2,
+.admin-layout .ProseMirror.xh-prose h3,
+.admin-layout .ProseMirror.xh-prose h4 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.admin-layout .ProseMirror.xh-prose h2 {
+  padding-top: 24px;
+  margin: 48px 0 16px;
+}
+
+.admin-layout .ProseMirror.xh-prose h3 {
+  margin: 32px 0 16px;
+}
+
+.admin-layout .ProseMirror.xh-prose h4 {
+  margin: 24px 0 16px;
+}
+
+/* Placeholder for an EMPTY paragraph. Preflight zeroes every margin, so in a
+   blank document the whole editable area would collapse and read as a dead
+   box. `min-height: 1lh` keeps exactly one empty line tall — no arbitrary
+   pixel guess — and resets the margin so a lone blank paragraph does not sit
+   off-centre. */
+.admin-layout .ProseMirror p.is-editor-empty:first-child {
+  min-height: 1lh;
+  margin: 0;
+}
+
+/* Links need the pointer even when the link does not fill its own box. The
+   cursor deliberately does NOT come from a `cursor-pointer` utility on the
+   editable root: that utility is a `(0,1,0)` selector on the root, so it would
+   win the cursor against `.xh-prose a` while the COLOR still went to
+   `.xh-prose a` (`(0,1,1)`) — one property set split across two owners. */
+.admin-layout .ProseMirror.xh-prose a {
+  cursor: pointer;
+}
+
+/* Image resize handles. Tiptap's resize plugin draws its grabber by attaching a
+   `data-*` attribute to the element it wraps; this editor has no dedicated
+   wrapper class for it. This is the ONE documented exception to the
+   "no element classes encoded into content" rule below — it is fixed chrome on
+   a live node view, never persisted into saved content. */
+.admin-layout .ProseMirror img[data-resize-handle] {
+  cursor: pointer;
+}
+
+/* Code-block node view (`extensions/code-block/code-block-view.tsx`).
+   `xh-prose pre` only styles bare `<pre>` output, and the EDITOR never renders
+   a bare `<pre>`: a code block becomes
+     .shiki > div.p-6.font-mono.text-sm.leading-relaxed > code
+   The measurement worth keeping in mind is that the published page shows a
+   14px code line-box with 22.4px leading, while the node view's own
+   `text-sm`/`leading-relaxed` put the code element at 14.5px / 21.75px — a
+   drift that reads as "the code looks different over there". These rules
+   settle the code element onto the published metrics; the container keeps the
+   mono face so nothing flashes in the wrong typeface while the node view
+   mounts. */
+.admin-layout .ProseMirror .shiki code {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Tailwind preflight gives `[hidden]` a `display: none !important`. If a
+   heading `id` ever collided with it, the browser's own `#id { display: none }`
+   rule would lose to that `!important` — so re-assert the element's display
+   from a higher-specificity, unlayered rule. (`hidden="until-found"` is
+   intentionally left alone: that value means "collapsed until searched".) */
+.admin-layout .ProseMirror.xh-prose h2[hidden]:not([hidden="until-found"]),
+.admin-layout .ProseMirror.xh-prose h3[hidden]:not([hidden="until-found"]),
+.admin-layout .ProseMirror.xh-prose h4[hidden]:not([hidden="until-found"]) {
+  display: block;
 }

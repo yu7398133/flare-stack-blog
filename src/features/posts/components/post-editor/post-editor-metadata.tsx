@@ -51,7 +51,12 @@ export function PostEditorMetadata({
           onChange={(e) => onPostChange({ title: e.target.value })}
           minRows={1}
           placeholder={m.editor_title_placeholder()}
-          className="w-full resize-none overflow-hidden border-none bg-transparent p-0 text-4xl font-medium leading-[1.2] tracking-tight text-foreground transition-all placeholder:text-muted-foreground/20 focus:outline-none md:text-6xl font-serif"
+          // Same font, size and leading as the article `<h1>` on the public
+          // page (32px / 1.25, bold), so the title the author types and the
+          // title readers see are the same object. Kept as arbitrary values
+          // rather than utilities because ``text-4xl`` would be size 3 of the
+          // Tailwind scale while this one number is the design decision.
+          className="w-full resize-none overflow-hidden border-none bg-transparent p-0 font-serif text-[2rem] font-bold leading-[1.25] tracking-tight text-foreground transition-all placeholder:text-muted-foreground/20 focus:outline-none"
         />
       </div>
 

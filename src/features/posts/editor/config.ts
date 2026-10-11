@@ -68,10 +68,15 @@ export const extensions = [
     heading: false,
     codeBlock: false,
     blockquote: false,
+    // Inline code carries no typography class on purpose. This extension list
+    // is shared by the admin editor and the public renderer
+    // (`ContentRenderer`), and these HTMLAttributes are written onto the
+    // rendered element — so a class here outranks the `.xh-prose` rule that is
+    // supposed to define inline code, and the editor and the published page
+    // drift apart. Inline code is styled by the `.xh-prose` scope in
+    // markdown.css (mono face, 0.875em, weight 600, tinted surface).
     code: {
       HTMLAttributes: {
-        class:
-          "font-mono text-sm px-1 text-foreground/80 bg-muted/40 rounded-sm",
         spellCheck: false,
       },
     },
@@ -89,8 +94,6 @@ export const extensions = [
       autolink: true,
       openOnClick: false,
       HTMLAttributes: {
-        class:
-          "font-normal underline underline-offset-4 decoration-border hover:decoration-foreground transition-all duration-300 cursor-pointer text-foreground",
         target: "_blank",
       },
     },

@@ -61,9 +61,22 @@ export const Editor = memo(function Editor({
     },
     editorProps: {
       attributes: {
+        // `xh-prose` puts the editable body on the SAME stylesheet the public
+        // post page uses (see features/theme/themes/xinghui/styles/markdown.css),
+        // so what the author types is rendered with the surface's own font,
+        // sizes and block rhythm. Without it the admin fell back to Tailwind's
+        // preflight reset — every heading at body size, lists without markers,
+        // quotes and tables unstyled — which is what made the editor and the
+        // published page look like two different sites.
+        //
+        // Deliberately no `text-*` / `leading-*` utility here: `.xh-prose`
+        // sets the body font-size and line-height, and a utility on this same
+        // element would outrank the stylesheet's own `p` rules. The
+        // admin-only minimum height is kept, and `admin.css` owns the empty
+        // paragraph + placeholder styling.
         class: cn(
-          "max-w-none focus:outline-none text-lg leading-relaxed min-h-[500px]",
-          !editable && "min-h-0 text-base leading-7",
+          "xh-prose max-w-none focus:outline-none min-h-[500px]",
+          !editable && "min-h-0",
           contentClassName,
         ),
       },
@@ -156,6 +169,11 @@ export const Editor = memo(function Editor({
     [editor],
   );
 
+  // `cursor-pointer` must NOT sit on this editable root: `.xh-prose a` already
+  // declares `cursor: pointer`, so a utility that is also a `(0,1,0)` selector on
+  // an ancestor would win the link cursor while losing the link COLOR to the
+  // same rule (`.xh-prose a` is `(0,1,1)`), splitting one property set across two
+  // sources. `admin.css` sets the pointer for links inside the editable body.
   const handleModalSubmit = (
     url: string,
     attrs?: { width?: number; height?: number },
