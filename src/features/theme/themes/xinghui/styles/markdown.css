@@ -124,13 +124,16 @@
    Weight 600 is deliberate: at the same size as body text a monospace face reads
    thinner than the surrounding sans, so inline code needs the extra weight to
    hold its own. The language badge in code-block.tsx uses the same idea
-   (`font-bold`) for the same reason. */
+   (`font-bold`) for the same reason.
+   The family is `--font-mono` rather than the system `ui-monospace` stack so
+   inline code and code blocks share one face — with `ui-monospace` first here,
+   the two rendered differently wherever Geist Mono was loaded. */
 .xh-prose code:not(pre code) {
   background: oklch(0.95 0.025 250 / 0.85);
   padding: 3px 6px;
   border-radius: 4px;
   font-size: 0.875em;
-  font-family: ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-weight: 600;
   color: oklch(0.55 0.12 250);
 }
