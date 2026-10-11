@@ -352,6 +352,28 @@ export async function updatePost(
     }),
   );
 
+  // An update alone left the published list stale: `/api/posts` is served with
+  // `CDN-Cache-Control: s-maxage=31536000`, so the archive kept showing the old
+  // list until an unrelated deploy purged the edge. Purging here keeps the
+  // public surface correct no matter which caller writes — the admin UI happens
+  // to run a post-process workflow that purges, but MCP (and anything else
+  // calling this service directly) does not.
+  if (updatedPost.status === "published") {
+    context.executionCtx.waitUntil(
+      (async () => {
+        const version = await CacheService.getVersion(context, "posts:detail");
+        await Promise.all([
+          CacheService.deleteKey(
+            context,
+            POSTS_CACHE_KEYS.detail(version, updatedPost.slug),
+          ),
+          CacheService.bumpVersion(context, "posts:list"),
+          purgePostCDNCache(context.env, updatedPost.slug),
+        ]);
+      })(),
+    );
+  }
+
   return ok(updatedPost);
 }
 

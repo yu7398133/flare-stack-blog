@@ -260,6 +260,45 @@ describe("Posts Integration", () => {
       expect(newCachedData).toBeNull();
     });
 
+    it("should bump the list version when a published post is updated", async () => {
+      const { id } = await PostService.createEmptyPost(adminContext);
+      await updatePost({
+        id,
+        data: {
+          title: "Published",
+          slug: "published-post",
+          status: "published",
+          publishedAt: new Date(),
+        },
+      });
+
+      // The list version is what /api/posts keys its cache on. Updating a
+      // published post must move it, otherwise the archive keeps serving the
+      // old list — that was the reported bug.
+      const before = await CacheService.getVersion(adminContext, "posts:list");
+
+      await updatePost({ id, data: { title: "Published v2" } });
+      await waitForBackgroundTasks(adminContext.executionCtx);
+
+      const after = await CacheService.getVersion(adminContext, "posts:list");
+      expect(after).not.toBe(before);
+    });
+
+    it("should leave the list version alone when a draft is updated", async () => {
+      const { id } = await PostService.createEmptyPost(adminContext);
+      await updatePost({ id, data: { title: "Still a draft" } });
+
+      const before = await CacheService.getVersion(adminContext, "posts:list");
+
+      await updatePost({ id, data: { title: "Still a draft v2" } });
+      await waitForBackgroundTasks(adminContext.executionCtx);
+
+      // Nothing published changed, so the public list is still correct and
+      // purging would only cost an unnecessary cache miss.
+      const after = await CacheService.getVersion(adminContext, "posts:list");
+      expect(after).toBe(before);
+    });
+
     it("should use isolated storage for each test", async () => {
       // Verify KV is clean at the start of this test
       const version = await CacheService.getVersion(
