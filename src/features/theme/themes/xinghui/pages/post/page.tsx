@@ -132,7 +132,7 @@ export function PostPage({ post }: PostPageProps) {
         </article>
 
         {/* Sidebar */}
-        <aside className="hidden lg:flex flex-col gap-5 w-64 shrink-0 self-start">
+        <aside className="hidden lg:flex flex-col gap-5 w-64 shrink-0 self-stretch">
           {/* Author card */}
           <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 text-center">
             <div className="w-16 h-16 mx-auto rounded-full p-0.5 bg-gradient-to-tr from-indigo-500 to-purple-500 shadow-md mb-3 transition-transform duration-500 hover:rotate-3">
