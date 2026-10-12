@@ -222,14 +222,17 @@ export function PostPage({ post }: PostPageProps) {
                         16;
                       window.scrollTo({ top: y, behavior: "smooth" });
                     }}
-                    className={`block text-sm py-1 border-l-[1.5px] transition-all duration-300 leading-relaxed ${
+                    className={`block text-[0.8rem] py-1 border-l-[1.5px] transition-all duration-300 leading-relaxed ${
+                      item.level <= 2
+                        ? "pl-3"
+                        : item.level === 3
+                          ? "pl-[1.9rem]"
+                          : "pl-[2.7rem]"
+                    } ${
                       activeId === item.id
-                        ? "text-indigo-600 dark:text-indigo-400 border-indigo-500 font-medium pl-3"
-                        : "text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-slate-300 pl-3 hover:border-slate-300 dark:hover:border-slate-600"
+                        ? "text-indigo-600 dark:text-indigo-400 border-indigo-500 font-medium"
+                        : "text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"
                     }`}
-                    style={{
-                      marginLeft: `${(item.level - 2) * 0.75}rem`,
-                    }}
                   >
                     {item.text}
                   </a>
@@ -296,8 +299,14 @@ function TocCard({
         cards.reduce((sum, c) => sum + c.offsetHeight, 0) +
         cards.length * SIDEBAR_GAP;
 
-      // No height cap: the card is as tall as its list needs.
-      el.style.maxHeight = "";
+      // Cap the list to the lower of half the viewport and the room left
+      // below the card's slot, so a long list scrolls inside the card rather
+      // than running off screen. Clamped so a short viewport still shows a
+      // usable slice of the list instead of collapsing it.
+      const room = window.innerHeight - (above + NAVBAR_OFFSET);
+      const halfViewport = window.innerHeight * 0.5;
+      const cap = Math.max(160, Math.min(halfViewport, room));
+      el.style.maxHeight = `${Math.round(cap)}px`;
 
       // The offset keeps the card in its slot: it may rise only as far as the
       // content above it, so it can never pin over the article.
