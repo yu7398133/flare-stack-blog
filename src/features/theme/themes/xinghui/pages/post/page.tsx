@@ -168,7 +168,7 @@ export function PostPage({ post }: PostPageProps) {
           {recommended && recommended.length > 0 && (
             <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5">
               <h3 className="font-black text-slate-900 dark:text-white mb-3 border-l-4 border-indigo-500 pl-2 text-sm uppercase tracking-widest">
-                Recommended
+                推荐阅读
               </h3>
               <div className="space-y-3">
                 {recommended.map(
@@ -201,7 +201,7 @@ export function PostPage({ post }: PostPageProps) {
           {/* TOC */}
           {post.toc && post.toc.length > 0 && (
             <TocCard activeId={activeId}>
-              <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">
+              <h3 className="font-black text-slate-900 dark:text-white mb-3 border-l-4 border-indigo-500 pl-2 text-sm uppercase tracking-widest">
                 目录
               </h3>
               <nav className="flex flex-col">
