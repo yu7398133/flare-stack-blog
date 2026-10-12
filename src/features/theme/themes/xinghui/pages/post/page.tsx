@@ -201,10 +201,13 @@ export function PostPage({ post }: PostPageProps) {
           {/* TOC */}
           {post.toc && post.toc.length > 0 && (
             <TocCard activeId={activeId}>
-              <h3 className="font-black text-slate-900 dark:text-white mb-3 border-l-4 border-indigo-500 pl-2 text-sm uppercase tracking-widest">
+              <h3 className="shrink-0 font-black text-slate-900 dark:text-white mb-3 border-l-4 border-indigo-500 pl-2 text-sm uppercase tracking-widest">
                 目录
               </h3>
-              <nav className="flex flex-col">
+              <nav
+                data-toc-list
+                className="flex flex-col overflow-y-auto overscroll-contain xh-scrollbar"
+              >
                 {post.toc.map((item) => (
                   <a
                     key={item.id}
@@ -253,17 +256,16 @@ export function PostPage({ post }: PostPageProps) {
 
 /**
  * Table of contents card with three scroll behaviours:
- *  1. It travels with the page while the article scrolls, and comes to rest
- *     under the cards above it; once the sidebar scrolls on it travels away
- *     too, instead of being pinned and clipped.
- *  2. Wheel over the card scrolls the card's own list; when the list hits an
- *     edge the wheel is released so the page keeps scrolling naturally.
- *  3. The entry for the section being read is kept in view, so a long list
- *     follows along as the article moves through its headings.
+ *  1. The card is pinned to the middle of the page and stays put: its own
+ *     centre is aligned with the viewport's centre, and it does not move as
+ *     the article scrolls. It is deliberately independent of the cards above
+ *     it, which scroll away as normal.
+ *  2. The heading is fixed and the list scrolls on its own, capped at
+ *     two thirds of the viewport; wheel over the list scrolls it, and at
+ *     either end the wheel is released so the page keeps scrolling.
+ *  3. The entry for the section being read is highlighted and scrolled into
+ *     view, so a long list follows the reader through the article.
  */
-const NAVBAR_OFFSET = 96; // sticky top-24 + breathing room
-const SIDEBAR_GAP = 20; // matches the aside's gap-5
-
 function TocCard({
   children,
   activeId,
@@ -279,59 +281,79 @@ function TocCard({
     const sidebar = el.parentElement;
     if (!sidebar) return;
 
-    let frame = 0;
+    // Keeps the card's slot in the sidebar while the card itself is fixed.
+    const placeholder = document.createElement("div");
+    placeholder.setAttribute("aria-hidden", "true");
+    sidebar.insertBefore(placeholder, el);
 
-    // Scroll logic 1 — the card rides with the page beneath the other sidebar
-    // cards, then stops following and scrolls away with the rest of the column.
+    // Scroll logic 1 — the card is pinned to the middle of the page.
     //
-    // It is held below the cards above it by a sticky offset equal to their
-    // combined height, and capped to the room left below that rest point, so a
-    // long list scrolls inside the card instead of running off the screen.
-    const updateStickyTop = () => {
-      frame = 0;
-      const cards = Array.from(sidebar.children).filter(
-        (c) => c !== el,
-      ) as HTMLElement[];
-      // Everything stacked above the TOC inside the sidebar.
-      const above =
-        cards.reduce((sum, c) => sum + c.offsetHeight, 0) +
-        cards.length * SIDEBAR_GAP;
+    // It is taken out of flow with position: fixed and anchored so its own
+    // centre lands on the viewport's centre. Being fixed, it is unaffected by
+    // the cards above it (which scroll away as normal) and by how far the
+    // article has been scrolled, so it stays visible throughout.
+    //
+    // The sidebar itself is hidden below Tailwind's `lg` breakpoint, and fixed
+    // positioning ignores a hidden ancestor, so the card has to stand itself
+    // down on narrow screens or it would float over the article.
+    const isWide = () => window.innerWidth >= 1024;
 
-      // Cap the list to the lower of half the viewport and the room left
-      // below the card's slot. Clamped so a short viewport still shows a
-      // usable slice of the list instead of collapsing it.
-      const room = window.innerHeight - (above + NAVBAR_OFFSET);
-      const halfViewport = window.innerHeight * 0.5;
-      const cap = Math.max(160, Math.min(halfViewport, room));
-      el.style.maxHeight = `${Math.round(cap)}px`;
+    const layout = () => {
+      if (!isWide()) {
+        el.style.position = "";
+        el.style.left = "";
+        el.style.width = "";
+        el.style.top = "";
+        placeholder.style.height = "";
+        return;
+      }
 
-      // The offset keeps the card in its slot: it may rise only as far as the
-      // content above it, so it can never pin over the article.
-      el.style.top = `${above + NAVBAR_OFFSET}px`;
+      const box = sidebar.getBoundingClientRect();
+      const height = el.offsetHeight;
+
+      // Hold the card's place in the column: fixed positioning takes it out of
+      // flow, which would otherwise collapse the space reserved for it.
+      placeholder.style.height = `${height}px`;
+
+      el.style.position = "fixed";
+      el.style.left = `${box.left}px`;
+      el.style.width = `${box.width}px`;
+      el.style.top = `${Math.max(8, (window.innerHeight - height) / 2)}px`;
     };
 
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(updateStickyTop);
+    // Cap the list at two thirds of the viewport, minus the heading, so a long
+    // table of contents scrolls inside the card rather than overrunning it.
+    const sizeList = () => {
+      if (!isWide()) return;
+      const list = el.querySelector<HTMLElement>("[data-toc-list]");
+      if (!list) return;
+      list.style.maxHeight = "";
+      const headingHeight = el.offsetHeight - list.offsetHeight;
+      const room = window.innerHeight * (2 / 3) - headingHeight;
+      list.style.maxHeight = `${Math.round(Math.max(120, room))}px`;
     };
 
-    updateStickyTop();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const onResize = () => {
+      sizeList();
+      layout();
+    };
 
-    // The cards above the TOC are filled in asynchronously (the recommended
-    // list is fetched after mount), so their heights change once the data
-    // lands. Re-measure whenever the sidebar's size changes, otherwise the
-    // offset is computed from a sidebar that has not finished filling in and
-    // the card ends up sitting too high and running off screen.
-    const observer = new ResizeObserver(onScroll);
+    sizeList();
+    layout();
+    window.addEventListener("resize", onResize);
+
+    // The cards above the TOC fill in asynchronously (the recommended list is
+    // fetched after mount), and the list height depends on its own content, so
+    // re-run whenever anything in the sidebar or the card changes size.
+    const observer = new ResizeObserver(onResize);
     observer.observe(sidebar);
+    observer.observe(el);
     for (const card of sidebar.children) observer.observe(card);
 
     return () => {
-      if (frame) cancelAnimationFrame(frame);
       observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
+      placeholder.remove();
     };
   }, []);
 
@@ -340,9 +362,11 @@ function TocCard({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const list = el.querySelector<HTMLElement>("[data-toc-list]");
+    if (!list) return;
 
     const onWheel = (e: WheelEvent) => {
-      const { scrollTop, scrollHeight, clientHeight } = el;
+      const { scrollTop, scrollHeight, clientHeight } = list;
       const atTop = scrollTop <= 0;
       const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
       const scrollingUp = e.deltaY < 0;
@@ -351,58 +375,45 @@ function TocCard({
       if ((scrollingUp && atTop) || (!scrollingUp && atBottom)) return;
 
       e.preventDefault();
-      el.scrollTop += e.deltaY;
+      list.scrollTop += e.deltaY;
     };
 
     // passive: false so preventDefault() is allowed.
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    list.addEventListener("wheel", onWheel, { passive: false });
+    return () => list.removeEventListener("wheel", onWheel);
   }, [children]);
 
-  // Scroll logic 3: while the other sidebar cards are still on screen the
-  // list follows the reader — if the entry for the current section would leave
-  // the visible area, the list scrolls itself to bring it back.
-  //
-  // Once those cards have scrolled away the list stops following: from then on
-  // it moves with the page like the rest of the sidebar, so the reader is
-  // never fighting the list for scroll position.
+  // Scroll logic 3: the list follows the reader. The active entry is
+  // highlighted, and when it would leave the list's visible area the list
+  // scrolls itself to bring it back, so a long table of contents always shows
+  // where the reader currently is.
   useEffect(() => {
     const el = ref.current;
     if (!el || !activeId) return;
-    const sidebar = el.parentElement;
-    if (!sidebar) return;
+    const list = el.querySelector<HTMLElement>("[data-toc-list]");
+    if (!list) return;
 
-    const previousCards = Array.from(sidebar.children).filter(
-      (c) => c !== el,
-    ) as HTMLElement[];
-
-    // The other cards are gone once the last of them has left the viewport.
-    const othersGone = previousCards.every(
-      (card) => card.getBoundingClientRect().bottom <= 0,
-    );
-    if (othersGone) return;
-
-    const active = el.querySelector<HTMLElement>(
+    const active = list.querySelector<HTMLElement>(
       `[data-toc-id="${CSS.escape(activeId)}"]`,
     );
     if (!active) return;
 
-    const cardBox = el.getBoundingClientRect();
+    const listBox = list.getBoundingClientRect();
     const itemBox = active.getBoundingClientRect();
 
     // Already comfortably visible — leave the scroll position alone.
     const inset = 8;
     if (
-      itemBox.top >= cardBox.top + inset &&
-      itemBox.bottom <= cardBox.bottom - inset
+      itemBox.top >= listBox.top + inset &&
+      itemBox.bottom <= listBox.bottom - inset
     ) {
       return;
     }
 
     // Centre the active entry within the list.
     const target =
-      active.offsetTop - el.clientHeight / 2 + active.clientHeight / 2;
-    el.scrollTo({
+      active.offsetTop - list.clientHeight / 2 + active.clientHeight / 2;
+    list.scrollTo({
       top: Math.max(0, target),
       behavior: "smooth",
     });
@@ -411,7 +422,7 @@ function TocCard({
   return (
     <div
       ref={ref}
-      className="sticky top-24 z-10 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-4 overflow-y-auto overscroll-contain xh-scrollbar"
+      className="z-10 flex flex-col rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-4"
     >
       {children}
     </div>
