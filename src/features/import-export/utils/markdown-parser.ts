@@ -122,8 +122,9 @@ export async function markdownToJsonContent(
 }
 
 /**
- * Rewrite `#` (and anything past `####`) in body content to the levels an
- * article is allowed to use, so the stored document is already clean.
+ * Bring headings outside `#`–`####` in body content into range, so the stored
+ * document is already clean: anything past `####` becomes `####`, and a level
+ * that is missing or nonsense becomes `#`.
  *
  * The renderer clamps too, but normalising here keeps the database — and
  * therefore the outline, the editor and every export — consistent rather than

@@ -8,20 +8,22 @@ export interface TableOfContentsItem {
 }
 
 /**
- * Article bodies start at `##`: the post title is already the page's `<h1>`,
- * so a `#` in the body would put a second 36px heading directly under it and
- * break the page's heading order. Level 1 therefore clamps up to 2, and
- * anything past `####` clamps down to 4 to match the editor's `levels` option.
+ * Article bodies may use `#` through `####`.
+ *
+ * A body `#` renders at 28px, a step below the 32px post title, so a section
+ * heading never competes with the title above it. Levels below 1 clamp up to 1
+ * and anything past `####` clamps down to 4 to match the editor's `levels`
+ * option.
  *
  * Applied at render time rather than only in the editor, because documents
  * written before this rule — or imported through the MCP API — never passed
  * through an editor toolbar.
  */
-export function clampHeadingLevel(level: unknown): 2 | 3 | 4 {
+export function clampHeadingLevel(level: unknown): 1 | 2 | 3 | 4 {
   const value = Number(level);
-  if (!Number.isFinite(value) || value < 2) return 2;
+  if (!Number.isFinite(value) || value < 1) return 1;
   if (value > 4) return 4;
-  return value as 2 | 3 | 4;
+  return value as 1 | 2 | 3 | 4;
 }
 
 export function generateTableOfContents(

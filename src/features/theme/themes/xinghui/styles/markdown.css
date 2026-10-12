@@ -20,10 +20,10 @@
 }
 
 /* Headings — vp-doc spacing.
-   The scale was shifted down one step (h1 takes the old h2 size, and so on)
-   because the body only ever uses h2-h4, so the old h1 slot sat unused while
-   h2 opened every section at 30px — heavy against 16px body text. h4 is the
-   floor and still clears the body size. */
+   The scale runs h1 24 / h2 22 / h3 20 / h4 18 against 16px body text. It was
+   shifted down one step from the original h1 36 / h2 30 / h3 24 / h4 20, which
+   opened every section too heavily; the h1 slot stays a step below the 32px
+   post title. h4 is the floor and still clears the body size. */
 .xh-prose h1,
 .xh-prose h2,
 .xh-prose h3,
@@ -45,14 +45,16 @@
 
 .xh-prose h1 {
   font-family: var(--font-serif);
-  font-size: 1.875rem;
+  /* A step below the 32px post title, so a body heading never competes with
+     the title above it. */
+  font-size: 1.5rem;
   margin-top: 0;
   margin-bottom: 0.7rem;
   line-height: 32px;
 }
 .xh-prose h2 {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   padding-top: 24px;
   margin: 48px 0 16px;
   line-height: 28px;
@@ -199,7 +201,12 @@
 .xh-prose hr {
   border: none;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgb(148 163 184 / 0.3), transparent);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgb(148 163 184 / 0.3),
+    transparent
+  );
   margin: 16px 0;
 }
 

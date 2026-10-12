@@ -99,8 +99,9 @@ export const extensions = [
     },
   }),
   HeadingExtension.configure({
-    // No level 1: the post title is the page's <h1>, so bodies start at ##.
-    levels: [2, 3, 4],
+    // Level 1 is available, but renders a step below the post title so a
+    // section heading never competes with it.
+    levels: [1, 2, 3, 4],
   }),
   BlockQuoteExtension,
   CodeBlockExtension,
