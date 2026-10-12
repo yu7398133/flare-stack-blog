@@ -72,6 +72,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
 }) => {
   const {
     isBold,
+    isHeading1,
     isHeading2,
     isHeading3,
     isItalic,
@@ -91,6 +92,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
       if (!ctx.editor) {
         return {
           isBold: false,
+          isHeading1: false,
           isHeading2: false,
           isHeading3: false,
           isItalic: false,
