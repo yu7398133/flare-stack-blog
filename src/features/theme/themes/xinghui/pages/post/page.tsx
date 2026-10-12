@@ -1,11 +1,12 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { ArrowLeft, Edit3 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PostPageProps } from "@/features/theme/contract/pages";
 import { authClient } from "@/lib/auth/auth.client";
-import { ContentRenderer } from "../../components/content/content-renderer";
 import { CommentSection } from "../../components/comment-section";
+import { ContentRenderer } from "../../components/content/content-renderer";
 import { SocialIcon } from "../../components/profile-card";
 
 function formatDate(date: Date | string) {
@@ -76,7 +77,19 @@ export function PostPage({ post }: PostPageProps) {
             <div className="flex flex-wrap items-center gap-3 mb-6">
               {post.publishedAt && (
                 <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-bold bg-white/30 dark:bg-slate-900/50 px-3 py-1.5 rounded-full text-xs shadow-sm border border-white/20 dark:border-white/5">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
                   {formatDate(post.publishedAt)}
                 </span>
               )}
@@ -119,7 +132,7 @@ export function PostPage({ post }: PostPageProps) {
         </article>
 
         {/* Sidebar */}
-        <aside className="hidden lg:flex flex-col gap-5 w-64 shrink-0 sticky top-24 self-start">
+        <aside className="hidden lg:flex flex-col gap-5 w-64 shrink-0 self-start">
           {/* Author card */}
           <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-5 text-center">
             <div className="w-16 h-16 mx-auto rounded-full p-0.5 bg-gradient-to-tr from-indigo-500 to-purple-500 shadow-md mb-3 transition-transform duration-500 hover:rotate-3">
@@ -159,7 +172,11 @@ export function PostPage({ post }: PostPageProps) {
               </h3>
               <div className="space-y-3">
                 {recommended.map(
-                  (r: { slug: string; title: string; publishedAt?: string }) => (
+                  (r: {
+                    slug: string;
+                    title: string;
+                    publishedAt?: string;
+                  }) => (
                     <Link
                       key={r.slug}
                       to="/post/$slug"
@@ -183,7 +200,7 @@ export function PostPage({ post }: PostPageProps) {
 
           {/* TOC */}
           {post.toc && post.toc.length > 0 && (
-            <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-4 max-h-[calc(100vh-20rem)] overflow-y-auto xh-scrollbar">
+            <TocCard activeId={activeId}>
               <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">
                 目录
               </h3>
@@ -191,13 +208,18 @@ export function PostPage({ post }: PostPageProps) {
                 {post.toc.map((item) => (
                   <a
                     key={item.id}
+                    data-toc-id={item.id}
                     href={`#${item.id}`}
                     onClick={(e) => {
                       e.preventDefault();
                       const el = document.getElementById(item.id);
                       if (!el) return;
                       const navbarH = 64;
-                      const y = el.getBoundingClientRect().top + window.scrollY - navbarH - 16;
+                      const y =
+                        el.getBoundingClientRect().top +
+                        window.scrollY -
+                        navbarH -
+                        16;
                       window.scrollTo({ top: y, behavior: "smooth" });
                     }}
                     className={`block text-sm py-1 border-l-[1.5px] transition-all duration-300 leading-relaxed ${
@@ -213,7 +235,7 @@ export function PostPage({ post }: PostPageProps) {
                   </a>
                 ))}
               </nav>
-            </div>
+            </TocCard>
           )}
         </aside>
       </div>
@@ -222,6 +244,148 @@ export function PostPage({ post }: PostPageProps) {
       <div className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 xh-animate-in">
         <CommentSection postId={post.id} />
       </div>
+    </div>
+  );
+}
+
+/**
+ * Table of contents card with three scroll behaviours:
+ *  1. It travels with the page while the article scrolls, and comes to rest
+ *     under the cards above it; once the sidebar scrolls on it travels away
+ *     too, instead of being pinned and clipped.
+ *  2. Wheel over the card scrolls the card's own list; when the list hits an
+ *     edge the wheel is released so the page keeps scrolling naturally.
+ *  3. The entry for the section being read is kept in view, so a long list
+ *     follows along as the article moves through its headings.
+ */
+const NAVBAR_OFFSET = 96; // sticky top-24 + breathing room
+const SIDEBAR_GAP = 20; // matches the aside's gap-5
+
+function TocCard({
+  children,
+  activeId,
+}: {
+  children: ReactNode;
+  activeId?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const sidebar = el.parentElement;
+    if (!sidebar) return;
+
+    let frame = 0;
+
+    // Scroll logic 1 — the card travels with the page while the other sidebar
+    // cards are still on screen, then pins just below them and stops.
+    //
+    // A plain CSS `sticky top-24` cannot express this: it would hold the card
+    // at the top forever, and because the sidebar is taller than the viewport
+    // the bottom of a long TOC would sit permanently below the fold. Raising
+    // the sticky offset to the height of the cards above makes the card come
+    // to rest exactly under them, so it can never ride up past its slot.
+    const updateStickyTop = () => {
+      frame = 0;
+      const cards = Array.from(sidebar.children).filter(
+        (c) => c !== el,
+      ) as HTMLElement[];
+      // Height of everything stacked above the TOC inside the sidebar.
+      const above =
+        cards.reduce((sum, c) => sum + c.offsetHeight, 0) +
+        cards.length * SIDEBAR_GAP;
+
+      // Rest position: just under the cards above, never above the navbar.
+      const restTop = Math.max(NAVBAR_OFFSET, above + NAVBAR_OFFSET);
+
+      // Cap the list to the room actually left below its rest position, so a
+      // long TOC scrolls inside the card instead of running off screen.
+      const room = window.innerHeight - restTop - 16;
+      el.style.maxHeight = `${Math.max(200, room)}px`;
+
+      // This offset is what stops the card: it can rise no further than the
+      // height of the content above it.
+      el.style.top = `${above + NAVBAR_OFFSET}px`;
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(updateStickyTop);
+    };
+
+    updateStickyTop();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  // Scroll logic 2: the wheel over the card scrolls the card's own list; at
+  // either end the event falls through so the page keeps scrolling naturally.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      const atTop = scrollTop <= 0;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+      const scrollingUp = e.deltaY < 0;
+
+      // Release the wheel to the page at either end of the list.
+      if ((scrollingUp && atTop) || (!scrollingUp && atBottom)) return;
+
+      e.preventDefault();
+      el.scrollTop += e.deltaY;
+    };
+
+    // passive: false so preventDefault() is allowed.
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [children]);
+
+  // Scroll logic 3: as the article moves through its sections the matching
+  // entry is highlighted, and if that entry sits outside the visible part of
+  // the list the list scrolls itself to bring it back into view.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !activeId) return;
+
+    const active = el.querySelector<HTMLElement>(
+      `[data-toc-id="${CSS.escape(activeId)}"]`,
+    );
+    if (!active) return;
+
+    const cardBox = el.getBoundingClientRect();
+    const itemBox = active.getBoundingClientRect();
+
+    // Already comfortably visible — leave the user's scroll position alone.
+    const inset = 8;
+    if (
+      itemBox.top >= cardBox.top + inset &&
+      itemBox.bottom <= cardBox.bottom - inset
+    ) {
+      return;
+    }
+
+    // Centre the active entry within the list.
+    const target =
+      active.offsetTop - el.clientHeight / 2 + active.clientHeight / 2;
+    el.scrollTo({
+      top: Math.max(0, target),
+      behavior: "smooth",
+    });
+  }, [activeId]);
+
+  return (
+    <div
+      ref={ref}
+      className="sticky top-24 z-10 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-4 overflow-y-auto overscroll-contain xh-scrollbar"
+    >
+      {children}
     </div>
   );
 }
