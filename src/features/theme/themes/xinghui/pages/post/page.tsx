@@ -256,10 +256,10 @@ export function PostPage({ post }: PostPageProps) {
 
 /**
  * Table of contents card with three scroll behaviours:
- *  1. The card is pinned to the middle of the page and stays put: its own
- *     centre is aligned with the viewport's centre, and it does not move as
- *     the article scrolls. It is deliberately independent of the cards above
- *     it, which scroll away as normal.
+ *  1. The card sits in the column after the other sidebar cards and scrolls
+ *     with them until its top edge reaches a quarter of the way down the
+ *     viewport, where it sticks and stays for the rest of the article. If it
+ *     starts above that line it is simply stuck from the outset.
  *  2. The heading is fixed and the list scrolls on its own, capped at
  *     two thirds of the viewport; wheel over the list scrolls it, and at
  *     either end the wheel is released so the page keeps scrolling.
@@ -281,50 +281,22 @@ function TocCard({
     const sidebar = el.parentElement;
     if (!sidebar) return;
 
-    // Keeps the card's slot in the sidebar while the card itself is fixed.
-    const placeholder = document.createElement("div");
-    placeholder.setAttribute("aria-hidden", "true");
-    sidebar.insertBefore(placeholder, el);
-
-    // Scroll logic 1 — the card is pinned to the middle of the page.
+    // Scroll logic 1 — the card scrolls with the column, then sticks once its
+    // top edge reaches a quarter of the way down the viewport.
     //
-    // It is taken out of flow with position: fixed and anchored so its own
-    // centre lands on the viewport's centre. Being fixed, it is unaffected by
-    // the cards above it (which scroll away as normal) and by how far the
-    // article has been scrolled, so it stays visible throughout.
+    // This is plain `position: sticky` with a `top` of 25vh, which expresses
+    // the rule exactly: below that line the card is in its normal place in the
+    // column, at or above it the card is pinned. A card that starts out above
+    // the line is therefore pinned from the outset, with no special case.
     //
-    // The sidebar itself is hidden below Tailwind's `lg` breakpoint, and fixed
-    // positioning ignores a hidden ancestor, so the card has to stand itself
-    // down on narrow screens or it would float over the article.
-    const isWide = () => window.innerWidth >= 1024;
-
-    const layout = () => {
-      if (!isWide()) {
-        el.style.position = "";
-        el.style.left = "";
-        el.style.width = "";
-        el.style.top = "";
-        placeholder.style.height = "";
-        return;
-      }
-
-      const box = sidebar.getBoundingClientRect();
-      const height = el.offsetHeight;
-
-      // Hold the card's place in the column: fixed positioning takes it out of
-      // flow, which would otherwise collapse the space reserved for it.
-      placeholder.style.height = `${height}px`;
-
-      el.style.position = "fixed";
-      el.style.left = `${box.left}px`;
-      el.style.width = `${box.width}px`;
-      el.style.top = `${Math.max(8, (window.innerHeight - height) / 2)}px`;
-    };
+    // Sticky (rather than fixed) keeps the card in the flow, so it continues to
+    // stack after the other sidebar cards instead of breaking out into a
+    // column of its own.
+    const STICK_AT = 0.25;
 
     // Cap the list at two thirds of the viewport, minus the heading, so a long
     // table of contents scrolls inside the card rather than overrunning it.
     const sizeList = () => {
-      if (!isWide()) return;
       const list = el.querySelector<HTMLElement>("[data-toc-list]");
       if (!list) return;
       list.style.maxHeight = "";
@@ -333,13 +305,10 @@ function TocCard({
       list.style.maxHeight = `${Math.round(Math.max(120, room))}px`;
     };
 
-    const onResize = () => {
-      sizeList();
-      layout();
-    };
+    const onResize = sizeList;
 
+    el.style.top = `${STICK_AT * 100}vh`;
     sizeList();
-    layout();
     window.addEventListener("resize", onResize);
 
     // The cards above the TOC fill in asynchronously (the recommended list is
@@ -353,7 +322,6 @@ function TocCard({
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", onResize);
-      placeholder.remove();
     };
   }, []);
 
@@ -422,7 +390,7 @@ function TocCard({
   return (
     <div
       ref={ref}
-      className="z-10 flex flex-col rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-4"
+      className="sticky z-10 flex flex-col rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-4"
     >
       {children}
     </div>
