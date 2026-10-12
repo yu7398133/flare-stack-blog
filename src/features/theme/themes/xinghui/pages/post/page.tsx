@@ -284,11 +284,9 @@ function TocCard({
     // Scroll logic 1 — the card rides with the page beneath the other sidebar
     // cards, then stops following and scrolls away with the rest of the column.
     //
-    // The list has no height cap, so the card is always fully readable. It is
-    // held below the cards above it by a sticky offset equal to their height:
-    // the card can rise no further than its own slot, and once those cards
-    // have left the viewport it simply travels on with the page like any other
-    // element — no pinning, no clipping.
+    // It is held below the cards above it by a sticky offset equal to their
+    // combined height, and capped to the room left below that rest point, so a
+    // long list scrolls inside the card instead of running off the screen.
     const updateStickyTop = () => {
       frame = 0;
       const cards = Array.from(sidebar.children).filter(
@@ -300,8 +298,7 @@ function TocCard({
         cards.length * SIDEBAR_GAP;
 
       // Cap the list to the lower of half the viewport and the room left
-      // below the card's slot, so a long list scrolls inside the card rather
-      // than running off screen. Clamped so a short viewport still shows a
+      // below the card's slot. Clamped so a short viewport still shows a
       // usable slice of the list instead of collapsing it.
       const room = window.innerHeight - (above + NAVBAR_OFFSET);
       const halfViewport = window.innerHeight * 0.5;
@@ -320,8 +317,19 @@ function TocCard({
     updateStickyTop();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+
+    // The cards above the TOC are filled in asynchronously (the recommended
+    // list is fetched after mount), so their heights change once the data
+    // lands. Re-measure whenever the sidebar's size changes, otherwise the
+    // offset is computed from a sidebar that has not finished filling in and
+    // the card ends up sitting too high and running off screen.
+    const observer = new ResizeObserver(onScroll);
+    observer.observe(sidebar);
+    for (const card of sidebar.children) observer.observe(card);
+
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      observer.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
