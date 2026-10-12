@@ -278,34 +278,29 @@ function TocCard({
 
     let frame = 0;
 
-    // Scroll logic 1 — the card travels with the page while the other sidebar
-    // cards are still on screen, then pins just below them and stops.
+    // Scroll logic 1 — the card rides with the page beneath the other sidebar
+    // cards, then stops following and scrolls away with the rest of the column.
     //
-    // A plain CSS `sticky top-24` cannot express this: it would hold the card
-    // at the top forever, and because the sidebar is taller than the viewport
-    // the bottom of a long TOC would sit permanently below the fold. Raising
-    // the sticky offset to the height of the cards above makes the card come
-    // to rest exactly under them, so it can never ride up past its slot.
+    // The list has no height cap, so the card is always fully readable. It is
+    // held below the cards above it by a sticky offset equal to their height:
+    // the card can rise no further than its own slot, and once those cards
+    // have left the viewport it simply travels on with the page like any other
+    // element — no pinning, no clipping.
     const updateStickyTop = () => {
       frame = 0;
       const cards = Array.from(sidebar.children).filter(
         (c) => c !== el,
       ) as HTMLElement[];
-      // Height of everything stacked above the TOC inside the sidebar.
+      // Everything stacked above the TOC inside the sidebar.
       const above =
         cards.reduce((sum, c) => sum + c.offsetHeight, 0) +
         cards.length * SIDEBAR_GAP;
 
-      // Rest position: just under the cards above, never above the navbar.
-      const restTop = Math.max(NAVBAR_OFFSET, above + NAVBAR_OFFSET);
+      // No height cap: the card is as tall as its list needs.
+      el.style.maxHeight = "";
 
-      // Cap the list to the room actually left below its rest position, so a
-      // long TOC scrolls inside the card instead of running off screen.
-      const room = window.innerHeight - restTop - 16;
-      el.style.maxHeight = `${Math.max(200, room)}px`;
-
-      // This offset is what stops the card: it can rise no further than the
-      // height of the content above it.
+      // The offset keeps the card in its slot: it may rise only as far as the
+      // content above it, so it can never pin over the article.
       el.style.top = `${above + NAVBAR_OFFSET}px`;
     };
 
@@ -347,12 +342,28 @@ function TocCard({
     return () => el.removeEventListener("wheel", onWheel);
   }, [children]);
 
-  // Scroll logic 3: as the article moves through its sections the matching
-  // entry is highlighted, and if that entry sits outside the visible part of
-  // the list the list scrolls itself to bring it back into view.
+  // Scroll logic 3: while the other sidebar cards are still on screen the
+  // list follows the reader — if the entry for the current section would leave
+  // the visible area, the list scrolls itself to bring it back.
+  //
+  // Once those cards have scrolled away the list stops following: from then on
+  // it moves with the page like the rest of the sidebar, so the reader is
+  // never fighting the list for scroll position.
   useEffect(() => {
     const el = ref.current;
     if (!el || !activeId) return;
+    const sidebar = el.parentElement;
+    if (!sidebar) return;
+
+    const previousCards = Array.from(sidebar.children).filter(
+      (c) => c !== el,
+    ) as HTMLElement[];
+
+    // The other cards are gone once the last of them has left the viewport.
+    const othersGone = previousCards.every(
+      (card) => card.getBoundingClientRect().bottom <= 0,
+    );
+    if (othersGone) return;
 
     const active = el.querySelector<HTMLElement>(
       `[data-toc-id="${CSS.escape(activeId)}"]`,
@@ -362,7 +373,7 @@ function TocCard({
     const cardBox = el.getBoundingClientRect();
     const itemBox = active.getBoundingClientRect();
 
-    // Already comfortably visible — leave the user's scroll position alone.
+    // Already comfortably visible — leave the scroll position alone.
     const inset = 8;
     if (
       itemBox.top >= cardBox.top + inset &&
