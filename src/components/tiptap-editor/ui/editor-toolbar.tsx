@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   Bold,
   Code,
+  Heading1,
   Heading2,
   Heading3,
   Image as ImageIcon,
@@ -106,6 +107,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
       }
       return {
         isBold: ctx.editor.isActive("bold"),
+        isHeading1: ctx.editor.isActive("heading", { level: 1 }),
         isHeading2: ctx.editor.isActive("heading", { level: 2 }),
         isHeading3: ctx.editor.isActive("heading", { level: 3 }),
         isItalic: ctx.editor.isActive("italic"),
@@ -123,6 +125,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
     },
   }) || {
     isBold: false,
+    isHeading1: false,
     isHeading2: false,
     isHeading3: false,
     isItalic: false,
@@ -141,6 +144,14 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
   return (
     <div className="sticky top-0 z-30 mb-8 py-2 bg-background border-b border-border/50 flex flex-wrap items-center gap-1 px-4">
       {/* Headings */}
+      <ToolbarButton
+        onClick={() =>
+          editor?.chain().focus().toggleHeading({ level: 1 }).run()
+        }
+        isActive={isHeading1}
+        icon={Heading1}
+        label={m.editor_toolbar_heading1()}
+      />
       <ToolbarButton
         onClick={() =>
           editor?.chain().focus().toggleHeading({ level: 2 }).run()
