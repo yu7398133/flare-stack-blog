@@ -3,12 +3,13 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import theme from "@theme";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { ErrorPage } from "@/components/common/error-page";
 import { AUTH_KEYS } from "@/features/auth/queries";
 import { getThemePreloadImages } from "@/features/theme/site-config.helpers";
 import { authClient } from "@/lib/auth/auth.client";
 import { getLogoutAuthErrorMessage } from "@/lib/auth/auth-errors";
-import { ErrorPage } from "@/components/common/error-page";
 import { CACHE_CONTROL } from "@/lib/constants";
+import { CSP_DIRECTIVES } from "@/lib/csp";
 import { m } from "@/paraglide/messages";
 
 export const Route = createFileRoute("/_public")({
@@ -18,18 +19,11 @@ export const Route = createFileRoute("/_public")({
   component: PublicLayout,
   errorComponent: ({ error }) => <ErrorPage error={error} />,
   headers: () => ({
-      ...CACHE_CONTROL.public,
-      "Content-Security-Policy": [
-        "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-        "img-src 'self' data: blob: https: http:",
-        "font-src 'self' https://fonts.gstatic.com data:",
-        "connect-src 'self' https: wss:",
-        "media-src 'self' https: http:",
-        "frame-src 'none'",
-      ].join("; "),
-    }),
+    ...CACHE_CONTROL.public,
+    // 与 src/lib/hono/middlewares.ts 的 cspMiddleware 共用 src/lib/csp.ts，
+    // 不再各写一份（此前这里缺 style-src-elem，font-src 也少两个域名）。
+    "Content-Security-Policy": CSP_DIRECTIVES,
+  }),
   head: ({ loaderData }) => ({
     links: (loaderData?.preloadImages ?? []).map((href) => ({
       rel: "preload" as const,

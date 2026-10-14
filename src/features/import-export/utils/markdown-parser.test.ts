@@ -65,6 +65,58 @@ describe("markdownToJsonContent", () => {
     expect(linkMark).toBeDefined();
   });
 
+  it("should not import a javascript: link as an executable href", async () => {
+    // Markdown 导入走 marked -> linkedom -> ProseMirror DOMParser。
+    // 实测：Tiptap 的 Link 扩展在 parse 阶段就会拒绝危险 scheme，
+    // 该链接根本不会产出 link mark。本测试锁定这一契约，
+    // 防止未来升级 Tiptap 或替换解析器时静默放开。
+    const json = await markdownToJsonContent(
+      "[click me](javascript://alert(1))",
+    );
+
+    const paragraph = json.content!.find((n) => n.type === "paragraph");
+    const textNode = paragraph!.content!.find((n) => n.type === "text");
+    const linkMark = textNode!.marks?.find(
+      (m: { type: string }) => m.type === "link",
+    );
+
+    // 要么没有 link mark，要么 href 不是可执行协议 —— 两者都安全。
+    const href = (linkMark?.attrs as { href?: string } | undefined)?.href;
+    expect(
+      href === undefined || !/^(javascript|data|vbscript):/i.test(href),
+    ).toBe(true);
+  });
+
+  it("should not import a data: link as an executable href", async () => {
+    const json = await markdownToJsonContent(
+      "[x](data://text/html,<script>alert(1)</script>)",
+    );
+
+    const paragraph = json.content!.find((n) => n.type === "paragraph");
+    const textNode = paragraph!.content!.find((n) => n.type === "text");
+    const linkMark = textNode!.marks?.find(
+      (m: { type: string }) => m.type === "link",
+    );
+
+    const href = (linkMark?.attrs as { href?: string } | undefined)?.href;
+    expect(href === undefined || !/^data:/i.test(href)).toBe(true);
+  });
+
+  it("should still import ordinary https links", async () => {
+    // 反向保护：上面的安全断言不能以"所有链接都不导入"为代价。
+    const json = await markdownToJsonContent("[x](https://example.com)");
+
+    const paragraph = json.content!.find((n) => n.type === "paragraph");
+    const textNode = paragraph!.content!.find((n) => n.type === "text");
+    const linkMark = textNode!.marks?.find(
+      (m: { type: string }) => m.type === "link",
+    );
+
+    expect((linkMark?.attrs as { href?: string } | undefined)?.href).toBe(
+      "https://example.com",
+    );
+  });
+
   it("should handle empty string", async () => {
     const json = await markdownToJsonContent("");
 

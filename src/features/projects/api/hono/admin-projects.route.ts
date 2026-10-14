@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import * as ProjectsData from "@/features/projects/data/projects.data";
 import { getServiceContext } from "@/lib/hono/helper";
-import { baseMiddleware } from "@/lib/hono/middlewares";
+import { adminGuardMiddleware, baseMiddleware } from "@/lib/hono/middlewares";
 
 const projectCreateSchema = z.object({
   title: z.string().min(1).max(200),
@@ -21,7 +21,7 @@ const projectUpdateSchema = projectCreateSchema.partial();
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use("*", baseMiddleware);
+app.use("*", baseMiddleware, adminGuardMiddleware);
 
 const adminProjectsRoute = app
   // GET /api/admin/projects

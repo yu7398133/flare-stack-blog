@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import * as PhotosData from "@/features/photos/data/photos.data";
 import { getServiceContext } from "@/lib/hono/helper";
-import { baseMiddleware } from "@/lib/hono/middlewares";
+import { adminGuardMiddleware, baseMiddleware } from "@/lib/hono/middlewares";
 
 const photoCreateSchema = z.object({
   title: z.string().min(1).max(200),
@@ -18,7 +18,7 @@ const photoUpdateSchema = photoCreateSchema.partial();
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use("*", baseMiddleware);
+app.use("*", baseMiddleware, adminGuardMiddleware);
 
 const adminPhotosRoute = app
   // GET /api/admin/photos

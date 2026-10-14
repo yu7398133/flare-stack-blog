@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import * as MomentsData from "@/features/moments/data/moments.data";
 import { getServiceContext } from "@/lib/hono/helper";
-import { baseMiddleware } from "@/lib/hono/middlewares";
+import { adminGuardMiddleware, baseMiddleware } from "@/lib/hono/middlewares";
 
 const momentCreateSchema = z.object({
   content: z.string().min(1).max(5000),
@@ -16,7 +16,7 @@ const momentUpdateSchema = momentCreateSchema.partial();
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.use("*", baseMiddleware);
+app.use("*", baseMiddleware, adminGuardMiddleware);
 
 const adminMomentsRoute = app
   // GET /api/admin/moments

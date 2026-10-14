@@ -2,6 +2,7 @@ import type { Context } from "hono";
 import { createMiddleware } from "hono/factory";
 import { getAuth } from "@/lib/auth/auth.server";
 import { CACHE_CONTROL } from "@/lib/constants";
+import { CSP_DIRECTIVES } from "@/lib/csp";
 import { getDb } from "@/lib/db";
 import type { Duration } from "@/lib/duration";
 import { serverEnv } from "@/lib/env/server.env";
@@ -41,6 +42,40 @@ export const baseMiddleware = createMiddleware<{ Bindings: Env }>(
     const auth = getAuth({ db, env: c.env });
     c.set("db", db);
     c.set("auth", auth);
+    return next();
+  },
+);
+
+/**
+ * 管理员守卫：要求已登录且 role === "admin"。
+ *
+ * 独立挂载的 Hono 路由（src/lib/hono/routes.ts 的 /api/admin/*）不经过
+ * server function 的 adminMiddleware，必须显式套用本中间件，否则路由
+ * 会完全匿名可达。
+ *
+ * 依赖 baseMiddleware 先注入 context.auth；若缺失则按 401 处理，
+ * 即 fail-closed，避免鉴权被静默跳过。
+ */
+export const adminGuardMiddleware = createMiddleware<{ Bindings: Env }>(
+  async (c, next) => {
+    const auth = c.get("auth") as ReturnType<typeof getAuth> | undefined;
+
+    if (!auth) {
+      return c.json({ code: "UNAUTHORIZED", message: "Unauthorized" }, 401);
+    }
+
+    const session = await auth.api.getSession({
+      headers: c.req.raw.headers,
+    });
+
+    if (!session) {
+      return c.json({ code: "UNAUTHORIZED", message: "Unauthorized" }, 401);
+    }
+
+    if (session.user.role !== "admin") {
+      return c.json({ code: "FORBIDDEN", message: "Forbidden" }, 403);
+    }
+
     return next();
   },
 );
@@ -216,18 +251,8 @@ export const turnstileMiddleware = createMiddleware<{ Bindings: Env }>(
 );
 
 /* ======================= Content Security Policy ====================== */
-const CSP_DIRECTIVES = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://music-resolver.chenyusc.eu.org https://ncmusic-api.chenyusc.eu.org",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https: http:",
-  "font-src 'self' https://fonts.gstatic.com https://fonts.gstatic.font.im https://cdn.jsdelivr.net data:",
-  "connect-src 'self' https: wss:",
-  "media-src 'self' https: http:",
-  "frame-src 'none'",
-].join("; ");
-
+// 策略定义已抽到 src/lib/csp.ts，与 src/routes/_public/route.tsx 共用同一份，
+// 避免两处漂移（此前路由那份已缺少 style-src-elem 等条目）。
 export const cspMiddleware = createMiddleware(async (c, next) => {
   await next();
   // Only set CSP for HTML responses (not API, assets, etc.)
@@ -235,6 +260,9 @@ export const cspMiddleware = createMiddleware(async (c, next) => {
   if (contentType.includes("text/html")) {
     c.res.headers.set("Content-Security-Policy", CSP_DIRECTIVES);
     // Prevent CDN from caching HTML (avoids stale CSP header)
-    c.res.headers.set("Cache-Control", "public, max-age=0, must-revalidate, no-transform");
+    c.res.headers.set(
+      "Cache-Control",
+      "public, max-age=0, must-revalidate, no-transform",
+    );
   }
 });
