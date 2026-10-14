@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -59,7 +59,10 @@ function MomentsAdminPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, ...body }: { id: number } & Partial<typeof form>) => {
+    mutationFn: async ({
+      id,
+      ...body
+    }: { id: number } & Partial<typeof form>) => {
       const res = await fetch(`/api/admin/moments/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -122,13 +125,18 @@ function MomentsAdminPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-border/30 pb-6">
         <div className="space-y-1">
-          <h1 className="text-3xl font-serif font-medium tracking-tight">说说管理</h1>
+          <h1 className="text-3xl font-serif font-medium tracking-tight">
+            说说管理
+          </h1>
           <p className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
             Moments · 共 {data?.total || 0} 条
           </p>
         </div>
         <button
-          onClick={() => { resetForm(); setShowForm(!showForm); }}
+          onClick={() => {
+            resetForm();
+            setShowForm(!showForm);
+          }}
           className="px-4 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 transition-colors"
         >
           {showForm ? "取消" : "+ 发布说说"}
@@ -138,7 +146,9 @@ function MomentsAdminPage() {
       {/* Form */}
       {showForm && (
         <div className="border border-border/30 p-6 space-y-4">
-          <textarea id="index-form" name="index-form"
+          <textarea
+            id="index-form"
+            name="index-form"
             value={form.content}
             onChange={(e) => setForm({ ...form, content: e.target.value })}
             placeholder="写点什么..."
@@ -146,21 +156,32 @@ function MomentsAdminPage() {
             className="w-full bg-transparent border border-border/30 p-3 text-sm font-mono focus:outline-none focus:border-foreground resize-none"
           />
           <div className="flex gap-4">
-            <input id="index-form" name="index-form"
+            <input
+              id="index-form"
+              name="index-form"
               value={form.mood}
               onChange={(e) => setForm({ ...form, mood: e.target.value })}
               placeholder="心情 (可选)"
               className="flex-1 bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none focus:border-foreground"
             />
-            <input id="index-form" name="index-form"
+            <input
+              id="index-form"
+              name="index-form"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
               placeholder="位置 (可选)"
               className="flex-1 bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none focus:border-foreground"
             />
-            <select id="index-form" name="index-form"
+            <select
+              id="index-form"
+              name="index-form"
               value={form.visibility}
-              onChange={(e) => setForm({ ...form, visibility: e.target.value as "public" | "private" })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  visibility: e.target.value as "public" | "private",
+                })
+              }
               className="bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none"
             >
               <option value="public">公开</option>
@@ -179,13 +200,20 @@ function MomentsAdminPage() {
 
       {/* List */}
       {isLoading ? (
-        <div className="text-center text-muted-foreground text-xs font-mono py-20">加载中...</div>
+        <div className="text-center text-muted-foreground text-xs font-mono py-20">
+          加载中...
+        </div>
       ) : moments.length === 0 ? (
-        <div className="text-center text-muted-foreground text-xs font-mono py-20">暂无说说</div>
+        <div className="text-center text-muted-foreground text-xs font-mono py-20">
+          暂无说说
+        </div>
       ) : (
         <div className="space-y-3">
           {moments.map((item) => (
-            <div key={item.id} className="border border-border/30 p-4 group hover:border-foreground/30 transition-colors">
+            <div
+              key={item.id}
+              className="border border-border/30 p-4 group hover:border-foreground/30 transition-colors"
+            >
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm whitespace-pre-wrap">{item.content}</p>
@@ -193,13 +221,29 @@ function MomentsAdminPage() {
                     {item.mood && <span>心情: {item.mood}</span>}
                     {item.location && <span>位置: {item.location}</span>}
                     <span>❤️ {item.likes}</span>
-                    <span>{item.visibility === "private" ? "🔒 私密" : "🌐 公开"}</span>
-                    <span>{new Date(item.createdAt).toLocaleString("zh-CN")}</span>
+                    <span>
+                      {item.visibility === "private" ? "🔒 私密" : "🌐 公开"}
+                    </span>
+                    <span>
+                      {new Date(item.createdAt).toLocaleString("zh-CN")}
+                    </span>
                   </div>
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEdit(item)} className="text-xs font-mono text-muted-foreground hover:text-foreground">编辑</button>
-                  <button onClick={() => { if (confirm("确定删除?")) deleteMutation.mutate(item.id); }} className="text-xs font-mono text-muted-foreground hover:text-destructive">删除</button>
+                  <button
+                    onClick={() => handleEdit(item)}
+                    className="text-xs font-mono text-muted-foreground hover:text-foreground"
+                  >
+                    编辑
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm("确定删除?")) deleteMutation.mutate(item.id);
+                    }}
+                    className="text-xs font-mono text-muted-foreground hover:text-destructive"
+                  >
+                    删除
+                  </button>
                 </div>
               </div>
             </div>

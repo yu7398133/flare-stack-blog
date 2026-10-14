@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import { useLocation } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { useMusic } from "./music-provider";
 
 export function FloatingPlayer() {
   const location = useLocation();
   const {
-    currentSong, isPlaying, togglePlay, nextSong, currentLyric, isLoading,
+    currentSong,
+    isPlaying,
+    togglePlay,
+    nextSong,
+    currentLyric,
+    isLoading,
   } = useMusic();
   const [isMounted, setIsMounted] = useState(false);
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -15,7 +20,9 @@ export function FloatingPlayer() {
   const dragStart = useRef({ x: 0, y: 0, px: 0, py: 0 });
   const moved = useRef(false);
 
-  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   if (!isMounted || isLoading || !currentSong) return null;
 
@@ -40,10 +47,15 @@ export function FloatingPlayer() {
     });
   };
 
-  const handlePointerUp = () => { setDragging(false); };
+  const handlePointerUp = () => {
+    setDragging(false);
+  };
 
   const handleClick = (e: React.MouseEvent, action: () => void) => {
-    if (moved.current) { e.stopPropagation(); return; }
+    if (moved.current) {
+      e.stopPropagation();
+      return;
+    }
     action();
   };
 
@@ -72,7 +84,11 @@ export function FloatingPlayer() {
             animationPlayState: isPlaying ? "running" : "paused",
           }}
         >
-          <img src={currentSong.cover} alt="" className="w-full h-full object-cover" />
+          <img
+            src={currentSong.cover}
+            alt=""
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-black/10" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white/80 backdrop-blur-sm rounded-full shadow-inner" />
         </div>
@@ -94,16 +110,30 @@ export function FloatingPlayer() {
             className="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform cursor-pointer"
           >
             {isPlaying ? (
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+              <svg
+                className="w-3.5 h-3.5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+              </svg>
             ) : (
-              <svg className="w-3.5 h-3.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+              <svg
+                className="w-3.5 h-3.5 ml-0.5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
             )}
           </button>
           <button
             onClick={(e) => handleClick(e, nextSong)}
             className="text-slate-600 dark:text-slate-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+            </svg>
           </button>
         </div>
       </div>

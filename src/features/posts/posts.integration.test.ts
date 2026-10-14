@@ -1178,6 +1178,8 @@ describe("Posts Integration", () => {
         summary: "Before workflow",
         slug: "published-revision",
         status: "published",
+        // 快照需记录 type，否则恢复历史版本时无法还原「文章/说说」。
+        type: "article",
         publishedAt: publishedAt.toISOString(),
         readTimeInMinutes: 1,
         contentJson: {

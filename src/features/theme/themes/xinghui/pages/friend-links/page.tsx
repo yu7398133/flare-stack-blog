@@ -1,10 +1,7 @@
-import { Globe, ExternalLink } from "lucide-react";
+import { Globe } from "lucide-react";
 import type { FriendLinksPageProps } from "@/features/theme/contract/pages";
-import { useRouteContext } from "@tanstack/react-router";
 
 export function FriendLinksPage({ links }: FriendLinksPageProps) {
-  const { siteConfig } = useRouteContext({ from: "__root__" });
-
   return (
     <div className="flex flex-col gap-8 xh-animate-in">
       {/* Header */}

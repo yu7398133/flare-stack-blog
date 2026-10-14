@@ -9,7 +9,9 @@ export function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col items-center gap-1">
         <div className="flex items-center justify-center gap-1 text-xs text-slate-400">
           <span>© {currentYear}</span>
-          <span className="font-medium text-slate-300">{siteConfig.author}</span>
+          <span className="font-medium text-slate-300">
+            {siteConfig.author}
+          </span>
           <span>·</span>
           <span>🐟</span>
         </div>

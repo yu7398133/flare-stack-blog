@@ -2,7 +2,7 @@ import type { JSONContent } from "@tiptap/react";
 import { relations } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createdAt, id } from "./helper";
-import type { PostStatus } from "./posts.table";
+import type { PostStatus, PostType } from "./posts.table";
 import { PostsTable } from "./posts.table";
 
 export const POST_REVISION_REASONS = [
@@ -16,6 +16,13 @@ export interface PostRevisionSnapshot {
   summary: string | null;
   slug: string;
   status: PostStatus;
+  /**
+   * 文章类型（article / talk）。
+   *
+   * 早期版本未记录该字段，因此声明为可选以兼容历史快照；
+   * 恢复时若缺失则沿用当前帖子的类型，避免把「说说」恢复成「文章」。
+   */
+  type?: PostType;
   publishedAt: string | null;
   readTimeInMinutes: number;
   contentJson: JSONContent | null;

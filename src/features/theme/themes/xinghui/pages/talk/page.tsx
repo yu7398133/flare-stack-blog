@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
-import { Search, Ghost } from "lucide-react";
+import { Ghost, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import type { PostListItem } from "@/features/posts/schema/posts.schema";
 import { getPostCover } from "../../utils/post-cover";
 
@@ -32,8 +32,7 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (post.summary || "").toLowerCase().includes(searchQuery.toLowerCase());
       const matchTag =
-        activeTag === "全部" ||
-        post.tags?.some((t) => t.name === activeTag);
+        activeTag === "全部" || post.tags?.some((t) => t.name === activeTag);
       return matchSearch && matchTag;
     });
   }, [posts, searchQuery, activeTag]);
@@ -53,7 +52,9 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
       {/* Search + Tags */}
       <div className="flex flex-col items-center gap-5 md:gap-8">
         <div className="relative w-full max-w-lg group">
-          <input id="page-search" name="page-search"
+          <input
+            id="page-search"
+            name="page-search"
             type="text"
             placeholder="搜寻被遗忘的思绪..."
             value={searchQuery}
@@ -83,10 +84,10 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
       {/* Waterfall layout with timeline-style cards */}
       {filteredPosts.length > 0 ? (
         <div className="columns-2 lg:columns-3 gap-3 md:gap-6 space-y-3 md:space-y-6">
-            {filteredPosts.map((post) => {
-              const cover = getPostCover(post.slug, post.cover, 400, 250);
-              return (
-                <div key={post.id} className="break-inside-avoid">
+          {filteredPosts.map((post) => {
+            const cover = getPostCover(post.slug, undefined, 400, 250);
+            return (
+              <div key={post.id} className="break-inside-avoid">
                 <Link
                   to="/post/$slug"
                   params={{ slug: post.slug }}
@@ -128,9 +129,9 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
                     </div>
                   </div>
                 </Link>
-                </div>
-              );
-            })}
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-16">

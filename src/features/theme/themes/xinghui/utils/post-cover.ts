@@ -16,7 +16,11 @@ const COVER_POOL_SIZE = 697; // img1.webp through img697.webp
  * Generate an anime cover image URL from a post slug.
  * Uses a hash to pick from a fixed pool of anime images for consistency.
  */
-export function getPostCoverBySlug(slug: string, _width = 800, _height = 500): string {
+export function getPostCoverBySlug(
+  slug: string,
+  _width = 800,
+  _height = 500,
+): string {
   // Simple hash to get a deterministic index
   let hash = 0;
   for (let i = 0; i < slug.length; i++) {

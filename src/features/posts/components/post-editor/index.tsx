@@ -25,6 +25,9 @@ export function PostEditor({ initialData, onSave }: PostEditorProps) {
     summary: initialData.summary,
     slug: initialData.slug,
     status: initialData.status,
+    // type 此前漏传：PostEditorData 要求该字段，缺失会让「文章/说说」
+    // 类型在初始状态就丢掉（TS2741 也指出了这一点）。
+    type: initialData.type,
     readTimeInMinutes: initialData.readTimeInMinutes,
     contentJson: initialData.contentJson ?? null,
     publishedAt: initialData.publishedAt,
@@ -108,26 +111,16 @@ export function PostEditor({ initialData, onSave }: PostEditorProps) {
   }, []);
 
   const handleRestoreApplied = useCallback(
-    ({
-      snapshot,
-    }: {
-      snapshot: {
-        title: string;
-        summary: string | null;
-        slug: string;
-        status: PostEditorData["status"];
-        publishedAt: string | null;
-        readTimeInMinutes: number;
-        contentJson: PostEditorData["contentJson"];
-        tagIds: Array<number>;
-      };
-    }) => {
+    ({ snapshot }: { snapshot: PostRevisionSnapshot }) => {
       const hasPublicCache = post.hasPublicCache;
       const restoredPost: PostEditorData = {
         title: snapshot.title,
         summary: snapshot.summary ?? "",
         slug: snapshot.slug,
         status: snapshot.status,
+        // 旧快照可能没有 type，缺失时沿用当前类型，避免恢复时把
+        // 「说说」变回「文章」。
+        type: snapshot.type ?? post.type,
         readTimeInMinutes: snapshot.readTimeInMinutes,
         contentJson: snapshot.contentJson,
         publishedAt: snapshot.publishedAt

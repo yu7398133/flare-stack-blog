@@ -45,7 +45,9 @@ export function toPhotoInsertInput(input: McpPhotoCreateInput): PhotoInsert {
   }
 
   if (input.tags !== undefined) {
-    data.tags = Array.isArray(input.tags) ? JSON.stringify(input.tags) : input.tags;
+    data.tags = Array.isArray(input.tags)
+      ? JSON.stringify(input.tags)
+      : input.tags;
   }
 
   if (input.sortOrder !== undefined) {

@@ -1,7 +1,10 @@
-import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
 import * as MomentsData from "@/features/moments/data/moments.data";
+import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
 import { defineMcpTool } from "../../../service/mcp-tool";
-import { McpMomentCreateInputSchema, McpMomentSchema } from "../schema/mcp-moments.schema";
+import {
+  McpMomentCreateInputSchema,
+  McpMomentSchema,
+} from "../schema/mcp-moments.schema";
 import { serializeMcpMoment } from "../service/mcp-moments.service";
 
 const REQUIRED_SCOPES: OAuthScopeRequest = { posts: ["write"] };

@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -66,7 +66,10 @@ function ProjectsAdminPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, ...body }: { id: number } & Partial<typeof form>) => {
+    mutationFn: async ({
+      id,
+      ...body
+    }: { id: number } & Partial<typeof form>) => {
       const res = await fetch(`/api/admin/projects/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -85,7 +88,9 @@ function ProjectsAdminPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/projects/${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("删除失败");
       return res.json();
     },
@@ -97,7 +102,15 @@ function ProjectsAdminPage() {
   });
 
   const resetForm = () => {
-    setForm({ title: "", description: "", projectUrl: "", repoUrl: "", techStack: "", status: "active", featured: false });
+    setForm({
+      title: "",
+      description: "",
+      projectUrl: "",
+      repoUrl: "",
+      techStack: "",
+      status: "active",
+      featured: false,
+    });
     setEditItem(null);
     setShowForm(false);
   };
@@ -136,13 +149,18 @@ function ProjectsAdminPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-border/30 pb-6">
         <div className="space-y-1">
-          <h1 className="text-3xl font-serif font-medium tracking-tight">项目管理</h1>
+          <h1 className="text-3xl font-serif font-medium tracking-tight">
+            项目管理
+          </h1>
           <p className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
             Projects · 共 {projects?.length || 0} 个
           </p>
         </div>
         <button
-          onClick={() => { resetForm(); setShowForm(!showForm); }}
+          onClick={() => {
+            resetForm();
+            setShowForm(!showForm);
+          }}
           className="px-4 py-2 text-xs font-mono uppercase tracking-widest bg-foreground text-background hover:bg-foreground/80 transition-colors"
         >
           {showForm ? "取消" : "+ 添加项目"}
@@ -152,13 +170,17 @@ function ProjectsAdminPage() {
       {/* Form */}
       {showForm && (
         <div className="border border-border/30 p-6 space-y-4">
-          <input id="index-form" name="index-form"
+          <input
+            id="index-form"
+            name="index-form"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             placeholder="项目名称"
             className="w-full bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
           />
-          <textarea id="index-form" name="index-form"
+          <textarea
+            id="index-form"
+            name="index-form"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             placeholder="项目描述"
@@ -166,29 +188,42 @@ function ProjectsAdminPage() {
             className="w-full bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground resize-none"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input id="index-form" name="index-form"
+            <input
+              id="index-form"
+              name="index-form"
               value={form.projectUrl}
               onChange={(e) => setForm({ ...form, projectUrl: e.target.value })}
               placeholder="项目链接 (可选)"
               className="bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             />
-            <input id="index-form" name="index-form"
+            <input
+              id="index-form"
+              name="index-form"
               value={form.repoUrl}
               onChange={(e) => setForm({ ...form, repoUrl: e.target.value })}
               placeholder="仓库链接 (可选)"
               className="bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             />
           </div>
-          <input id="index-form" name="index-form"
+          <input
+            id="index-form"
+            name="index-form"
             value={form.techStack}
             onChange={(e) => setForm({ ...form, techStack: e.target.value })}
             placeholder='技术栈 (JSON数组，如 ["React","TailwindCSS"])'
             className="w-full bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
           />
           <div className="flex items-center gap-4">
-            <select id="index-form" name="index-form"
+            <select
+              id="index-form"
+              name="index-form"
               value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value as typeof form.status })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  status: e.target.value as typeof form.status,
+                })
+              }
               className="bg-transparent border border-border/30 p-2 text-xs font-mono focus:outline-none"
             >
               <option value="active">进行中</option>
@@ -199,7 +234,9 @@ function ProjectsAdminPage() {
               <input
                 type="checkbox"
                 checked={form.featured}
-                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+                onChange={(e) =>
+                  setForm({ ...form, featured: e.target.checked })
+                }
               />
               置顶推荐
             </label>
@@ -216,35 +253,85 @@ function ProjectsAdminPage() {
 
       {/* Project List */}
       {isLoading ? (
-        <div className="text-center text-muted-foreground text-xs font-mono py-20">加载中...</div>
+        <div className="text-center text-muted-foreground text-xs font-mono py-20">
+          加载中...
+        </div>
       ) : !projects?.length ? (
-        <div className="text-center text-muted-foreground text-xs font-mono py-20">暂无项目</div>
+        <div className="text-center text-muted-foreground text-xs font-mono py-20">
+          暂无项目
+        </div>
       ) : (
         <div className="space-y-3">
           {projects.map((project) => (
-            <div key={project.id} className="border border-border/30 p-4 group hover:border-foreground/30 transition-colors">
+            <div
+              key={project.id}
+              className="border border-border/30 p-4 group hover:border-foreground/30 transition-colors"
+            >
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-mono font-bold">{project.title}</h3>
-                    {project.featured && <span className="text-[10px] px-1.5 py-0.5 bg-foreground text-background font-mono">置顶</span>}
-                    <span className={`text-[10px] font-mono ${statusColors[project.status] || ""}`}>
+                    <h3 className="text-sm font-mono font-bold">
+                      {project.title}
+                    </h3>
+                    {project.featured && (
+                      <span className="text-[10px] px-1.5 py-0.5 bg-foreground text-background font-mono">
+                        置顶
+                      </span>
+                    )}
+                    <span
+                      className={`text-[10px] font-mono ${statusColors[project.status] || ""}`}
+                    >
                       [{project.status}]
                     </span>
                   </div>
                   {project.description && (
-                    <p className="text-xs text-muted-foreground mt-1">{project.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {project.description}
+                    </p>
                   )}
                   <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground font-mono">
                     {project.techStack && <span>🛠 {project.techStack}</span>}
-                    {project.projectUrl && <a href={project.projectUrl} target="_blank" rel="noopener" className="hover:text-foreground">🔗 演示</a>}
-                    {project.repoUrl && <a href={project.repoUrl} target="_blank" rel="noopener" className="hover:text-foreground">📦 仓库</a>}
-                    <span>{new Date(project.createdAt).toLocaleDateString("zh-CN")}</span>
+                    {project.projectUrl && (
+                      <a
+                        href={project.projectUrl}
+                        target="_blank"
+                        rel="noopener"
+                        className="hover:text-foreground"
+                      >
+                        🔗 演示
+                      </a>
+                    )}
+                    {project.repoUrl && (
+                      <a
+                        href={project.repoUrl}
+                        target="_blank"
+                        rel="noopener"
+                        className="hover:text-foreground"
+                      >
+                        📦 仓库
+                      </a>
+                    )}
+                    <span>
+                      {new Date(project.createdAt).toLocaleDateString("zh-CN")}
+                    </span>
                   </div>
                 </div>
                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEdit(project)} className="text-xs font-mono text-muted-foreground hover:text-foreground">编辑</button>
-                  <button onClick={() => { if (confirm("确定删除?")) deleteMutation.mutate(project.id); }} className="text-xs font-mono text-muted-foreground hover:text-destructive">删除</button>
+                  <button
+                    onClick={() => handleEdit(project)}
+                    className="text-xs font-mono text-muted-foreground hover:text-foreground"
+                  >
+                    编辑
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm("确定删除?"))
+                        deleteMutation.mutate(project.id);
+                    }}
+                    className="text-xs font-mono text-muted-foreground hover:text-destructive"
+                  >
+                    删除
+                  </button>
                 </div>
               </div>
             </div>

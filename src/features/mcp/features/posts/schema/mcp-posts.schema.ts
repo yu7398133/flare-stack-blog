@@ -21,7 +21,10 @@ export const McpPostsListInputSchema = z.object({
     .enum(["publishedAt", "updatedAt"])
     .optional()
     .describe("Field used for sorting."),
-  type: z.enum(POST_TYPES).optional().describe("Filter by post type: article or talk."),
+  type: z
+    .enum(POST_TYPES)
+    .optional()
+    .describe("Filter by post type: article or talk."),
 });
 
 export const McpPostSummarySchema = z.object({
@@ -95,10 +98,7 @@ export const McpPostUpdateInputSchema = z
       .describe(
         "Full post body as markdown. Converted to editor JSON internally.",
       ),
-    type: z
-      .enum(POST_TYPES)
-      .optional()
-      .describe("Post type: article or talk."),
+    type: z.enum(POST_TYPES).optional().describe("Post type: article or talk."),
   })
   .refine(
     (value) =>

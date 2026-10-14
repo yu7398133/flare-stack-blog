@@ -8,7 +8,7 @@
 
 /* Override Tailwind font-sans to use Geist */
 .xh-page-bg .font-sans {
-  font-family: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 /* Page background with gradient */
@@ -66,17 +66,33 @@
 }
 
 /* Staggered animation delays */
-.xh-delay-1 { animation-delay: 50ms; }
-.xh-delay-2 { animation-delay: 100ms; }
-.xh-delay-3 { animation-delay: 150ms; }
-.xh-delay-4 { animation-delay: 200ms; }
-.xh-delay-5 { animation-delay: 250ms; }
-.xh-delay-6 { animation-delay: 300ms; }
+.xh-delay-1 {
+  animation-delay: 50ms;
+}
+.xh-delay-2 {
+  animation-delay: 100ms;
+}
+.xh-delay-3 {
+  animation-delay: 150ms;
+}
+.xh-delay-4 {
+  animation-delay: 200ms;
+}
+.xh-delay-5 {
+  animation-delay: 250ms;
+}
+.xh-delay-6 {
+  animation-delay: 300ms;
+}
 
 /* Spinning disc animation (for music player) */
 @keyframes xh-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .xh-spin-slow {
@@ -89,8 +105,13 @@
 
 /* Audio wave animation */
 @keyframes xh-wave {
-  0%, 100% { height: 4px; }
-  50% { height: 24px; }
+  0%,
+  100% {
+    height: 4px;
+  }
+  50% {
+    height: 24px;
+  }
 }
 
 .xh-wave-bar {
@@ -99,8 +120,13 @@
 
 /* Typing cursor blink */
 @keyframes xh-cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 .xh-cursor {
@@ -136,8 +162,13 @@
 
 /* Skeleton loading pulse */
 @keyframes xh-skeleton-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .xh-skeleton {

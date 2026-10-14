@@ -46,7 +46,5 @@ export const McpMusicListOutputSchema = z.object({
   songs: z
     .array(McpMusicSongSchema)
     .describe("Configured individual song entries."),
-  playlists: z
-    .array(z.string())
-    .describe("Configured Netease playlist IDs."),
+  playlists: z.array(z.string()).describe("Configured Netease playlist IDs."),
 });

@@ -2,15 +2,20 @@
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    /* ES2023 lib：代码里用了 Array.prototype.toSpliced 等 ES2023 方法，
+       Cloudflare Workers 运行时已支持；lib 落后会让 tsc 报 TS2550。 */
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
     "module": "ESNext",
     /* Bundler mode */
     "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"],
-      "@theme": ["./src/features/theme/themes/default"],
-      "@theme/*": ["./src/features/theme/themes/default/*"]
+      /* 必须与 src/features/theme/registry.ts 的 DEFAULT_THEME 保持一致。
+         tsc 读不到运行时 THEME 环境变量，只能指向默认主题；此前写的
+         themes/default 并不存在，导致 21 处 "Cannot find module '@theme'"。 */
+      "@theme": ["./src/features/theme/themes/xinghui"],
+      "@theme/*": ["./src/features/theme/themes/xinghui/*"]
     },
     "types": ["vite/client", "@cloudflare/vitest-pool-workers/types"],
     "allowImportingTsExtensions": true,

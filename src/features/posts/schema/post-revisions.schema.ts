@@ -7,6 +7,7 @@ import { z } from "zod";
 import {
   POST_REVISION_REASONS,
   POST_STATUSES,
+  POST_TYPES,
   PostRevisionsTable,
 } from "@/lib/db/schema";
 import { NullableJsonContentSchema } from "./json-content.schema";
@@ -18,6 +19,8 @@ export const PostRevisionSnapshotSchema = z.object({
   summary: z.string().nullable(),
   slug: z.string(),
   status: z.enum(POST_STATUSES),
+  // 可选：早期快照未记录 type，缺失时恢复沿用当前帖子的类型。
+  type: z.enum(POST_TYPES).optional(),
   publishedAt: z.string().nullable(),
   readTimeInMinutes: z.number().int().min(1),
   contentJson: NullableJsonContentSchema,

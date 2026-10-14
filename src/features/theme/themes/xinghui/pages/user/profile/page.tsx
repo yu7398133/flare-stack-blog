@@ -1,5 +1,5 @@
-import { Loader2, Bell, BellOff, LogOut, Key, User } from "lucide-react";
 import { useRouteContext } from "@tanstack/react-router";
+import { Bell, BellOff, Key, Loader2, LogOut, User } from "lucide-react";
 import type { ProfilePageProps } from "@/features/theme/contract/pages";
 
 export function ProfilePage({
@@ -22,7 +22,7 @@ export function ProfilePage({
         <div className="flex items-center gap-4 mb-6">
           {xinghuiAvatar || user.image ? (
             <img
-              src={xinghuiAvatar || user.image}
+              src={xinghuiAvatar || user.image || undefined}
               alt={user.name}
               className="w-16 h-16 rounded-2xl object-cover border-2 border-white/50"
             />
@@ -32,8 +32,12 @@ export function ProfilePage({
             </div>
           )}
           <div>
-            <h1 className="text-xl font-bold text-slate-800 dark:text-white">{user.name}</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
+            <h1 className="text-xl font-bold text-slate-800 dark:text-white">
+              {user.name}
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {user.email}
+            </p>
             {user.role && (
               <span className="inline-block mt-1 px-2 py-0.5 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-medium">
                 {user.role}
@@ -57,7 +61,9 @@ export function ProfilePage({
               className="w-full px-4 py-2.5 rounded-xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-800 dark:text-white text-sm transition-all"
             />
             {profileForm.errors.name && (
-              <span className="text-xs text-red-500 mt-1 block">{profileForm.errors.name.message}</span>
+              <span className="text-xs text-red-500 mt-1 block">
+                {profileForm.errors.name.message}
+              </span>
             )}
           </div>
           <button
@@ -141,7 +147,9 @@ export function ProfilePage({
             <BellOff size={18} className="text-slate-400" />
           )}
           <div>
-            <p className="font-medium text-slate-800 dark:text-white text-sm">邮件通知</p>
+            <p className="font-medium text-slate-800 dark:text-white text-sm">
+              邮件通知
+            </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {notification.enabled ? "已开启" : "已关闭"}
             </p>

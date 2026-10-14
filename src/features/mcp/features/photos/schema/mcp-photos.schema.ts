@@ -6,7 +6,10 @@ export const McpPhotoSchema = z.object({
   description: z.string().nullable().describe("Photo description."),
   imageUrl: z.string().describe("URL of the photo image."),
   thumbnailUrl: z.string().nullable().describe("URL of the photo thumbnail."),
-  album: z.string().nullable().describe("Album/category this photo belongs to."),
+  album: z
+    .string()
+    .nullable()
+    .describe("Album/category this photo belongs to."),
   tags: z.string().nullable().describe("JSON array of tags."),
   sortOrder: z.number().describe("Sort order for ordering within an album."),
   createdAt: z.iso.datetime().describe("Photo creation time."),
@@ -27,13 +30,21 @@ export const McpPhotoCreateInputSchema = z.object({
   title: z.string().min(1).max(200).describe("Photo title (required)."),
   description: z.string().max(500).optional().describe("Photo description."),
   imageUrl: z.string().url().describe("URL of the photo image (required)."),
-  thumbnailUrl: z.string().url().optional().describe("URL of the photo thumbnail."),
+  thumbnailUrl: z
+    .string()
+    .url()
+    .optional()
+    .describe("URL of the photo thumbnail."),
   album: z.string().max(100).optional().describe("Album/category name."),
   tags: z
     .union([z.string(), z.array(z.string())])
     .optional()
     .describe("Tags as JSON string or array of strings."),
-  sortOrder: z.number().int().optional().describe("Sort order for ordering within an album."),
+  sortOrder: z
+    .number()
+    .int()
+    .optional()
+    .describe("Sort order for ordering within an album."),
 });
 
 export const McpPhotoCreateOutputSchema = z.object({

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PhotoItem } from "@/features/theme/contract/pages";
 
 interface LatestPhotosCarouselProps {
@@ -8,23 +8,28 @@ interface LatestPhotosCarouselProps {
   initialDelay?: number;
 }
 
-export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6000 }: LatestPhotosCarouselProps) {
+export function LatestPhotosCarousel({
+  photos,
+  interval = 9000,
+  initialDelay = 6000,
+}: LatestPhotosCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const indexRef = useRef(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
-
-  const goTo = useCallback(
-    (idx: number) => {
-      setFade(false);
-      setTimeout(() => {
-        setCurrentIndex(idx);
-        indexRef.current = idx;
-        setFade(true);
-      }, 300);
-    },
-    [],
+  // React 19 的 useRef 要求显式初始值（types 收紧），undefined 与原先的
+  // 「未初始化」语义一致，读取处仍需判空。
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined,
   );
+
+  const goTo = useCallback((idx: number) => {
+    setFade(false);
+    setTimeout(() => {
+      setCurrentIndex(idx);
+      indexRef.current = idx;
+      setFade(true);
+    }, 300);
+  }, []);
 
   useEffect(() => {
     if (photos.length <= 1) return;
@@ -44,6 +49,7 @@ export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6
     return (
       <Link
         to="/photowall"
+        search={{ album: undefined }}
         className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden relative group min-h-[200px] sm:min-h-[220px] flex-shrink-0 flex items-center justify-center"
       >
         <span className="text-4xl">📸</span>
@@ -72,7 +78,7 @@ export function LatestPhotosCarousel({ photos, interval = 9000, initialDelay = 6
       {/* Clickable link — navigate to specific album */}
       <Link
         to="/photowall"
-        search={photo.album ? { album: photo.album } : undefined}
+        search={{ album: photo.album ?? undefined }}
         className="absolute inset-0 z-20"
         aria-label={photo.album ? `查看相册: ${photo.album}` : "查看照片墙"}
       />

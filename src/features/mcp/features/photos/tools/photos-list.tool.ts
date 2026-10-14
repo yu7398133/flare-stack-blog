@@ -21,7 +21,9 @@ export const photosListTool = defineMcpTool({
     const allPhotos = await PhotosData.getAll(context.db, args.album);
     const offset = args.offset ?? 0;
     const limit = args.limit ?? allPhotos.length;
-    const items = allPhotos.slice(offset, offset + limit).map(serializeMcpPhoto);
+    const items = allPhotos
+      .slice(offset, offset + limit)
+      .map(serializeMcpPhoto);
 
     return {
       content: [

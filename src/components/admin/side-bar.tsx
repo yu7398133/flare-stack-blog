@@ -6,14 +6,14 @@ import {
   LayoutDashboard,
   Link2,
   LogOut,
+  MessageCircle,
   MessageSquare,
   Music,
+  Rocket,
   Sparkles,
   Tag,
   User,
   X,
-  Rocket,
-  MessageCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

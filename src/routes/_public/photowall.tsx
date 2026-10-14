@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
 import theme from "@theme";
-
-const photowallSearchSchema = {
-  album: undefined as string | undefined,
-};
+import { useEffect, useState } from "react";
+import type { Photo } from "@/lib/db/schema/photos.table";
 
 export const Route = createFileRoute("/_public/photowall")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -16,14 +13,17 @@ export const Route = createFileRoute("/_public/photowall")({
       fetch("https://blog.chenyusc.eu.org/api/photos"),
       fetch("https://blog.chenyusc.eu.org/api/photos/albums"),
     ]);
-    const photos = await photosRes.json();
-    const albums = await albumsRes.json();
+    // 标注类型：res.json() 返回 any，若不标注，Promise.all 会让下游
+    // useState 推断出 unknown，赋给主题 props 时报 TS2322。
+    const photos = (await photosRes.json()) as Photo[];
+    const albums = (await albumsRes.json()) as string[];
     return { photos, albums };
   },
 });
 
 function PhotoWallRoute() {
-  const { photos: initialPhotos, albums: initialAlbums } = Route.useLoaderData();
+  const { photos: initialPhotos, albums: initialAlbums } =
+    Route.useLoaderData();
   const { album: albumParam } = Route.useSearch();
   const [selectedAlbum, setSelectedAlbum] = useState<string>("");
   const [photos, setPhotos] = useState(initialPhotos);
@@ -41,8 +41,8 @@ function PhotoWallRoute() {
           fetch(`/api/photos?album=${selectedAlbum}`),
           fetch("/api/photos/albums"),
         ]);
-        const photosData = await photosRes.json();
-        const albumsData = await albumsRes.json();
+        const photosData = (await photosRes.json()) as Photo[];
+        const albumsData = (await albumsRes.json()) as string[];
         setPhotos(photosData);
         setAlbums(albumsData);
       } catch (e) {

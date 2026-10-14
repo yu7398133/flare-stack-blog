@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
-import { Search, X, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Search, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import type { PhotoWallPageProps } from "@/features/theme/contract/pages";
 
 interface AlbumGroup {
@@ -7,14 +7,10 @@ interface AlbumGroup {
   photos: PhotoWallPageProps["photos"];
 }
 
-export function PhotoWallPage({
-  photos,
-  albums,
-  selectedAlbum,
-  onAlbumChange,
-  initialAlbum,
-}: PhotoWallPageProps) {
-  const [openAlbum, setOpenAlbum] = useState<string | null>(initialAlbum || null);
+export function PhotoWallPage({ photos, initialAlbum }: PhotoWallPageProps) {
+  const [openAlbum, setOpenAlbum] = useState<string | null>(
+    initialAlbum || null,
+  );
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
     caption?: string;
@@ -47,8 +43,7 @@ export function PhotoWallPage({
 
   // Search filtering
   const { matchedAlbums, matchedPhotos } = useMemo(() => {
-    if (!activeQuery)
-      return { matchedAlbums: albumGroups, matchedPhotos: [] };
+    if (!activeQuery) return { matchedAlbums: albumGroups, matchedPhotos: [] };
     const ma = albumGroups.filter((a) =>
       a.album.toLowerCase().includes(activeQuery),
     );
@@ -87,7 +82,9 @@ export function PhotoWallPage({
                 size={18}
                 className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-slate-500 dark:text-slate-400 group-focus-within:text-indigo-500 transition-colors"
               />
-              <input id="page-search" name="page-search"
+              <input
+                id="page-search"
+                name="page-search"
                 type="text"
                 placeholder="搜索相册名或照片描述..."
                 value={searchQuery}

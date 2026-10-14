@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { useRouteContext } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 
 interface DanmakuItem {
   id: number;
@@ -28,9 +28,13 @@ export function DanmakuBackground() {
   const [items, setItems] = useState<DanmakuItem[]>([]);
   const counterRef = useRef(0);
 
-  const danmakuList =
-    siteConfig.theme.xinghui?.danmakuList?.length > 0
-      ? siteConfig.theme.xinghui.danmakuList
+  // 用局部变量 + 显式非空判断，让 TS 能收窄类型。
+  // 原写法 `?.length > 0 ? ... : ...` 语义正确但无法收窄，
+  // 导致后续 danmakuList[...] 报 TS18048（possibly undefined）。
+  const configuredDanmaku = siteConfig.theme.xinghui?.danmakuList;
+  const danmakuList: string[] =
+    configuredDanmaku && configuredDanmaku.length > 0
+      ? configuredDanmaku
       : DEFAULT_TEXTS;
   const fontSize = siteConfig.theme.xinghui?.danmakuFontSize ?? 14;
   const opacity = siteConfig.theme.xinghui?.danmakuOpacity ?? 0.5;

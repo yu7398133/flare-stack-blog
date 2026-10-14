@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { useState, useMemo, useRef, useEffect } from "react";
-import { Search, Sparkles, LayoutGrid, ListTree, ArrowUp } from "lucide-react";
+import { ArrowUp, LayoutGrid, ListTree, Search, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
 import { getPostCover } from "../../utils/post-cover";
@@ -52,8 +52,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
   const filtered = useMemo(() => {
     return posts.filter((post) => {
       const tagMatch =
-        selectedTag === "All" ||
-        post.tags?.some((t) => t.name === selectedTag);
+        selectedTag === "All" || post.tags?.some((t) => t.name === selectedTag);
       const searchMatch =
         !searchQuery.trim() ||
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -92,7 +91,9 @@ export function TimelinePage({ posts }: TimelinePageProps) {
             size={20}
             className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-20"
           />
-          <input id="page-search" name="page-search"
+          <input
+            id="page-search"
+            name="page-search"
             type="text"
             placeholder="搜寻被封存的知识..."
             value={searchQuery}
@@ -125,8 +126,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                   : "bg-white/50 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 hover:bg-white"
               }`}
             >
-              {tag.name}{" "}
-              <span className="opacity-50 ml-1">{tag.count}</span>
+              {tag.name} <span className="opacity-50 ml-1">{tag.count}</span>
             </button>
           ))}
         </div>
@@ -181,7 +181,7 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                 >
                   <div className="relative h-28 sm:h-36 overflow-hidden">
                     <img
-                      src={getPostCover(post.slug, post.cover)}
+                      src={getPostCover(post.slug)}
                       alt=""
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />

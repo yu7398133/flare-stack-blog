@@ -7,7 +7,7 @@ import {
 import { addPlaylist } from "../service/mcp-music.service";
 
 const MUSIC_ADD_PLAYLIST_REQUIRED_SCOPES: OAuthScopeRequest = {
-  "posts": ["write"],
+  posts: ["write"],
 };
 
 export const musicAddPlaylistTool = defineMcpTool({

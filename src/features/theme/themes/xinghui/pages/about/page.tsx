@@ -1,20 +1,22 @@
-import { useRouteContext } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouteContext } from "@tanstack/react-router";
 import { marked } from "marked";
+import { useMemo, useState } from "react";
+import type { PostListResponse } from "@/features/posts/schema/posts.schema";
+import type { Moment } from "@/lib/db/schema/moments.table";
 
 export function AboutPage() {
   const { siteConfig } = useRouteContext({ from: "__root__" });
   const [activeTab, setActiveTab] = useState<"intro" | "activity">("intro");
 
-
-
   // Fetch all posts for activity timeline
+  // 显式标注返回类型：错误兜底分支与 res.json() 分支联合后会被推断为 {}，
+  // 导致下方 postsData?.items 报 TS2339。
   const { data: postsData } = useQuery({
     queryKey: ["about-posts"],
-    queryFn: async () => {
+    queryFn: async (): Promise<PostListResponse> => {
       const res = await fetch("/api/posts?limit=100");
-      if (!res.ok) return { items: [] };
+      if (!res.ok) return { items: [], nextCursor: null };
       return res.json();
     },
   });
@@ -22,9 +24,9 @@ export function AboutPage() {
   // Fetch moments for activity
   const { data: momentsData } = useQuery({
     queryKey: ["about-moments"],
-    queryFn: async () => {
+    queryFn: async (): Promise<{ items: Moment[]; total: number }> => {
       const res = await fetch("/api/moments?limit=100");
-      if (!res.ok) return { items: [] };
+      if (!res.ok) return { items: [], total: 0 };
       return res.json();
     },
   });
@@ -43,7 +45,9 @@ export function AboutPage() {
         id: `post-${post.id}`,
         type: "文章",
         title: post.title,
-        date: post.publishedAt || post.createdAt,
+        // schema 的 coercedDate 允许 Date | string，这里统一成 ISO 字符串
+        // （下游只用 new Date(...) 解析，且 JSON 传输后本就是字符串）。
+        date: new Date(post.publishedAt || post.createdAt).toISOString(),
         url: `/post/${post.slug}`,
       });
     }
@@ -52,7 +56,7 @@ export function AboutPage() {
         id: `moment-${m.id}`,
         type: "说说",
         title: m.content.slice(0, 30),
-        date: m.createdAt,
+        date: new Date(m.createdAt).toISOString(),
         url: "/moments",
       });
     }
@@ -193,7 +197,9 @@ export function AboutPage() {
               <div
                 className="text-base text-slate-600 dark:text-slate-300 font-serif leading-relaxed space-y-4"
                 dangerouslySetInnerHTML={{
-                  __html: marked.parse(siteConfig.theme.xinghui.aboutContent, { async: false }),
+                  __html: marked.parse(siteConfig.theme.xinghui.aboutContent, {
+                    async: false,
+                  }),
                 }}
               />
             ) : (
@@ -202,16 +208,22 @@ export function AboutPage() {
                   {siteConfig.description}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {["React", "TypeScript", "TailwindCSS", "Cloudflare", "TanStack", "Hono", "Drizzle ORM"].map(
-                    (tech) => (
-                      <span
-                        key={tech}
-                        className="px-3 py-1.5 bg-white/50 dark:bg-white/10 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 border border-white/40 dark:border-white/10"
-                      >
-                        {tech}
-                      </span>
-                    ),
-                  )}
+                  {[
+                    "React",
+                    "TypeScript",
+                    "TailwindCSS",
+                    "Cloudflare",
+                    "TanStack",
+                    "Hono",
+                    "Drizzle ORM",
+                  ].map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-3 py-1.5 bg-white/50 dark:bg-white/10 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 border border-white/40 dark:border-white/10"
+                    >
+                      {tech}
+                    </span>
+                  ))}
                 </div>
               </div>
             )}

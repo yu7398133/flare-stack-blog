@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { X, Sun, Moon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Moon, Sun, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
 interface MobileMenuProps {
@@ -11,11 +11,20 @@ interface MobileMenuProps {
   logout: () => Promise<void>;
 }
 
-export function MobileMenu({ navOptions, isOpen, onClose, user, logout }: MobileMenuProps) {
+export function MobileMenu({
+  navOptions,
+  isOpen,
+  onClose,
+  user,
+  logout,
+}: MobileMenuProps) {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") === "dark" ||
-        (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      return (
+        localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      );
     }
     return false;
   });
@@ -56,7 +65,11 @@ export function MobileMenu({ navOptions, isOpen, onClose, user, logout }: Mobile
           <div className="flex items-center gap-3 mb-6 px-2">
             <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white/50">
               {user.image ? (
-                <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
                   {user.name?.charAt(0).toUpperCase()}
@@ -64,7 +77,9 @@ export function MobileMenu({ navOptions, isOpen, onClose, user, logout }: Mobile
               )}
             </div>
             <div>
-              <p className="font-medium text-slate-800 dark:text-white text-sm">{user.name}</p>
+              <p className="font-medium text-slate-800 dark:text-white text-sm">
+                {user.name}
+              </p>
             </div>
           </div>
         )}

@@ -10,8 +10,6 @@ export function ClickEffect() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let ripples: any[] = [];
-
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -56,6 +54,10 @@ export function ClickEffect() {
         ctx.fill();
       }
     }
+
+    // Ripple 类已在上方定义，用它做元素类型（原为 any[]）。
+    // 用 const：只修改数组内容，不重新绑定（biome useConst）。
+    const ripples: Ripple[] = [];
 
     const handleClick = (e: MouseEvent) => {
       ripples.push(new Ripple(e.clientX, e.clientY));

@@ -3,7 +3,12 @@ import { Button } from "@/components/ui/button";
 import Dropdown from "@/components/ui/dropdown";
 import { Input } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
-import type { SortDirection, SortField, StatusFilter, TypeFilter } from "../types";
+import type {
+  SortDirection,
+  SortField,
+  StatusFilter,
+  TypeFilter,
+} from "../types";
 import { STATUS_FILTERS, TYPE_FILTERS } from "../types";
 
 interface PostsToolbarProps {

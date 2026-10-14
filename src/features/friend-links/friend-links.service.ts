@@ -13,10 +13,6 @@ import type {
   SubmitFriendLinkInput,
   UpdateFriendLinkInput,
 } from "./friend-links.schema";
-import {
-  ApprovedFriendLinksResponseSchema,
-  FRIEND_LINKS_CACHE_KEYS,
-} from "./friend-links.schema";
 
 // ============ Authed User Methods ============
 

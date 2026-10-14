@@ -1,7 +1,7 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useCallback } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import theme from "@theme";
+import { useCallback, useState } from "react";
 import type { Moment } from "@/lib/db/schema/moments.table";
 
 export const Route = createFileRoute("/_public/moments")({
@@ -15,7 +15,9 @@ function MomentsRoute() {
   const { data, isLoading } = useQuery<{ items: Moment[]; total: number }>({
     queryKey: ["moments", page],
     queryFn: async () => {
-      const res = await fetch(`/api/moments?limit=${limit}&offset=${page * limit}`);
+      const res = await fetch(
+        `/api/moments?limit=${limit}&offset=${page * limit}`,
+      );
       return res.json();
     },
   });
@@ -30,9 +32,12 @@ function MomentsRoute() {
     setPage((p) => p + 1);
   }, []);
 
-  const handleLike = useCallback((id: number) => {
-    likeMutation.mutate(id);
-  }, [likeMutation]);
+  const handleLike = useCallback(
+    (id: number) => {
+      likeMutation.mutate(id);
+    },
+    [likeMutation],
+  );
 
   if (isLoading) return <theme.MomentsPageSkeleton />;
 

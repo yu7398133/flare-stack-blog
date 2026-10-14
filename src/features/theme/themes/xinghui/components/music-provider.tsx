@@ -2,11 +2,11 @@
 
 import {
   createContext,
-  useContext,
-  useState,
-  useRef,
-  useEffect,
   type ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 
 // LRC lyric parser
@@ -22,6 +22,8 @@ function parseLrc(lrcText: string) {
       const text = line
         .replace(/\[\d{2,}:\d{2}(?:\.\d{2,3})?\]/g, "")
         .trim()
+        // 有意清洗歌词里的控制字符与零宽字符，正则中的控制字符范围是必需的。
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: 用于剥离不可见字符
         .replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200D\uFEFF]/g, "");
 
       if (text) {
@@ -90,7 +92,14 @@ interface MusicProviderProps {
   resolverUrl?: string;
 }
 
-export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMap, vipMap, resolverUrl }: MusicProviderProps) {
+export function MusicProvider({
+  children,
+  musicIds,
+  musicPlaylistIds,
+  audioUrlMap,
+  vipMap,
+  resolverUrl,
+}: MusicProviderProps) {
   const [playlist, setPlaylist] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -117,24 +126,26 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
         // Step 1: Get song metadata from existing API
         const params = new URLSearchParams();
         if (musicIds.length > 0) params.set("ids", musicIds.join(","));
-        if (musicPlaylistIds && musicPlaylistIds.length > 0) params.set("playlistIds", musicPlaylistIds.join(","));
+        if (musicPlaylistIds && musicPlaylistIds.length > 0)
+          params.set("playlistIds", musicPlaylistIds.join(","));
         const res = await fetch(`/api/music?${params.toString()}`);
         const rawResults = await res.json();
 
         // Step 2: If resolver is configured, resolve audio URLs in parallel
         // Auto-detect VIP songs from API fee field (fee=1 means VIP)
-        let resolvedUrls: Record<string, string> = {};
+        // 只做属性赋值，不重新绑定（biome useConst）
+        const resolvedUrls: Record<string, string> = {};
         if (resolverUrl) {
-          const allSongs = (rawResults as Array<Record<string, unknown>>).filter(
-            (s) => s && !s.error,
-          );
+          const allSongs = (
+            rawResults as Array<Record<string, unknown>>
+          ).filter((s) => s && !s.error);
           const resolves = await Promise.allSettled(
             allSongs.map(async (song) => {
               const songId = String(song.id || "");
               if (!songId) return null;
               if (audioUrlMap?.[songId]) return null;
               // Always try to resolve, not just VIP - some non-VIP songs also need resolving
-              const isVip = vipMap?.[songId] === true || (song.fee === 1);
+              const isVip = vipMap?.[songId] === true || song.fee === 1;
               // Try grey/VIP unlock first via /song/url/match (UnblockNeteaseMusic).
               // Its data field is a direct URL string, not an array.
               let audioUrl: string | null = null;
@@ -142,7 +153,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                 const baseUrl = resolverUrl.replace(/\/+$/, "");
                 const r = await fetch(`${baseUrl}/song/url/match?id=${songId}`);
                 if (r.ok) {
-                  const data = await r.json() as Record<string, unknown>;
+                  const data = (await r.json()) as Record<string, unknown>;
                   const d = data.data;
                   // /song/media/outer/url?id= resolves to a 404 HTML page for VIP
                   // songs no third-party source carries — skip it so the v1
@@ -155,20 +166,29 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                     audioUrl = d;
                   }
                 }
-              } catch { /* fall through */ }
+              } catch {
+                /* fall through */
+              }
               // Fallback: /song/url/v1 returns standard-quality links for free
               // songs (data is an array of song objects with .url).
               if (!audioUrl) {
                 try {
                   const baseUrl = resolverUrl.replace(/\/+$/, "");
-                  const r = await fetch(`${baseUrl}/song/url/v1?id=${songId}&level=exhigh`);
+                  const r = await fetch(
+                    `${baseUrl}/song/url/v1?id=${songId}&level=exhigh`,
+                  );
                   if (r.ok) {
-                    const data = await r.json() as Record<string, unknown>;
-                    const items = data.data as Array<Record<string, unknown>> | undefined;
+                    const data = (await r.json()) as Record<string, unknown>;
+                    const items = data.data as
+                      | Array<Record<string, unknown>>
+                      | undefined;
                     const u = items?.[0]?.url;
-                    if (typeof u === "string" && u.startsWith("http")) audioUrl = u;
+                    if (typeof u === "string" && u.startsWith("http"))
+                      audioUrl = u;
                   }
-                } catch { /* fall through */ }
+                } catch {
+                  /* fall through */
+                }
               }
               if (audioUrl) {
                 // ncmusic-api returns http URLs - upgrade to https for mixed-content safety
@@ -184,8 +204,12 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
                 const r = await fetch(`${baseUrl}/song/${songId}`);
                 if (!r.ok) return null;
                 const data = (await r.json()) as Record<string, string>;
-                return data.audioUrl ? { id: songId, url: data.audioUrl } : null;
-              } catch { return null; }
+                return data.audioUrl
+                  ? { id: songId, url: data.audioUrl }
+                  : null;
+              } catch {
+                return null;
+              }
             }),
           );
           for (const result of resolves) {
@@ -197,30 +221,25 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
 
         const mergedPlaylist = (rawResults as Array<Record<string, unknown>>)
           .filter((song) => song && !song.error)
-          .map(
-            (song): Song => {
-              const songId = (song.id as string) || Math.random().toString();
-              return {
-                id: songId,
-                title: (song.name as string) || "未知歌曲",
-                artist:
-                  (song.artist as string) ||
-                  (song.author as string) ||
-                  "未知歌手",
-                cover:
-                  (song.cover as string) ||
-                  (song.pic as string) ||
-                  "",
-                src:
-                  audioUrlMap?.[songId] ?
-                    audioUrlMap[songId] :
-                  resolvedUrls[songId] ?
-                    resolvedUrls[songId] :
-                  (song.url as string) || `https://music.163.com/song/media/outer/url?id=${songId}.mp3`,
-                lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
-              };
-            },
-          );
+          .map((song): Song => {
+            const songId = (song.id as string) || Math.random().toString();
+            return {
+              id: songId,
+              title: (song.name as string) || "未知歌曲",
+              artist:
+                (song.artist as string) ||
+                (song.author as string) ||
+                "未知歌手",
+              cover: (song.cover as string) || (song.pic as string) || "",
+              src: audioUrlMap?.[songId]
+                ? audioUrlMap[songId]
+                : resolvedUrls[songId]
+                  ? resolvedUrls[songId]
+                  : (song.url as string) ||
+                    `https://music.163.com/song/media/outer/url?id=${songId}.mp3`,
+              lyrics: song.lrc ? parseLrc(song.lrc as string) : [],
+            };
+          });
 
         if (isMounted) {
           if (mergedPlaylist.length > 0) {
@@ -238,7 +257,10 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
       }
     };
 
-    if (musicIds.length > 0 || (musicPlaylistIds && musicPlaylistIds.length > 0)) {
+    if (
+      musicIds.length > 0 ||
+      (musicPlaylistIds && musicPlaylistIds.length > 0)
+    ) {
       fetchMusicData();
     } else {
       setIsLoading(false);
@@ -348,8 +370,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
 
   const prevSong = () => {
     if (playlist.length === 0) return;
-    const prevIndex =
-      (currentIndex - 1 + playlist.length) % playlist.length;
+    const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
     setCurrentIndex(prevIndex);
     setIsPlaying(true);
   };
@@ -410,11 +431,7 @@ export function MusicProvider({ children, musicIds, musicPlaylistIds, audioUrlMa
       {children}
       {/* Hidden audio element */}
       {currentSong && (
-        <audio
-          ref={audioRef}
-          src={currentSong.src}
-          preload="auto"
-        />
+        <audio ref={audioRef} src={currentSong.src} preload="auto" />
       )}
     </MusicContext.Provider>
   );

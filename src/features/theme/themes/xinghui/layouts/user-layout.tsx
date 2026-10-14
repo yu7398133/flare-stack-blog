@@ -49,14 +49,18 @@ export function UserLayout({
           <div className="flex items-center gap-4">
             {(avatarUrl || user?.image) && (
               <img
-                src={avatarUrl || user?.image}
+                src={avatarUrl || user?.image || undefined}
                 alt={user?.name}
                 className="w-12 h-12 rounded-xl object-cover border-2 border-white/50"
               />
             )}
             <div>
-              <h1 className="text-lg font-bold text-slate-800 dark:text-white">{user?.name}</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{user?.role}</p>
+              <h1 className="text-lg font-bold text-slate-800 dark:text-white">
+                {user?.name}
+              </h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {user?.role}
+              </p>
             </div>
           </div>
           <button

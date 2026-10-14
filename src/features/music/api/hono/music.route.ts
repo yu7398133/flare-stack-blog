@@ -54,7 +54,9 @@ async function fetchPlaylistTrackIds(
     );
     const data = (await res.json()) as Record<string, unknown>;
     const result = data.result as Record<string, unknown> | undefined;
-    const tracks = (result?.tracks ?? data.playlist?.tracks) as
+    // data.playlist 是 unknown，直接取 .tracks 会报 TS2339，先收窄类型。
+    const playlist = data.playlist as Record<string, unknown> | undefined;
+    const tracks = (result?.tracks ?? playlist?.tracks) as
       | Array<Record<string, unknown>>
       | undefined;
 
@@ -63,9 +65,7 @@ async function fetchPlaylistTrackIds(
       return [];
     }
 
-    const trackIds = tracks
-      .map((t) => String(t.id ?? ""))
-      .filter(Boolean);
+    const trackIds = tracks.map((t) => String(t.id ?? "")).filter(Boolean);
 
     // Cache the result
     try {
@@ -76,10 +76,7 @@ async function fetchPlaylistTrackIds(
 
     return trackIds;
   } catch (error) {
-    console.error(
-      `[api/music] Failed to fetch playlist ${playlistId}:`,
-      error,
-    );
+    console.error(`[api/music] Failed to fetch playlist ${playlistId}:`, error);
     return [];
   }
 }

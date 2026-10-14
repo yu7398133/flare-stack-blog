@@ -84,16 +84,15 @@ export async function set(
     ? { expirationTtl: Math.floor(ms(options.ttl) / 1000) }
     : undefined;
 
-  await context.env.KV.put(serializedKey, value, putOptions)
-    .catch((err) =>
-      console.error(
-        JSON.stringify({
-          message: "cache set failed",
-          key: serializedKey,
-          error: String(err),
-        }),
-      ),
-    );
+  await context.env.KV.put(serializedKey, value, putOptions).catch((err) =>
+    console.error(
+      JSON.stringify({
+        message: "cache set failed",
+        key: serializedKey,
+        error: String(err),
+      }),
+    ),
+  );
 }
 
 export async function deleteKey(

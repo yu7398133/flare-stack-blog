@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { z } from "zod";
 import * as PhotosData from "@/features/photos/data/photos.data";
 import { getServiceContext } from "@/lib/hono/helper";
 import { baseMiddleware } from "@/lib/hono/middlewares";

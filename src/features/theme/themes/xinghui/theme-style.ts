@@ -13,7 +13,8 @@ export function getXinghuiThemeStyle(_siteConfig: SiteConfig): CSSProperties {
     "--xh-blur": "12px",
     "--xh-radius": "1.5rem",
     "--xh-radius-sm": "0.75rem",
-    "--xh-shadow": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+    "--xh-shadow":
+      "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
     "--xh-primary": "#6366f1",
     "--xh-primary-light": "#818cf8",
     "--xh-accent": "#a78bfa",

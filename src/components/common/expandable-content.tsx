@@ -1,8 +1,8 @@
 import type { JSONContent } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
+import { renderCommentReact } from "@/components/common/comment-render";
 import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
-import { renderCommentReact } from "@/components/common/comment-render";
 
 interface ExpandableContentProps {
   content: JSONContent | null;

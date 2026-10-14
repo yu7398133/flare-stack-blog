@@ -4,7 +4,7 @@ import { McpMusicListOutputSchema } from "../schema/mcp-music.schema";
 import { getMusicConfig } from "../service/mcp-music.service";
 
 const MUSIC_LIST_REQUIRED_SCOPES: OAuthScopeRequest = {
-  "posts": ["write"],
+  posts: ["write"],
 };
 
 export const musicListTool = defineMcpTool({

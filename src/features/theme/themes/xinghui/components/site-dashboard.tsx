@@ -1,11 +1,27 @@
-import { useState, useEffect } from "react";
 import { useRouteContext } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 const TECH_BADGES = [
-  { name: "TanStack", color: "text-orange-500", svg: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>' },
-  { name: "Hono", color: "text-orange-400", svg: '<circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>' },
-  { name: "Cloudflare", color: "text-amber-500", svg: '<path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>' },
-  { name: "D1", color: "text-blue-500", svg: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>' },
+  {
+    name: "TanStack",
+    color: "text-orange-500",
+    svg: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>',
+  },
+  {
+    name: "Hono",
+    color: "text-orange-400",
+    svg: '<circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>',
+  },
+  {
+    name: "Cloudflare",
+    color: "text-amber-500",
+    svg: '<path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>',
+  },
+  {
+    name: "D1",
+    color: "text-blue-500",
+    svg: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+  },
 ];
 
 export function SiteDashboard() {
@@ -37,8 +53,6 @@ export function SiteDashboard() {
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, [START_DATE]);
-
-
 
   return (
     <div className="xh-glass overflow-hidden flex flex-col md:flex-row items-stretch h-auto md:h-20 group">

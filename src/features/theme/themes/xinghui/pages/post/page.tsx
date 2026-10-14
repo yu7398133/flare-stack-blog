@@ -21,8 +21,8 @@ function formatDate(date: Date | string) {
 // Consistent image per post slug (same seed = same image as timeline)
 import { getPostCover } from "../../utils/post-cover";
 
-function getPostCoverLocal(slug: string, cover?: string | null) {
-  return getPostCover(slug, cover, 1200, 600);
+function getPostCoverLocal(slug: string) {
+  return getPostCover(slug, undefined, 1200, 600);
 }
 
 export function PostPage({ post }: PostPageProps) {
@@ -31,16 +31,21 @@ export function PostPage({ post }: PostPageProps) {
   const activeId = useActiveTOC(post.toc);
 
   // Fetch recommended posts
+  // 显式标注类型，否则兜底分支 [] 与 res.json() 联合后推断为 {}。
   const { data: recommended } = useQuery({
     queryKey: ["recommended-posts", post.slug],
-    queryFn: async () => {
+    queryFn: async (): Promise<
+      Array<{ slug: string; title: string; publishedAt?: string | null }>
+    > => {
       const res = await fetch(`/api/post/${post.slug}/related?limit=4`);
       if (!res.ok) return [];
       return res.json();
     },
   });
 
-  const coverSrc = getPostCoverLocal(post.slug, post.cover);
+  // posts 表没有 cover 列（迁移中从未出现），封面一律由 slug 派生。
+  // 此前这里传 post.cover，是访问不存在的字段，类型检查报 TS2339。
+  const coverSrc = getPostCoverLocal(post.slug);
 
   return (
     <div className="flex flex-col gap-6 xh-animate-in">
@@ -171,29 +176,23 @@ export function PostPage({ post }: PostPageProps) {
                 推荐阅读
               </h3>
               <div className="space-y-3">
-                {recommended.map(
-                  (r: {
-                    slug: string;
-                    title: string;
-                    publishedAt?: string;
-                  }) => (
-                    <Link
-                      key={r.slug}
-                      to="/post/$slug"
-                      params={{ slug: r.slug }}
-                      className="group block"
-                    >
-                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
-                        {r.title}
-                      </h4>
-                      {r.publishedAt && (
-                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-mono">
-                          {formatDate(r.publishedAt)}
-                        </p>
-                      )}
-                    </Link>
-                  ),
-                )}
+                {recommended.map((r) => (
+                  <Link
+                    key={r.slug}
+                    to="/post/$slug"
+                    params={{ slug: r.slug }}
+                    className="group block"
+                  >
+                    <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+                      {r.title}
+                    </h4>
+                    {r.publishedAt && (
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-mono">
+                        {formatDate(r.publishedAt)}
+                      </p>
+                    )}
+                  </Link>
+                ))}
               </div>
             </div>
           )}

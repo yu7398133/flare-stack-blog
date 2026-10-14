@@ -9,7 +9,13 @@ export function serializeMcpMoment(m: Moment) {
     location: m.location ?? null,
     visibility: m.visibility,
     likes: m.likes,
-    createdAt: m.createdAt instanceof Date ? m.createdAt.toISOString() : String(m.createdAt),
-    updatedAt: m.updatedAt instanceof Date ? m.updatedAt.toISOString() : String(m.updatedAt),
+    createdAt:
+      m.createdAt instanceof Date
+        ? m.createdAt.toISOString()
+        : String(m.createdAt),
+    updatedAt:
+      m.updatedAt instanceof Date
+        ? m.updatedAt.toISOString()
+        : String(m.updatedAt),
   };
 }

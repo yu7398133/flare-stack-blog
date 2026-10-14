@@ -19,7 +19,8 @@ export function LoginPage({
   } = loginForm;
 
   const { isLoading: socialIsLoading, handleGithubLogin } = socialLogin;
-  const isFormDisabled = isSubmitting || loginStep !== "IDLE" || turnstilePending;
+  const isFormDisabled =
+    isSubmitting || loginStep !== "IDLE" || turnstilePending;
 
   return (
     <div className="flex flex-col gap-8">
@@ -48,14 +49,21 @@ export function LoginPage({
                 className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-800 dark:text-white text-sm transition-all disabled:opacity-50"
               />
               {errors.email && (
-                <span className="text-xs text-red-500 mt-1 block">{errors.email.message}</span>
+                <span className="text-xs text-red-500 mt-1 block">
+                  {errors.email.message}
+                </span>
               )}
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-1.5">
-                <label className="text-sm font-bold text-slate-700 dark:text-slate-300">密码</label>
-                <Link to="/forgot-password" className="text-xs text-indigo-500 hover:text-indigo-600">
+                <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  密码
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs text-indigo-500 hover:text-indigo-600"
+                >
                   忘记密码？
                 </Link>
               </div>
@@ -68,7 +76,9 @@ export function LoginPage({
                 className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-white/10 border border-white/40 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-slate-800 dark:text-white text-sm transition-all disabled:opacity-50"
               />
               {errors.password && (
-                <span className="text-xs text-red-500 mt-1 block">{errors.password.message}</span>
+                <span className="text-xs text-red-500 mt-1 block">
+                  {errors.password.message}
+                </span>
               )}
             </div>
 
@@ -113,7 +123,10 @@ export function LoginPage({
         {isEmailConfigured && (
           <p className="text-center text-sm text-slate-500 dark:text-slate-400">
             还没有账号？{" "}
-            <Link to="/register" className="text-indigo-500 hover:text-indigo-600 font-medium">
+            <Link
+              to="/register"
+              className="text-indigo-500 hover:text-indigo-600 font-medium"
+            >
               立即注册
             </Link>
           </p>

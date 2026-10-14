@@ -13,7 +13,10 @@ const projectsRoute = app
     const status = c.req.query("status");
     const featured = c.req.query("featured") === "true" ? true : undefined;
     const ctx = getServiceContext(c);
-    const projects = await ProjectsData.getAll(ctx.db, { status: status || undefined, featured });
+    const projects = await ProjectsData.getAll(ctx.db, {
+      status: status || undefined,
+      featured,
+    });
     return c.json(projects);
   })
   // GET /api/projects/:id

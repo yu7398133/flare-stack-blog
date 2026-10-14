@@ -1,13 +1,13 @@
 import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
 import { defineMcpTool } from "../../../service/mcp-tool";
 import {
-  McpMusicRemoveSongInputSchema,
   McpMusicListOutputSchema,
+  McpMusicRemoveSongInputSchema,
 } from "../schema/mcp-music.schema";
 import { removeSong } from "../service/mcp-music.service";
 
 const MUSIC_REMOVE_SONG_REQUIRED_SCOPES: OAuthScopeRequest = {
-  "posts": ["write"],
+  posts: ["write"],
 };
 
 export const musicRemoveSongTool = defineMcpTool({

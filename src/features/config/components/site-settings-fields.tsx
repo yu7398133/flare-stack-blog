@@ -7,16 +7,19 @@ export function Field({
   hint,
   error,
   readOnly,
+  className,
   children,
 }: {
   label: string;
   hint?: string;
   error?: string;
   readOnly?: boolean;
+  /** 追加到外层 label 的类名，用于网格布局（如 sm:col-span-2）。 */
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <label className="space-y-3">
+    <label className={cn("space-y-3", className)}>
       <div className="space-y-1 min-h-10 flex flex-col justify-end">
         <p className="text-sm font-medium text-foreground">{label}</p>
         {hint ? (

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 import { getPostCover } from "../utils/post-cover";
 
@@ -17,23 +17,28 @@ function formatDate(date: Date | string) {
   return `${y}.${m}.${day}`;
 }
 
-export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 3000 }: LatestPostsCarouselProps) {
+export function LatestPostsCarousel({
+  posts,
+  interval = 9000,
+  initialDelay = 3000,
+}: LatestPostsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const indexRef = useRef(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
-
-  const goTo = useCallback(
-    (idx: number) => {
-      setFade(false);
-      setTimeout(() => {
-        setCurrentIndex(idx);
-        indexRef.current = idx;
-        setFade(true);
-      }, 300);
-    },
-    [],
+  // React 19 的 useRef 要求显式初始值（types 收紧），undefined 与原先的
+  // 「未初始化」语义一致，读取处仍需判空。
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined,
   );
+
+  const goTo = useCallback((idx: number) => {
+    setFade(false);
+    setTimeout(() => {
+      setCurrentIndex(idx);
+      indexRef.current = idx;
+      setFade(true);
+    }, 300);
+  }, []);
 
   // First slide visible immediately, delay only affects auto-rotation
   useEffect(() => {
@@ -67,7 +72,7 @@ export function LatestPostsCarousel({ posts, interval = 9000, initialDelay = 300
         style={{ opacity: fade ? 1 : 0 }}
       >
         <img
-          src={getPostCover(post.slug, post.cover)}
+          src={getPostCover(post.slug)}
           alt=""
           className="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105"
         />

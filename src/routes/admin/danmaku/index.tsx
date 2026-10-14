@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { Check, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSystemSetting } from "@/features/config/hooks/use-system-setting";
-import { Check, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/danmaku/")({
   ssr: false,
@@ -12,7 +12,11 @@ export const Route = createFileRoute("/admin/danmaku/")({
 });
 
 function DanmakuAdminPage() {
-  const { settings, isLoading: configLoading, saveSettings } = useSystemSetting();
+  const {
+    settings,
+    isLoading: configLoading,
+    saveSettings,
+  } = useSystemSetting();
   const [newText, setNewText] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -42,7 +46,8 @@ function DanmakuAdminPage() {
     if (!settings) return false;
     const xh = settings.site?.theme?.xinghui;
     return (
-      JSON.stringify(localDanmakuList) !== JSON.stringify(xh?.danmakuList ?? []) ||
+      JSON.stringify(localDanmakuList) !==
+        JSON.stringify(xh?.danmakuList ?? []) ||
       localFontSize !== (xh?.danmakuFontSize ?? 14) ||
       localOpacity !== (xh?.danmakuOpacity ?? 0.2) ||
       localClickEffect !== (xh?.clickEffect ?? true) ||
@@ -81,7 +86,16 @@ function DanmakuAdminPage() {
     } finally {
       setSaving(false);
     }
-  }, [settings, saving, saveSettings, localDanmakuList, localFontSize, localOpacity, localClickEffect, localFireflyEffect]);
+  }, [
+    settings,
+    saving,
+    saveSettings,
+    localDanmakuList,
+    localFontSize,
+    localOpacity,
+    localClickEffect,
+    localFireflyEffect,
+  ]);
 
   // --- Local-only operations ---
 
@@ -189,12 +203,16 @@ function DanmakuAdminPage() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium">鼠标点击特效</p>
-            <p className="text-xs text-muted-foreground">点击页面产生粒子动画</p>
+            <p className="text-xs text-muted-foreground">
+              点击页面产生粒子动画
+            </p>
           </div>
           <button
             onClick={() => setLocalClickEffect((v) => !v)}
             className={`relative w-12 h-6 rounded-full transition-colors ${
-              localClickEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
+              localClickEffect
+                ? "bg-indigo-500"
+                : "bg-slate-300 dark:bg-slate-600"
             }`}
           >
             <div
@@ -207,12 +225,16 @@ function DanmakuAdminPage() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium">萤火虫特效</p>
-            <p className="text-xs text-muted-foreground">页面背景萤火虫浮动动画</p>
+            <p className="text-xs text-muted-foreground">
+              页面背景萤火虫浮动动画
+            </p>
           </div>
           <button
             onClick={() => setLocalFireflyEffect((v) => !v)}
             className={`relative w-12 h-6 rounded-full transition-colors ${
-              localFireflyEffect ? "bg-indigo-500" : "bg-slate-300 dark:bg-slate-600"
+              localFireflyEffect
+                ? "bg-indigo-500"
+                : "bg-slate-300 dark:bg-slate-600"
             }`}
           >
             <div
@@ -228,7 +250,9 @@ function DanmakuAdminPage() {
       <div className="border border-border/30 p-6 space-y-4">
         <h3 className="text-sm font-mono font-bold">添加弹幕</h3>
         <div className="flex gap-3">
-          <input id="index-newtext" name="index-newtext"
+          <input
+            id="index-newtext"
+            name="index-newtext"
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
             placeholder="输入弹幕文案..."
@@ -268,7 +292,9 @@ function DanmakuAdminPage() {
                 <span className="text-xs text-muted-foreground font-mono w-6 text-right shrink-0">
                   {idx + 1}
                 </span>
-                <input id="index-text" name="index-text"
+                <input
+                  id="index-text"
+                  name="index-text"
                   value={text}
                   onChange={(e) => handleEdit(idx, e.target.value)}
                   className="flex-1 bg-transparent text-sm focus:outline-none border-b border-transparent focus:border-border/50 pb-0.5"

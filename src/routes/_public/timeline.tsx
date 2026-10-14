@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import theme from "@theme";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 

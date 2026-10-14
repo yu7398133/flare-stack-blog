@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Check, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useSystemSetting } from "@/features/config/hooks/use-system-setting";
-import { Check, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/music/")({
   ssr: false,
@@ -23,7 +23,11 @@ interface SongInfo {
 type MusicIdEntry = string | { id: string; audioUrl?: string; vip?: boolean };
 
 function MusicAdminPage() {
-  const { settings, isLoading: configLoading, saveSettings } = useSystemSetting();
+  const {
+    settings,
+    isLoading: configLoading,
+    saveSettings,
+  } = useSystemSetting();
   const [newId, setNewId] = useState("");
   const [newAudioUrl, setNewAudioUrl] = useState("");
   const [newVip, setNewVip] = useState(false);
@@ -40,9 +44,15 @@ function MusicAdminPage() {
   useEffect(() => {
     if (settings && !hasInitialized.current) {
       hasInitialized.current = true;
-      setLocalMusicIds((settings.site?.theme?.xinghui?.musicIds ?? []) as MusicIdEntry[]);
-      setLocalPlaylistIds(settings.site?.theme?.xinghui?.musicPlaylistIds ?? []);
-      setLocalResolverUrl(settings.site?.theme?.xinghui?.musicResolverUrl ?? "");
+      setLocalMusicIds(
+        (settings.site?.theme?.xinghui?.musicIds ?? []) as MusicIdEntry[],
+      );
+      setLocalPlaylistIds(
+        settings.site?.theme?.xinghui?.musicPlaylistIds ?? [],
+      );
+      setLocalResolverUrl(
+        settings.site?.theme?.xinghui?.musicResolverUrl ?? "",
+      );
     }
   }, [settings]);
 
@@ -53,16 +63,18 @@ function MusicAdminPage() {
 
   const audioUrlMap: Record<string, string> = Object.fromEntries(
     localMusicIds
-      .filter((item): item is { id: string; audioUrl?: string } =>
-        typeof item !== "string" && !!item.audioUrl,
+      .filter(
+        (item): item is { id: string; audioUrl?: string } =>
+          typeof item !== "string" && !!item.audioUrl,
       )
       .map((item) => [item.id, item.audioUrl!]),
   );
 
   const vipMap: Record<string, boolean> = Object.fromEntries(
     localMusicIds
-      .filter((item): item is { id: string; vip?: boolean } =>
-        typeof item !== "string" && !!item.vip,
+      .filter(
+        (item): item is { id: string; vip?: boolean } =>
+          typeof item !== "string" && !!item.vip,
       )
       .map((item) => [item.id, true]),
   );
@@ -70,9 +82,14 @@ function MusicAdminPage() {
   // Check if local state differs from saved settings
   const isDirty = (() => {
     if (!settings) return false;
-    const savedMusicIds = JSON.stringify(settings.site?.theme?.xinghui?.musicIds ?? []);
-    const savedPlaylistIds = JSON.stringify(settings.site?.theme?.xinghui?.musicPlaylistIds ?? []);
-    const savedResolverUrl = settings.site?.theme?.xinghui?.musicResolverUrl ?? "";
+    const savedMusicIds = JSON.stringify(
+      settings.site?.theme?.xinghui?.musicIds ?? [],
+    );
+    const savedPlaylistIds = JSON.stringify(
+      settings.site?.theme?.xinghui?.musicPlaylistIds ?? [],
+    );
+    const savedResolverUrl =
+      settings.site?.theme?.xinghui?.musicResolverUrl ?? "";
     return (
       savedMusicIds !== JSON.stringify(localMusicIds) ||
       savedPlaylistIds !== JSON.stringify(localPlaylistIds) ||
@@ -81,12 +98,18 @@ function MusicAdminPage() {
   })();
 
   const { data: songs, isLoading: songsLoading } = useQuery<SongInfo[]>({
-    queryKey: ["admin", "music-info", musicIds.join(","), localPlaylistIds.join(",")],
+    queryKey: [
+      "admin",
+      "music-info",
+      musicIds.join(","),
+      localPlaylistIds.join(","),
+    ],
     queryFn: async () => {
       if (musicIds.length === 0 && localPlaylistIds.length === 0) return [];
       const params = new URLSearchParams();
       if (musicIds.length > 0) params.set("ids", musicIds.join(","));
-      if (localPlaylistIds.length > 0) params.set("playlistIds", localPlaylistIds.join(","));
+      if (localPlaylistIds.length > 0)
+        params.set("playlistIds", localPlaylistIds.join(","));
       const res = await fetch(`/api/music?${params.toString()}`);
       if (!res.ok) return [];
       const data = await res.json();
@@ -132,7 +155,14 @@ function MusicAdminPage() {
     } finally {
       setSaving(false);
     }
-  }, [settings, saving, saveSettings, localMusicIds, localPlaylistIds, localResolverUrl]);
+  }, [
+    settings,
+    saving,
+    saveSettings,
+    localMusicIds,
+    localPlaylistIds,
+    localResolverUrl,
+  ]);
 
   // --- Local-only operations ---
 
@@ -141,7 +171,11 @@ function MusicAdminPage() {
     if (!id) return toast.error("请输入歌曲ID");
     if (musicIds.includes(id)) return toast.error("该歌曲已存在");
     const audioUrl = newAudioUrl.trim();
-    const entry: MusicIdEntry = audioUrl ? { id, audioUrl } : newVip ? { id, vip: true } : id;
+    const entry: MusicIdEntry = audioUrl
+      ? { id, audioUrl }
+      : newVip
+        ? { id, vip: true }
+        : id;
     setLocalMusicIds((prev) => [...prev, entry]);
     setNewId("");
     setNewAudioUrl("");
@@ -151,7 +185,9 @@ function MusicAdminPage() {
   const handleRemove = (id: string) => {
     if (!confirm("确定移除这首歌曲?")) return;
     setLocalMusicIds((prev) =>
-      prev.filter((item) => (typeof item === "string" ? item !== id : item.id !== id)),
+      prev.filter((item) =>
+        typeof item === "string" ? item !== id : item.id !== id,
+      ),
     );
   };
 
@@ -239,7 +275,8 @@ function MusicAdminPage() {
             音乐管理
           </h1>
           <p className="text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Music · {localPlaylistIds.length} 个歌单 · {songs?.length ?? 0} 首歌曲
+            Music · {localPlaylistIds.length} 个歌单 · {songs?.length ?? 0}{" "}
+            首歌曲
           </p>
         </div>
         <button
@@ -260,16 +297,21 @@ function MusicAdminPage() {
       <div className="border border-border/30 p-6 space-y-4">
         <h3 className="text-sm font-mono font-bold">音乐解析 API</h3>
         <p className="text-xs text-muted-foreground">
-          部署 music-resolver Worker 后，填入其地址，即可自动解析 VIP 歌曲的真实播放链接
+          部署 music-resolver Worker 后，填入其地址，即可自动解析 VIP
+          歌曲的真实播放链接
         </p>
         <p className="text-[11px] font-mono text-muted-foreground">
-          音频源优先级：自定义音频源 &gt; 解析 API（仅 VIP 歌曲） &gt; 网易云直链
+          音频源优先级：自定义音频源 &gt; 解析 API（仅 VIP 歌曲） &gt;
+          网易云直链
         </p>
         <p className="text-[11px] font-mono text-muted-foreground">
-          VIP 歌曲会自动尝试通过解析 API 获取可播放地址；非 VIP 歌曲直接使用网易云直链。
+          VIP 歌曲会自动尝试通过解析 API 获取可播放地址；非 VIP
+          歌曲直接使用网易云直链。
         </p>
         <div className="flex gap-3">
-          <input id="index-localresolverurl" name="index-localresolverurl"
+          <input
+            id="index-localresolverurl"
+            name="index-localresolverurl"
             value={localResolverUrl}
             onChange={(e) => setLocalResolverUrl(e.target.value)}
             placeholder="https://your-music-resolver.workers.dev"
@@ -287,10 +329,13 @@ function MusicAdminPage() {
       <div className="border border-border/30 p-6 space-y-4">
         <h3 className="text-sm font-mono font-bold">歌单管理</h3>
         <p className="text-xs text-muted-foreground">
-          输入网易云音乐歌单ID（从歌单页URL获取，如 music.163.com/playlist?id=<b>9157541613</b>），歌单内所有歌曲会自动加载
+          输入网易云音乐歌单ID（从歌单页URL获取，如 music.163.com/playlist?id=
+          <b>9157541613</b>），歌单内所有歌曲会自动加载
         </p>
         <div className="flex gap-3">
-          <input id="index-newplaylistid" name="index-newplaylistid"
+          <input
+            id="index-newplaylistid"
+            name="index-newplaylistid"
             value={newPlaylistId}
             onChange={(e) => setNewPlaylistId(e.target.value)}
             placeholder="歌单ID，如 9157541613"
@@ -340,17 +385,22 @@ function MusicAdminPage() {
       <div className="border border-border/30 p-6 space-y-4">
         <h3 className="text-sm font-mono font-bold">添加单曲</h3>
         <p className="text-xs text-muted-foreground">
-          输入网易云音乐歌曲ID（从歌曲页URL获取，如 music.163.com/song?id=<b>1809646618</b>）
+          输入网易云音乐歌曲ID（从歌曲页URL获取，如 music.163.com/song?id=
+          <b>1809646618</b>）
         </p>
         <div className="flex gap-3">
-          <input id="index-newid" name="index-newid"
+          <input
+            id="index-newid"
+            name="index-newid"
             value={newId}
             onChange={(e) => setNewId(e.target.value)}
             placeholder="歌曲ID，如 1809646618"
             className="flex-1 bg-transparent border border-border/30 p-2 text-sm font-mono focus:outline-none focus:border-foreground"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
-          <input id="index-newaudiourl" name="index-newaudiourl"
+          <input
+            id="index-newaudiourl"
+            name="index-newaudiourl"
             value={newAudioUrl}
             onChange={(e) => setNewAudioUrl(e.target.value)}
             placeholder="自定义音频源（可选，留空用网易云）"
@@ -402,9 +452,15 @@ function MusicAdminPage() {
                 <div
                   key={song.id}
                   draggable={isDirectSong}
-                  onDragStart={() => isDirectSong && handleDragStart(musicIds.indexOf(song.id))}
-                  onDragOver={(e) => isDirectSong && handleDragOver(e, musicIds.indexOf(song.id))}
-                  onDrop={() => isDirectSong && handleDrop(musicIds.indexOf(song.id))}
+                  onDragStart={() =>
+                    isDirectSong && handleDragStart(musicIds.indexOf(song.id))
+                  }
+                  onDragOver={(e) =>
+                    isDirectSong && handleDragOver(e, musicIds.indexOf(song.id))
+                  }
+                  onDrop={() =>
+                    isDirectSong && handleDrop(musicIds.indexOf(song.id))
+                  }
                   onDragEnd={handleDragEnd}
                   className={`border p-4 group hover:border-foreground/30 transition-colors ${
                     isDirectSong ? "cursor-grab active:cursor-grabbing" : ""
@@ -416,8 +472,16 @@ function MusicAdminPage() {
                 >
                   <div className="flex items-center gap-4">
                     {isDirectSong && (
-                      <div className="text-muted-foreground/40 cursor-grab active:cursor-grabbing flex-shrink-0" title="拖拽排序">
-                        <svg width="12" height="20" viewBox="0 0 12 20" fill="currentColor">
+                      <div
+                        className="text-muted-foreground/40 cursor-grab active:cursor-grabbing flex-shrink-0"
+                        title="拖拽排序"
+                      >
+                        <svg
+                          width="12"
+                          height="20"
+                          viewBox="0 0 12 20"
+                          fill="currentColor"
+                        >
                           <circle cx="3" cy="3" r="1.5" />
                           <circle cx="9" cy="3" r="1.5" />
                           <circle cx="3" cy="10" r="1.5" />
@@ -473,7 +537,9 @@ function MusicAdminPage() {
                         <button
                           onClick={() => {
                             const idx = localMusicIds.findIndex((item) =>
-                              typeof item === "string" ? item === song.id : item.id === song.id,
+                              typeof item === "string"
+                                ? item === song.id
+                                : item.id === song.id,
                             );
                             if (idx > 0) handleMoveUp(idx);
                           }}
@@ -484,9 +550,12 @@ function MusicAdminPage() {
                         <button
                           onClick={() => {
                             const idx = localMusicIds.findIndex((item) =>
-                              typeof item === "string" ? item === song.id : item.id === song.id,
+                              typeof item === "string"
+                                ? item === song.id
+                                : item.id === song.id,
                             );
-                            if (idx < localMusicIds.length - 1) handleMoveDown(idx);
+                            if (idx < localMusicIds.length - 1)
+                              handleMoveDown(idx);
                           }}
                           className="text-xs font-mono text-muted-foreground hover:text-foreground px-1"
                         >

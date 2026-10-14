@@ -154,7 +154,8 @@ export async function handleImageRequest(
   // 1. 防止循环调用 & 显式请求原图
   const viaHeader = request.headers.get("via");
   const isResizingLoop = viaHeader && /image-resizing/.test(viaHeader);
-  const isInternalLoop = request.headers.get("x-image-resize-internal") === "true";
+  const isInternalLoop =
+    request.headers.get("x-image-resize-internal") === "true";
   const isLoop = isResizingLoop || isInternalLoop;
   const wantsOriginal = searchParams.get("original") === "true";
 

@@ -1,15 +1,16 @@
-import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { renderCommentReact } from "@/components/common/comment-render";
+import type { CommentWithUser } from "@/features/comments/comments.schema";
 import { useComments } from "@/features/comments/hooks/use-comments";
 import {
-  rootCommentsByPostIdInfiniteQuery,
-  repliesByRootIdInfiniteQuery,
   COMMENTS_KEYS,
+  repliesByRootIdInfiniteQuery,
+  rootCommentsByPostIdInfiniteQuery,
 } from "@/features/comments/queries";
 import { authClient } from "@/lib/auth/auth.client";
 import { m } from "@/paraglide/messages";
-import { renderCommentReact } from "@/components/common/comment-render";
 
 interface CommentSectionProps {
   postId: number;
@@ -59,7 +60,9 @@ export function CommentSection({ postId }: CommentSectionProps) {
       {/* Comment input */}
       {session ? (
         <div className="space-y-3">
-          <textarea id="comment-section-comment" name="comment-section-comment"
+          <textarea
+            id="comment-section-comment"
+            name="comment-section-comment"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="写下你的评论..."
@@ -76,7 +79,11 @@ export function CommentSection({ postId }: CommentSectionProps) {
         </div>
       ) : (
         <p className="text-sm text-slate-400 dark:text-slate-500">
-          请先<a href="/login" className="text-indigo-500 hover:underline">登录</a>后发表评论
+          请先
+          <a href="/login" className="text-indigo-500 hover:underline">
+            登录
+          </a>
+          后发表评论
         </p>
       )}
 
@@ -110,13 +117,17 @@ function CommentItem({
   comment,
   postId,
 }: {
-  comment: any;
+  comment: CommentWithUser;
   postId: number;
 }) {
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id;
 
-  const { data: repliesData, fetchNextPage, hasNextPage } = useInfiniteQuery(
+  const {
+    data: repliesData,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery(
     repliesByRootIdInfiniteQuery(postId, comment.id, userId),
   );
   const replies = repliesData?.pages.flatMap((p) => p.items) ?? [];
@@ -140,13 +151,17 @@ function CommentItem({
       });
       setReplyContent("");
       setShowReplyInput(false);
+      // 参数名是 queryKey，此前误写作 key：React Query 会忽略该字段，
+      // 导致回复成功后该条评论的回复列表不刷新。
       queryClient.invalidateQueries({
-        key: COMMENTS_KEYS.replies(postId, comment.id),
+        queryKey: COMMENTS_KEYS.replies(postId, comment.id),
       });
     } catch {}
   };
 
-  const formatDate = (date: string) => {
+  // 评论行的 createdAt 是 Date（schema 推断），调用方也可能传字符串；
+  // 与 src/lib/utils 的同名实现保持一致，两者都接受。
+  const formatDate = (date: string | Date) => {
     return new Date(date).toLocaleDateString("zh-CN", {
       month: "2-digit",
       day: "2-digit",
@@ -181,17 +196,18 @@ function CommentItem({
           回复
         </button>
         {replyTotal > 0 && (
-          <span className="text-xs text-slate-400">
-            {replyTotal} 条回复
-          </span>
+          <span className="text-xs text-slate-400">{replyTotal} 条回复</span>
         )}
       </div>
 
       {/* Replies */}
       {replies.length > 0 && (
         <div className="pl-8 space-y-3 border-l-2 border-slate-200/30 dark:border-slate-600/30 ml-4">
-          {replies.map((reply: any) => (
-            <div key={reply.id} className="rounded-xl bg-white/20 dark:bg-slate-700/20 p-3">
+          {replies.map((reply) => (
+            <div
+              key={reply.id}
+              className="rounded-xl bg-white/20 dark:bg-slate-700/20 p-3"
+            >
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-6 h-6 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-600 dark:text-pink-400 text-[10px] font-bold">
                   {reply.user?.name?.[0] || "?"}
@@ -222,7 +238,9 @@ function CommentItem({
       {/* Reply input */}
       {showReplyInput && session && (
         <div className="pl-8 space-y-2">
-          <textarea id="comment-section-reply" name="comment-section-reply"
+          <textarea
+            id="comment-section-reply"
+            name="comment-section-reply"
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             placeholder="写下你的回复..."

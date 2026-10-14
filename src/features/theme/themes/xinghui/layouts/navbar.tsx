@@ -1,6 +1,6 @@
-import { Link, useRouteContext, useMatchRoute } from "@tanstack/react-router";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Menu, Sun, Moon, RefreshCw } from "lucide-react";
+import { Link, useMatchRoute, useRouteContext } from "@tanstack/react-router";
+import { Menu, Moon, RefreshCw, Sun } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { NavOption, UserInfo } from "@/features/theme/contract/layouts";
 
 interface NavbarProps {
@@ -11,13 +11,21 @@ interface NavbarProps {
   onRefreshBg?: () => void;
 }
 
-export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }: NavbarProps) {
+export function Navbar({
+  navOptions,
+  onMenuClick,
+  user,
+  isLoading,
+  onRefreshBg,
+}: NavbarProps) {
   const { siteConfig } = useRouteContext({ from: "__root__" });
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
     setIsDark(stored === "dark" || (!stored && prefersDark));
   }, []);
   const [visible, setVisible] = useState(true);
@@ -66,7 +74,10 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
         visible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="xh-glass mx-0 mt-0 border-t-0 border-x-0 h-16" style={{ borderRadius: 0 }}>
+      <div
+        className="xh-glass mx-0 mt-0 border-t-0 border-x-0 h-16"
+        style={{ borderRadius: 0 }}
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 h-full flex items-center justify-between">
           {/* Logo */}
           <Link
@@ -108,14 +119,26 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
             </button>
 
             {/* User / Login */}
-            {!isLoading && (
-              user ? (
+            {!isLoading &&
+              (user ? (
                 <Link
                   to="/admin"
                   className="w-9 h-9 rounded-xl overflow-hidden border-2 border-white/50 hover:border-indigo-400 transition-colors"
                 >
-                  {(siteConfig.theme.xinghui?.userAvatar || siteConfig.theme.xinghui?.avatar || user.image) ? (
-                    <img src={siteConfig.theme.xinghui?.userAvatar || siteConfig.theme.xinghui?.avatar || user.image} alt={user.name} className="w-full h-full object-cover" />
+                  {siteConfig.theme.xinghui?.userAvatar ||
+                  siteConfig.theme.xinghui?.avatar ||
+                  user.image ? (
+                    // user.image 类型含 null，img 的 src 不接受 null，统一 ?? undefined。
+                    <img
+                      src={
+                        siteConfig.theme.xinghui?.userAvatar ||
+                        siteConfig.theme.xinghui?.avatar ||
+                        user.image ||
+                        undefined
+                      }
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
                       {user.name?.charAt(0).toUpperCase()}
@@ -129,8 +152,7 @@ export function Navbar({ navOptions, onMenuClick, user, isLoading, onRefreshBg }
                 >
                   登录
                 </Link>
-              )
-            )}
+              ))}
 
             {/* Mobile menu button */}
             <button

@@ -7,9 +7,9 @@ import {
   Scripts,
   useRouteContext,
 } from "@tanstack/react-router";
-import { ErrorPage } from "@/components/common/error-page";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import theme from "@theme";
+import { ErrorPage } from "@/components/common/error-page";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { siteConfigQuery } from "@/features/config/queries";
 import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools";

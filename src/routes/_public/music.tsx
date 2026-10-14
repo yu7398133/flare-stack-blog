@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo, useEffect, useRef } from "react";
-import { useMusic } from "../../features/theme/themes/xinghui/components/music-provider";
 import {
   Disc3,
-  Repeat,
-  Shuffle,
   RefreshCcw,
+  Repeat,
+  Search,
+  Shuffle,
   Volume2,
   VolumeX,
-  Search,
   X,
 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useMusic } from "../../features/theme/themes/xinghui/components/music-provider";
 
 export const Route = createFileRoute("/_public/music")({
   component: MusicPage,
@@ -63,8 +63,7 @@ function MusicPage() {
   const activeLyricIndex = useMemo(() => {
     if (!parsedLyrics.length) return -1;
     let idx =
-      parsedLyrics.findIndex((l: { time: number }) => l.time > currentTime) -
-      1;
+      parsedLyrics.findIndex((l: { time: number }) => l.time > currentTime) - 1;
     if (idx === -2) idx = parsedLyrics.length - 1;
     return Math.max(0, idx);
   }, [currentTime, parsedLyrics]);
@@ -102,11 +101,23 @@ function MusicPage() {
   const getPlayModeIcon = () => {
     switch (playMode) {
       case "loop":
-        return <Repeat size={18} className="text-slate-500 hover:text-indigo-500 md:w-5 md:h-5" />;
+        return (
+          <Repeat
+            size={18}
+            className="text-slate-500 hover:text-indigo-500 md:w-5 md:h-5"
+          />
+        );
       case "single":
-        return <RefreshCcw size={18} className="text-indigo-500 md:w-5 md:h-5" />;
+        return (
+          <RefreshCcw size={18} className="text-indigo-500 md:w-5 md:h-5" />
+        );
       case "random":
-        return <Shuffle size={18} className="text-slate-500 hover:text-indigo-500 md:w-5 md:h-5" />;
+        return (
+          <Shuffle
+            size={18}
+            className="text-slate-500 hover:text-indigo-500 md:w-5 md:h-5"
+          />
+        );
       default:
         return <Repeat size={18} className="text-slate-500 md:w-5 md:h-5" />;
     }
@@ -218,23 +229,47 @@ function MusicPage() {
                 onClick={prevSong}
                 className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 transition-transform hover:scale-110"
               >
-                <svg className="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
+                <svg
+                  className="w-6 h-6 md:w-7 md:h-7"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                </svg>
               </button>
               <button
                 onClick={togglePlay}
                 className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center bg-indigo-500 text-white rounded-full hover:scale-105 shadow-xl shadow-indigo-500/40"
               >
                 {isPlaying ? (
-                  <svg className="w-5 h-5 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                  <svg
+                    className="w-5 h-5 md:w-8 md:h-8"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                  </svg>
                 ) : (
-                  <svg className="w-5 h-5 md:w-8 md:h-8 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                  <svg
+                    className="w-5 h-5 md:w-8 md:h-8 ml-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
                 )}
               </button>
               <button
                 onClick={nextSong}
                 className="p-2 text-slate-700 dark:text-slate-300 hover:text-indigo-500 transition-transform hover:scale-110"
               >
-                <svg className="w-6 h-6 md:w-7 md:h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+                <svg
+                  className="w-6 h-6 md:w-7 md:h-7"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                </svg>
               </button>
             </div>
             <div
@@ -344,7 +379,10 @@ function MusicPage() {
                       )
                     ) : (
                       <div className="flex flex-col items-center gap-3 md:gap-4">
-                        <Disc3 size={32} className="text-indigo-500/40 animate-spin" />
+                        <Disc3
+                          size={32}
+                          className="text-indigo-500/40 animate-spin"
+                        />
                         <p className="text-base md:text-xl font-black text-indigo-500 animate-pulse">
                           {currentLyric || "正在捕获灵魂旋律..."}
                         </p>
@@ -359,7 +397,9 @@ function MusicPage() {
                 <div className="relative w-full max-w-md mx-auto group mb-4 md:mb-8 shrink-0">
                   <div className="absolute inset-0 bg-indigo-500/5 blur-xl group-focus-within:bg-indigo-500/10 transition-all rounded-full" />
                   <Search className="w-4 h-4 md:w-5 md:h-5 absolute left-4 top-1/2 -translate-y-1/2 z-10 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
-                  <input id="music-search" name="music-search"
+                  <input
+                    id="music-search"
+                    name="music-search"
                     type="text"
                     placeholder="搜索音轨..."
                     value={searchQuery}

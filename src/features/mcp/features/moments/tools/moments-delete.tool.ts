@@ -1,5 +1,5 @@
-import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
 import * as MomentsData from "@/features/moments/data/moments.data";
+import type { OAuthScopeRequest } from "@/features/oauth-provider/schema/oauth-provider.schema";
 import { defineMcpTool } from "../../../service/mcp-tool";
 import { McpMomentDeleteInputSchema } from "../schema/mcp-moments.schema";
 
@@ -13,9 +13,15 @@ export const momentsDeleteTool = defineMcpTool({
   async handler(args, context) {
     const existing = await MomentsData.getById(context.db, args.id);
     if (!existing) {
-      return { content: [{ type: "text", text: `Moment ${args.id} not found` }], isError: true };
+      return {
+        content: [{ type: "text", text: `Moment ${args.id} not found` }],
+        isError: true,
+      };
     }
     await MomentsData.remove(context.db, args.id);
-    return { content: [{ type: "text", text: `Deleted moment ${args.id}` }], structuredContent: { deleted: true, id: args.id } };
+    return {
+      content: [{ type: "text", text: `Deleted moment ${args.id}` }],
+      structuredContent: { deleted: true, id: args.id },
+    };
   },
 });

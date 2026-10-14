@@ -13,7 +13,11 @@ const momentsRoute = app
     const limit = parseInt(c.req.query("limit") || "20");
     const offset = parseInt(c.req.query("offset") || "0");
     const ctx = getServiceContext(c);
-    const moments = await MomentsData.getAll(ctx.db, { visibility: "public", limit, offset });
+    const moments = await MomentsData.getAll(ctx.db, {
+      visibility: "public",
+      limit,
+      offset,
+    });
     const total = await MomentsData.count(ctx.db, "public");
     return c.json({ items: moments, total });
   })

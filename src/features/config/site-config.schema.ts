@@ -22,18 +22,6 @@ function createSiteTextFormSchema(max: number, messages: Messages) {
     .max(max, messages.settings_site_validation_too_long({ max }));
 }
 
-function createAssetRefSchema() {
-  return z.string().refine((value) => value === "" || value.startsWith("/"), {
-    message: "Please enter a root-relative path",
-  });
-}
-
-function createAssetRefFormSchema(messages: Messages) {
-  return z.string().refine((value) => value === "" || value.startsWith("/"), {
-    message: messages.settings_site_validation_invalid_asset_ref(),
-  });
-}
-
 function isExternalImageUrl(value: string) {
   try {
     const url = new URL(value);
@@ -101,7 +89,11 @@ function createXinghuiThemeSiteConfigSchema() {
       .array(
         z.union([
           z.string(),
-          z.object({ id: z.string(), audioUrl: z.string().optional(), vip: z.boolean().optional() }),
+          z.object({
+            id: z.string(),
+            audioUrl: z.string().optional(),
+            vip: z.boolean().optional(),
+          }),
         ]),
       )
       .optional(),
@@ -126,7 +118,11 @@ function createXinghuiThemeSiteConfigInputSchema() {
       .array(
         z.union([
           z.string(),
-          z.object({ id: z.string(), audioUrl: z.string().optional(), vip: z.boolean().optional() }),
+          z.object({
+            id: z.string(),
+            audioUrl: z.string().optional(),
+            vip: z.boolean().optional(),
+          }),
         ]),
       )
       .optional(),
@@ -151,7 +147,11 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
       .array(
         z.union([
           z.string(),
-          z.object({ id: z.string(), audioUrl: z.string().optional(), vip: z.boolean().optional() }),
+          z.object({
+            id: z.string(),
+            audioUrl: z.string().optional(),
+            vip: z.boolean().optional(),
+          }),
         ]),
       )
       .optional(),
@@ -168,7 +168,8 @@ function createXinghuiThemeSiteConfigInputFormSchema(messages: Messages) {
 
 // ==================== Exports ====================
 
-export const xinghuiThemeSiteConfigSchema = createXinghuiThemeSiteConfigSchema();
+export const xinghuiThemeSiteConfigSchema =
+  createXinghuiThemeSiteConfigSchema();
 export const xinghuiThemeSiteConfigInputSchema =
   createXinghuiThemeSiteConfigInputSchema();
 
@@ -208,7 +209,8 @@ export function createSiteConfigInputFormSchema(messages: Messages) {
       .optional(),
     theme: z
       .object({
-        xinghui: createXinghuiThemeSiteConfigInputFormSchema(messages).optional(),
+        xinghui:
+          createXinghuiThemeSiteConfigInputFormSchema(messages).optional(),
       })
       .optional(),
   });
@@ -238,7 +240,9 @@ export const SiteConfigInputSchema = z.object({
 
 export const SiteConfigSchema = SiteConfigInputSchema;
 
-export type XinghuiThemeSiteConfig = z.infer<typeof xinghuiThemeSiteConfigSchema>;
+export type XinghuiThemeSiteConfig = z.infer<
+  typeof xinghuiThemeSiteConfigSchema
+>;
 export type XinghuiThemeSiteConfigInput = z.infer<
   typeof xinghuiThemeSiteConfigInputSchema
 >;

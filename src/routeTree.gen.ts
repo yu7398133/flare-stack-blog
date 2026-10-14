@@ -17,8 +17,10 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
 import { Route as UserSubmitFriendLinkRouteImport } from './routes/_user/submit-friend-link'
+import { Route as UserProfileRouteImport } from './routes/_user/profile'
 import { Route as PublicUnsubscribeRouteImport } from './routes/_public/unsubscribe'
 import { Route as PublicTimelineRouteImport } from './routes/_public/timeline'
+import { Route as PublicTalkRouteImport } from './routes/_public/talk'
 import { Route as PublicSearchRouteImport } from './routes/_public/search'
 import { Route as PublicProjectsRouteImport } from './routes/_public/projects'
 import { Route as PublicPostsRouteImport } from './routes/_public/posts'
@@ -35,9 +37,14 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-pa
 import { Route as AdminPostsRouteRouteImport } from './routes/admin/posts/route'
 import { Route as AdminTagsIndexRouteImport } from './routes/admin/tags/index'
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
+import { Route as AdminProjectsIndexRouteImport } from './routes/admin/projects/index'
 import { Route as AdminPostsIndexRouteImport } from './routes/admin/posts/index'
+import { Route as AdminPhotosIndexRouteImport } from './routes/admin/photos/index'
+import { Route as AdminMusicIndexRouteImport } from './routes/admin/music/index'
+import { Route as AdminMomentsIndexRouteImport } from './routes/admin/moments/index'
 import { Route as AdminMediaIndexRouteImport } from './routes/admin/media/index'
 import { Route as AdminFriendLinksIndexRouteImport } from './routes/admin/friend-links/index'
+import { Route as AdminDanmakuIndexRouteImport } from './routes/admin/danmaku/index'
 import { Route as AdminCommentsIndexRouteImport } from './routes/admin/comments/index'
 import { Route as PublicPostSlugRouteImport } from './routes/_public/post/$slug'
 import { Route as AdminPostsEditIdRouteImport } from './routes/admin/posts/edit.$id'
@@ -79,6 +86,11 @@ const UserSubmitFriendLinkRoute = UserSubmitFriendLinkRouteImport.update({
   path: '/submit-friend-link',
   getParentRoute: () => UserRouteRoute,
 } as any)
+const UserProfileRoute = UserProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => UserRouteRoute,
+} as any)
 const PublicUnsubscribeRoute = PublicUnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
@@ -87,6 +99,11 @@ const PublicUnsubscribeRoute = PublicUnsubscribeRouteImport.update({
 const PublicTimelineRoute = PublicTimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicTalkRoute = PublicTalkRouteImport.update({
+  id: '/talk',
+  path: '/talk',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const PublicSearchRoute = PublicSearchRouteImport.update({
@@ -169,10 +186,30 @@ const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
   path: '/settings/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminProjectsIndexRoute = AdminProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminPostsIndexRoute = AdminPostsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminPostsRouteRoute,
+} as any)
+const AdminPhotosIndexRoute = AdminPhotosIndexRouteImport.update({
+  id: '/photos/',
+  path: '/photos/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminMusicIndexRoute = AdminMusicIndexRouteImport.update({
+  id: '/music/',
+  path: '/music/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminMomentsIndexRoute = AdminMomentsIndexRouteImport.update({
+  id: '/moments/',
+  path: '/moments/',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminMediaIndexRoute = AdminMediaIndexRouteImport.update({
   id: '/media/',
@@ -182,6 +219,11 @@ const AdminMediaIndexRoute = AdminMediaIndexRouteImport.update({
 const AdminFriendLinksIndexRoute = AdminFriendLinksIndexRouteImport.update({
   id: '/friend-links/',
   path: '/friend-links/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDanmakuIndexRoute = AdminDanmakuIndexRouteImport.update({
+  id: '/danmaku/',
+  path: '/danmaku/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminCommentsIndexRoute = AdminCommentsIndexRouteImport.update({
@@ -217,16 +259,23 @@ export interface FileRoutesByFullPath {
   '/posts': typeof PublicPostsRoute
   '/projects': typeof PublicProjectsRoute
   '/search': typeof PublicSearchRoute
+  '/talk': typeof PublicTalkRoute
   '/timeline': typeof PublicTimelineRoute
   '/unsubscribe': typeof PublicUnsubscribeRoute
+  '/profile': typeof UserProfileRoute
   '/submit-friend-link': typeof UserSubmitFriendLinkRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/admin/': typeof AdminIndexRoute
   '/post/$slug': typeof PublicPostSlugRoute
   '/admin/comments/': typeof AdminCommentsIndexRoute
+  '/admin/danmaku/': typeof AdminDanmakuIndexRoute
   '/admin/friend-links/': typeof AdminFriendLinksIndexRoute
   '/admin/media/': typeof AdminMediaIndexRoute
+  '/admin/moments/': typeof AdminMomentsIndexRoute
+  '/admin/music/': typeof AdminMusicIndexRoute
+  '/admin/photos/': typeof AdminPhotosIndexRoute
   '/admin/posts/': typeof AdminPostsIndexRoute
+  '/admin/projects/': typeof AdminProjectsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/posts/edit/$id': typeof AdminPostsEditIdRoute
@@ -246,16 +295,23 @@ export interface FileRoutesByTo {
   '/posts': typeof PublicPostsRoute
   '/projects': typeof PublicProjectsRoute
   '/search': typeof PublicSearchRoute
+  '/talk': typeof PublicTalkRoute
   '/timeline': typeof PublicTimelineRoute
   '/unsubscribe': typeof PublicUnsubscribeRoute
+  '/profile': typeof UserProfileRoute
   '/submit-friend-link': typeof UserSubmitFriendLinkRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/admin': typeof AdminIndexRoute
   '/post/$slug': typeof PublicPostSlugRoute
   '/admin/comments': typeof AdminCommentsIndexRoute
+  '/admin/danmaku': typeof AdminDanmakuIndexRoute
   '/admin/friend-links': typeof AdminFriendLinksIndexRoute
   '/admin/media': typeof AdminMediaIndexRoute
+  '/admin/moments': typeof AdminMomentsIndexRoute
+  '/admin/music': typeof AdminMusicIndexRoute
+  '/admin/photos': typeof AdminPhotosIndexRoute
   '/admin/posts': typeof AdminPostsIndexRoute
+  '/admin/projects': typeof AdminProjectsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/tags': typeof AdminTagsIndexRoute
   '/admin/posts/edit/$id': typeof AdminPostsEditIdRoute
@@ -280,17 +336,24 @@ export interface FileRoutesById {
   '/_public/posts': typeof PublicPostsRoute
   '/_public/projects': typeof PublicProjectsRoute
   '/_public/search': typeof PublicSearchRoute
+  '/_public/talk': typeof PublicTalkRoute
   '/_public/timeline': typeof PublicTimelineRoute
   '/_public/unsubscribe': typeof PublicUnsubscribeRoute
+  '/_user/profile': typeof UserProfileRoute
   '/_user/submit-friend-link': typeof UserSubmitFriendLinkRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/_public/': typeof PublicIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/_public/post/$slug': typeof PublicPostSlugRoute
   '/admin/comments/': typeof AdminCommentsIndexRoute
+  '/admin/danmaku/': typeof AdminDanmakuIndexRoute
   '/admin/friend-links/': typeof AdminFriendLinksIndexRoute
   '/admin/media/': typeof AdminMediaIndexRoute
+  '/admin/moments/': typeof AdminMomentsIndexRoute
+  '/admin/music/': typeof AdminMusicIndexRoute
+  '/admin/photos/': typeof AdminPhotosIndexRoute
   '/admin/posts/': typeof AdminPostsIndexRoute
+  '/admin/projects/': typeof AdminProjectsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/posts/edit/$id': typeof AdminPostsEditIdRoute
@@ -314,16 +377,23 @@ export interface FileRouteTypes {
     | '/posts'
     | '/projects'
     | '/search'
+    | '/talk'
     | '/timeline'
     | '/unsubscribe'
+    | '/profile'
     | '/submit-friend-link'
     | '/oauth/consent'
     | '/admin/'
     | '/post/$slug'
     | '/admin/comments/'
+    | '/admin/danmaku/'
     | '/admin/friend-links/'
     | '/admin/media/'
+    | '/admin/moments/'
+    | '/admin/music/'
+    | '/admin/photos/'
     | '/admin/posts/'
+    | '/admin/projects/'
     | '/admin/settings/'
     | '/admin/tags/'
     | '/admin/posts/edit/$id'
@@ -343,16 +413,23 @@ export interface FileRouteTypes {
     | '/posts'
     | '/projects'
     | '/search'
+    | '/talk'
     | '/timeline'
     | '/unsubscribe'
+    | '/profile'
     | '/submit-friend-link'
     | '/oauth/consent'
     | '/admin'
     | '/post/$slug'
     | '/admin/comments'
+    | '/admin/danmaku'
     | '/admin/friend-links'
     | '/admin/media'
+    | '/admin/moments'
+    | '/admin/music'
+    | '/admin/photos'
     | '/admin/posts'
+    | '/admin/projects'
     | '/admin/settings'
     | '/admin/tags'
     | '/admin/posts/edit/$id'
@@ -376,17 +453,24 @@ export interface FileRouteTypes {
     | '/_public/posts'
     | '/_public/projects'
     | '/_public/search'
+    | '/_public/talk'
     | '/_public/timeline'
     | '/_public/unsubscribe'
+    | '/_user/profile'
     | '/_user/submit-friend-link'
     | '/oauth/consent'
     | '/_public/'
     | '/admin/'
     | '/_public/post/$slug'
     | '/admin/comments/'
+    | '/admin/danmaku/'
     | '/admin/friend-links/'
     | '/admin/media/'
+    | '/admin/moments/'
+    | '/admin/music/'
+    | '/admin/photos/'
     | '/admin/posts/'
+    | '/admin/projects/'
     | '/admin/settings/'
     | '/admin/tags/'
     | '/admin/posts/edit/$id'
@@ -458,6 +542,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserSubmitFriendLinkRouteImport
       parentRoute: typeof UserRouteRoute
     }
+    '/_user/profile': {
+      id: '/_user/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof UserProfileRouteImport
+      parentRoute: typeof UserRouteRoute
+    }
     '/_public/unsubscribe': {
       id: '/_public/unsubscribe'
       path: '/unsubscribe'
@@ -470,6 +561,13 @@ declare module '@tanstack/react-router' {
       path: '/timeline'
       fullPath: '/timeline'
       preLoaderRoute: typeof PublicTimelineRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/talk': {
+      id: '/_public/talk'
+      path: '/talk'
+      fullPath: '/talk'
+      preLoaderRoute: typeof PublicTalkRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_public/search': {
@@ -584,12 +682,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/projects/': {
+      id: '/admin/projects/'
+      path: '/projects'
+      fullPath: '/admin/projects/'
+      preLoaderRoute: typeof AdminProjectsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/posts/': {
       id: '/admin/posts/'
       path: '/'
       fullPath: '/admin/posts/'
       preLoaderRoute: typeof AdminPostsIndexRouteImport
       parentRoute: typeof AdminPostsRouteRoute
+    }
+    '/admin/photos/': {
+      id: '/admin/photos/'
+      path: '/photos'
+      fullPath: '/admin/photos/'
+      preLoaderRoute: typeof AdminPhotosIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/music/': {
+      id: '/admin/music/'
+      path: '/music'
+      fullPath: '/admin/music/'
+      preLoaderRoute: typeof AdminMusicIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/moments/': {
+      id: '/admin/moments/'
+      path: '/moments'
+      fullPath: '/admin/moments/'
+      preLoaderRoute: typeof AdminMomentsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/media/': {
       id: '/admin/media/'
@@ -603,6 +729,13 @@ declare module '@tanstack/react-router' {
       path: '/friend-links'
       fullPath: '/admin/friend-links/'
       preLoaderRoute: typeof AdminFriendLinksIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/danmaku/': {
+      id: '/admin/danmaku/'
+      path: '/danmaku'
+      fullPath: '/admin/danmaku/'
+      preLoaderRoute: typeof AdminDanmakuIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/comments/': {
@@ -658,6 +791,7 @@ interface PublicRouteRouteChildren {
   PublicPostsRoute: typeof PublicPostsRoute
   PublicProjectsRoute: typeof PublicProjectsRoute
   PublicSearchRoute: typeof PublicSearchRoute
+  PublicTalkRoute: typeof PublicTalkRoute
   PublicTimelineRoute: typeof PublicTimelineRoute
   PublicUnsubscribeRoute: typeof PublicUnsubscribeRoute
   PublicIndexRoute: typeof PublicIndexRoute
@@ -673,6 +807,7 @@ const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicPostsRoute: PublicPostsRoute,
   PublicProjectsRoute: PublicProjectsRoute,
   PublicSearchRoute: PublicSearchRoute,
+  PublicTalkRoute: PublicTalkRoute,
   PublicTimelineRoute: PublicTimelineRoute,
   PublicUnsubscribeRoute: PublicUnsubscribeRoute,
   PublicIndexRoute: PublicIndexRoute,
@@ -684,10 +819,12 @@ const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
 )
 
 interface UserRouteRouteChildren {
+  UserProfileRoute: typeof UserProfileRoute
   UserSubmitFriendLinkRoute: typeof UserSubmitFriendLinkRoute
 }
 
 const UserRouteRouteChildren: UserRouteRouteChildren = {
+  UserProfileRoute: UserProfileRoute,
   UserSubmitFriendLinkRoute: UserSubmitFriendLinkRoute,
 }
 
@@ -713,8 +850,13 @@ interface AdminRouteRouteChildren {
   AdminPostsRouteRoute: typeof AdminPostsRouteRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
   AdminCommentsIndexRoute: typeof AdminCommentsIndexRoute
+  AdminDanmakuIndexRoute: typeof AdminDanmakuIndexRoute
   AdminFriendLinksIndexRoute: typeof AdminFriendLinksIndexRoute
   AdminMediaIndexRoute: typeof AdminMediaIndexRoute
+  AdminMomentsIndexRoute: typeof AdminMomentsIndexRoute
+  AdminMusicIndexRoute: typeof AdminMusicIndexRoute
+  AdminPhotosIndexRoute: typeof AdminPhotosIndexRoute
+  AdminProjectsIndexRoute: typeof AdminProjectsIndexRoute
   AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
   AdminTagsIndexRoute: typeof AdminTagsIndexRoute
 }
@@ -723,8 +865,13 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminPostsRouteRoute: AdminPostsRouteRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
   AdminCommentsIndexRoute: AdminCommentsIndexRoute,
+  AdminDanmakuIndexRoute: AdminDanmakuIndexRoute,
   AdminFriendLinksIndexRoute: AdminFriendLinksIndexRoute,
   AdminMediaIndexRoute: AdminMediaIndexRoute,
+  AdminMomentsIndexRoute: AdminMomentsIndexRoute,
+  AdminMusicIndexRoute: AdminMusicIndexRoute,
+  AdminPhotosIndexRoute: AdminPhotosIndexRoute,
+  AdminProjectsIndexRoute: AdminProjectsIndexRoute,
   AdminSettingsIndexRoute: AdminSettingsIndexRoute,
   AdminTagsIndexRoute: AdminTagsIndexRoute,
 }

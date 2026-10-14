@@ -3,7 +3,11 @@ import { z } from "zod";
 export const McpMomentSchema = z.object({
   id: z.number().describe("Numeric moment ID."),
   content: z.string().describe("Moment content text."),
-  images: z.string().nullable().optional().describe("JSON array of image URLs, if any."),
+  images: z
+    .string()
+    .nullable()
+    .optional()
+    .describe("JSON array of image URLs, if any."),
   mood: z.string().nullable().optional().describe("Mood tag, if any."),
   location: z.string().nullable().optional().describe("Location info, if any."),
   visibility: z.enum(["public", "private"]).describe("Visibility setting."),
@@ -27,7 +31,10 @@ export const McpMomentCreateInputSchema = z.object({
   images: z.string().optional().describe("JSON array of image URLs."),
   mood: z.string().max(50).optional().describe("Mood tag."),
   location: z.string().max(200).optional().describe("Location info."),
-  visibility: z.enum(["public", "private"]).optional().describe("Visibility setting."),
+  visibility: z
+    .enum(["public", "private"])
+    .optional()
+    .describe("Visibility setting."),
 });
 
 export const McpMomentDeleteInputSchema = z.object({

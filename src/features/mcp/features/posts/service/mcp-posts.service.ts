@@ -23,6 +23,8 @@ export function serializeMcpPostListItem(post: {
   readTimeInMinutes: number;
   slug: string;
   status: "draft" | "published";
+  // 函数体要序列化 type，参数声明必须包含它（此前遗漏导致 TS2339）。
+  type: "article" | "talk";
   summary: string | null;
   tags?: Array<{
     createdAt: Date | string;
@@ -64,6 +66,8 @@ export function serializeMcpPostDetail(post: {
     name: string;
   }>;
   title: string;
+  // 透传给 serializeMcpPostListItem，其参数要求 type（见上）。
+  type: "article" | "talk";
   updatedAt: Date | string;
 }) {
   return {

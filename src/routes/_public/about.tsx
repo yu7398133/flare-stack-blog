@@ -1,4 +1,4 @@
-import { createFileRoute, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import theme from "@theme";
 
 export const Route = createFileRoute("/_public/about")({
@@ -6,13 +6,7 @@ export const Route = createFileRoute("/_public/about")({
 });
 
 function AboutRoute() {
-  const { siteConfig } = useRouteContext({ from: "__root__" });
-
-  return (
-    <theme.AboutPage
-      author={siteConfig.author}
-      description={siteConfig.description}
-      social={siteConfig.social}
-    />
-  );
+  // 关于页从 theme 实现内部的 useRouteContext 读取 siteConfig，
+  // 这里不再传 author/description/social（历史死契约，无人接收）。
+  return <theme.AboutPage />;
 }

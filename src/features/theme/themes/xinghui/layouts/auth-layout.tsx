@@ -20,9 +20,7 @@ export function AuthLayout({ onBack, children }: AuthLayoutProps) {
         </button>
 
         {/* Auth card */}
-        <div className="xh-glass p-8 md:p-10">
-          {children}
-        </div>
+        <div className="xh-glass p-8 md:p-10">{children}</div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
-import { MapPin, MessageSquare, Clock, Search, Ghost } from "lucide-react";
 import { useRouteContext } from "@tanstack/react-router";
+import { Clock, Ghost, MapPin, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import type { MomentsPageProps } from "@/features/theme/contract/pages";
 
 function timeAgo(date: Date | string) {
@@ -8,8 +8,7 @@ function timeAgo(date: Date | string) {
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
   if (diffInSeconds < 60) return "刚刚";
-  if (diffInSeconds < 3600)
-    return `${Math.floor(diffInSeconds / 60)} 分钟前`;
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} 分钟前`;
   if (diffInSeconds < 86400)
     return `${Math.floor(diffInSeconds / 3600)} 小时前`;
   return d
@@ -23,7 +22,6 @@ function timeAgo(date: Date | string) {
 
 export function MomentsPage({
   moments,
-  total,
   hasNextPage,
   onLoadMore,
   onLike,
@@ -37,8 +35,7 @@ export function MomentsPage({
     index: number;
   } | null>(null);
 
-  const avatarUrl =
-    siteConfig.theme.xinghui?.avatar || "/images/avatar.png";
+  const avatarUrl = siteConfig.theme.xinghui?.avatar || "/images/avatar.png";
 
   const processedMoments = useMemo(() => {
     let result = [...moments];
@@ -71,8 +68,7 @@ export function MomentsPage({
     if (!images || images.length === 0) return null;
     const count = images.length;
     const columns = count === 1 ? 1 : count === 4 ? 2 : 3;
-    const maxWidth =
-      count === 1 ? "80%" : count === 4 ? "280px" : "320px";
+    const maxWidth = count === 1 ? "80%" : count === 4 ? "280px" : "320px";
 
     return (
       <div className="w-full flex justify-start sm:justify-center mt-4 md:mt-6">
@@ -157,10 +153,7 @@ export function MomentsPage({
           <div className="min-w-0 flex-1 pr-2">
             {moment.location && (
               <span className="inline-flex items-center gap-1 md:gap-1.5 text-[9px] md:text-[11px] font-bold px-2 md:px-3 py-1 md:py-1.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 max-w-full truncate border border-indigo-500/10">
-                <MapPin
-                  size={10}
-                  className="md:w-3 md:h-3 shrink-0"
-                />
+                <MapPin size={10} className="md:w-3 md:h-3 shrink-0" />
                 <span className="truncate">{moment.location}</span>
               </span>
             )}
@@ -194,8 +187,8 @@ export function MomentsPage({
           生活动态
         </h1>
         <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium italic opacity-80 flex items-center justify-center gap-1.5">
-          <span className="text-indigo-500">✨</span>
-          " 在代码之外捕捉瞬间的温度 "
+          <span className="text-indigo-500">✨</span>" 在代码之外捕捉瞬间的温度
+          "
         </p>
       </div>
 
@@ -203,7 +196,9 @@ export function MomentsPage({
       <div className="flex flex-col items-center gap-5 md:gap-6">
         <div className="relative w-full max-w-lg group">
           <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors z-20 pointer-events-none" />
-          <input id="page-search" name="page-search"
+          <input
+            id="page-search"
+            name="page-search"
             type="text"
             placeholder="搜寻被遗忘的记忆..."
             value={searchQuery}
@@ -294,9 +289,7 @@ export function MomentsPage({
                   setLightbox({
                     ...lightbox,
                     index:
-                      (lightbox.index -
-                        1 +
-                        lightbox.images.length) %
+                      (lightbox.index - 1 + lightbox.images.length) %
                       lightbox.images.length,
                   });
                 }}
@@ -309,9 +302,7 @@ export function MomentsPage({
                   e.stopPropagation();
                   setLightbox({
                     ...lightbox,
-                    index:
-                      (lightbox.index + 1) %
-                      lightbox.images.length,
+                    index: (lightbox.index + 1) % lightbox.images.length,
                   });
                 }}
               >

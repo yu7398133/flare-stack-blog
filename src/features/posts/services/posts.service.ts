@@ -454,6 +454,8 @@ export async function startPostProcessWorkflow(
           summary: post.summary,
           slug: post.slug,
           status: post.status,
+          // 记录 type，否则恢复历史版本时无法还原「文章/说说」。
+          type: post.type,
           publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,
           readTimeInMinutes: post.readTimeInMinutes,
           contentJson: post.contentJson,

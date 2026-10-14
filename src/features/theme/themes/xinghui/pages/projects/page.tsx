@@ -1,5 +1,5 @@
-import { ExternalLink, GitBranch, Search } from "lucide-react";
-import { useState, useMemo } from "react";
+import { Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import type { ProjectsPageProps } from "@/features/theme/contract/pages";
 import type { Project } from "@/lib/db/schema/projects.table";
 
@@ -20,7 +20,9 @@ const PROJECT_ICONS: Record<string, string> = {
 
 function getProjectIcon(project: Project): string {
   try {
-    const stack: string[] = project.techStack ? JSON.parse(project.techStack) : [];
+    const stack: string[] = project.techStack
+      ? JSON.parse(project.techStack)
+      : [];
     for (const tech of stack) {
       const lower = tech.toLowerCase();
       for (const [key, icon] of Object.entries(PROJECT_ICONS)) {
@@ -39,7 +41,11 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
     const q = searchQuery.toLowerCase();
     return projects.filter((p) => {
       const techStack = (() => {
-        try { return p.techStack ? JSON.parse(p.techStack) : []; } catch { return []; }
+        try {
+          return p.techStack ? JSON.parse(p.techStack) : [];
+        } catch {
+          return [];
+        }
       })();
       return (
         p.title.toLowerCase().includes(q) ||
@@ -66,7 +72,9 @@ export function ProjectsPage({ projects }: ProjectsPageProps) {
       {/* Search bar — rounded-full, serif font, matches reference */}
       <div className="mb-12 flex justify-center w-full">
         <div className="relative w-full max-w-lg">
-          <input id="page-search" name="page-search"
+          <input
+            id="page-search"
+            name="page-search"
             type="text"
             placeholder="搜索项目名称、描述或技术栈..."
             value={searchQuery}

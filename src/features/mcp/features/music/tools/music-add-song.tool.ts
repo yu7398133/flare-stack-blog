@@ -7,13 +7,12 @@ import {
 import { addSong } from "../service/mcp-music.service";
 
 const MUSIC_ADD_SONG_REQUIRED_SCOPES: OAuthScopeRequest = {
-  "posts": ["write"],
+  posts: ["write"],
 };
 
 export const musicAddSongTool = defineMcpTool({
   name: "music_add_song",
-  description:
-    "Add a Netease Cloud Music song ID to the music configuration.",
+  description: "Add a Netease Cloud Music song ID to the music configuration.",
   requiredScopes: MUSIC_ADD_SONG_REQUIRED_SCOPES,
   inputSchema: McpMusicAddSongInputSchema,
   outputSchema: McpMusicListOutputSchema,

@@ -70,7 +70,9 @@ export function ImageBlock({
 
       {/* Caption / Alt Text */}
       <div className="mt-3 flex items-center justify-center">
-        <input id="block-node" name="block-node"
+        <input
+          id="block-node"
+          name="block-node"
           type="text"
           value={node.attrs.alt || ""}
           onChange={(e) => updateAttributes({ alt: e.target.value })}

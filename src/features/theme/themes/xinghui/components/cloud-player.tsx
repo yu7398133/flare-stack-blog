@@ -1,20 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useMusic } from "./music-provider";
 
 const formatTime = (time: number) => {
   if (!time || isNaN(time)) return "00:00";
-  const m = Math.floor(time / 60).toString().padStart(2, "0");
-  const s = Math.floor(time % 60).toString().padStart(2, "0");
+  const m = Math.floor(time / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = Math.floor(time % 60)
+    .toString()
+    .padStart(2, "0");
   return `${m}:${s}`;
 };
 
 export function CloudPlayer() {
   const {
-    playlist, currentSong, isPlaying, progress, currentTime, duration,
-    currentLyric, isLoading, togglePlay, nextSong, prevSong, handleSeek,
+    playlist,
+    currentSong,
+    isPlaying,
+    progress,
+    currentTime,
+    duration,
+    currentLyric,
+    isLoading,
+    togglePlay,
+    nextSong,
+    prevSong,
+    handleSeek,
   } = useMusic();
   const [displayedLyric, setDisplayedLyric] = useState("");
   const navigate = useNavigate();
@@ -51,7 +65,11 @@ export function CloudPlayer() {
     return (
       <div className="h-full w-full rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl p-6 flex flex-col items-center justify-center transition-all duration-700">
         <div className="w-16 h-16 mb-4 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shadow-inner opacity-50">
-          <svg className="w-8 h-8 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-8 h-8 text-slate-400"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
           </svg>
         </div>
@@ -170,21 +188,43 @@ export function CloudPlayer() {
 
           {/* Controls */}
           <div className="flex items-center justify-center gap-6">
-            <button onClick={safePrevSong} className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
+            <button
+              onClick={safePrevSong}
+              className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+              </svg>
             </button>
             <button
               onClick={safeTogglePlay}
               className="w-12 h-12 flex items-center justify-center bg-indigo-500 text-white rounded-full hover:scale-105 shadow-xl shadow-indigo-500/40 transition-transform"
             >
               {isPlaying ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
               ) : (
-                <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                <svg
+                  className="w-5 h-5 ml-0.5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
               )}
             </button>
-            <button onClick={safeNextSong} className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+            <button
+              onClick={safeNextSong}
+              className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+              </svg>
             </button>
           </div>
         </div>

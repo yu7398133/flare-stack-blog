@@ -9,7 +9,17 @@ interface ImageAttrs {
   height?: number | string;
 }
 
-function InlineImage({ src, alt, width, height }: { src: string; alt: string; width?: number; height?: number }) {
+function InlineImage({
+  src,
+  alt,
+  width,
+  height,
+}: {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+}) {
   return (
     <figure className="my-4">
       <img
@@ -42,9 +52,13 @@ export function renderCommentReact(content: JSONContent | null) {
             (attrs.alt && attrs.alt !== "null" ? attrs.alt : null) ||
             "comment image";
           const width =
-            typeof attrs.width === "string" ? parseInt(attrs.width) : attrs.width;
+            typeof attrs.width === "string"
+              ? parseInt(attrs.width)
+              : attrs.width;
           const height =
-            typeof attrs.height === "string" ? parseInt(attrs.height) : attrs.height;
+            typeof attrs.height === "string"
+              ? parseInt(attrs.height)
+              : attrs.height;
 
           return (
             <InlineImage

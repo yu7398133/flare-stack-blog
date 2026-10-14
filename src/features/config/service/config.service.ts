@@ -103,7 +103,8 @@ export function resolveSiteConfig(
     theme: {
       xinghui: {
         homeBg:
-          config?.site?.theme?.xinghui?.homeBg ?? blogConfig.theme.xinghui.homeBg,
+          config?.site?.theme?.xinghui?.homeBg ??
+          blogConfig.theme.xinghui.homeBg,
         avatar:
           config?.site?.theme?.xinghui?.userAvatar ??
           config?.site?.theme?.xinghui?.avatar ??
@@ -112,23 +113,20 @@ export function resolveSiteConfig(
           config?.site?.theme?.xinghui?.userAvatar ??
           config?.site?.theme?.xinghui?.avatar ??
           "",
-        aboutContent:
-          config?.site?.theme?.xinghui?.aboutContent ?? "",
+        aboutContent: config?.site?.theme?.xinghui?.aboutContent ?? "",
         musicIds:
           config?.site?.theme?.xinghui?.musicIds ??
           blogConfig.theme.xinghui.musicIds,
         musicPlaylistIds:
           config?.site?.theme?.xinghui?.musicPlaylistIds ??
           blogConfig.theme.xinghui.musicPlaylistIds,
-        musicResolverUrl:
-          config?.site?.theme?.xinghui?.musicResolverUrl ??
-          "",
+        musicResolverUrl: config?.site?.theme?.xinghui?.musicResolverUrl ?? "",
         buildDate:
           config?.site?.theme?.xinghui?.buildDate ??
           blogConfig.theme.xinghui.buildDate,
-        danmakuList:
-          config?.site?.theme?.xinghui?.danmakuList ??
-          [...blogConfig.theme.xinghui.danmakuList],
+        danmakuList: config?.site?.theme?.xinghui?.danmakuList ?? [
+          ...blogConfig.theme.xinghui.danmakuList,
+        ],
         danmakuFontSize:
           config?.site?.theme?.xinghui?.danmakuFontSize ??
           blogConfig.theme.xinghui.danmakuFontSize,

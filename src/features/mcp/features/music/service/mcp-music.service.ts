@@ -64,7 +64,10 @@ export async function addSong(
   };
 
   await ConfigService.updateSystemConfig(context, updatedConfig);
-  return { songs: musicIds, playlists: systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [] };
+  return {
+    songs: musicIds,
+    playlists: systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [],
+  };
 }
 
 export async function removeSong(
@@ -101,7 +104,10 @@ export async function removeSong(
   };
 
   await ConfigService.updateSystemConfig(context, updatedConfig);
-  return { songs: musicIds, playlists: systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [] };
+  return {
+    songs: musicIds,
+    playlists: systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [],
+  };
 }
 
 export async function addPlaylist(
@@ -110,13 +116,10 @@ export async function addPlaylist(
 ): Promise<{ songs: MusicSong[]; playlists: string[] }> {
   const systemConfig = await ConfigService.getSystemConfig(context);
 
-  const playlistIds =
-    systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [];
+  const playlistIds = systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [];
 
   if (playlistIds.includes(input.playlistId)) {
-    throw new Error(
-      `Playlist ID "${input.playlistId}" is already configured.`,
-    );
+    throw new Error(`Playlist ID "${input.playlistId}" is already configured.`);
   }
 
   const updatedPlaylistIds = [...playlistIds, input.playlistId];
@@ -147,8 +150,7 @@ export async function removePlaylist(
 ): Promise<{ songs: MusicSong[]; playlists: string[] }> {
   const systemConfig = await ConfigService.getSystemConfig(context);
 
-  const playlistIds =
-    systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [];
+  const playlistIds = systemConfig.site?.theme?.xinghui?.musicPlaylistIds ?? [];
 
   const index = playlistIds.indexOf(input.playlistId);
   if (index === -1) {

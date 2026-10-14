@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
 import { getPostCover } from "../utils/post-cover";
 
@@ -17,23 +17,28 @@ function formatDate(date: Date | string) {
   return `${y}.${m}.${day}`;
 }
 
-export function LatestChatterCarousel({ posts, interval = 9000, initialDelay = 9000 }: LatestChatterCarouselProps) {
+export function LatestChatterCarousel({
+  posts,
+  interval = 9000,
+  initialDelay = 9000,
+}: LatestChatterCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const indexRef = useRef(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
-
-  const goTo = useCallback(
-    (idx: number) => {
-      setFade(false);
-      setTimeout(() => {
-        setCurrentIndex(idx);
-        indexRef.current = idx;
-        setFade(true);
-      }, 300);
-    },
-    [],
+  // React 19 的 useRef 要求显式初始值（types 收紧），undefined 与原先的
+  // 「未初始化」语义一致，读取处仍需判空。
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined,
   );
+
+  const goTo = useCallback((idx: number) => {
+    setFade(false);
+    setTimeout(() => {
+      setCurrentIndex(idx);
+      indexRef.current = idx;
+      setFade(true);
+    }, 300);
+  }, []);
 
   useEffect(() => {
     if (posts.length <= 1) return;
@@ -77,7 +82,7 @@ export function LatestChatterCarousel({ posts, interval = 9000, initialDelay = 9
         style={{ opacity: fade ? 1 : 0 }}
       >
         <img
-          src={getPostCover(post.slug, post.cover)}
+          src={getPostCover(post.slug)}
           alt=""
           className="w-full h-full object-cover opacity-80 dark:opacity-60 transition-transform duration-1000 group-hover:scale-105"
         />

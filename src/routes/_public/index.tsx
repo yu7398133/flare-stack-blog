@@ -8,10 +8,10 @@ import {
   recentPostsQuery,
 } from "@/features/posts/queries";
 import {
-  recentMomentsQuery,
-  recentTalkPostsQuery,
   allPhotosQuery,
   allProjectsQuery,
+  recentMomentsQuery,
+  recentTalkPostsQuery,
 } from "@/features/theme/themes/xinghui/queries";
 import { buildCanonicalUrl, canonicalLink } from "@/lib/seo";
 

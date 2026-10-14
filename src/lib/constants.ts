@@ -30,4 +30,3 @@ export const CACHE_CONTROL = {
     "CDN-Cache-Control": "private, no-store",
   },
 } as const;
-

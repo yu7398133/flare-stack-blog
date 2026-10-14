@@ -24,14 +24,19 @@ function StatusBadge({ status }: { status: MyFriendLink["status"] }) {
   const Icon = icons[status];
 
   return (
-    <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${styles[status]}`}>
+    <span
+      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${styles[status]}`}
+    >
       <Icon className="w-3.5 h-3.5" />
       {labels[status]}
     </span>
   );
 }
 
-export function SubmitFriendLinkPage({ myLinks, form }: SubmitFriendLinkPageProps) {
+export function SubmitFriendLinkPage({
+  myLinks,
+  form,
+}: SubmitFriendLinkPageProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
@@ -70,7 +75,9 @@ export function SubmitFriendLinkPage({ myLinks, form }: SubmitFriendLinkPageProp
                 placeholder="我的博客"
               />
               {form.errors.siteName && (
-                <p className="mt-1.5 text-sm text-red-500">{form.errors.siteName.message}</p>
+                <p className="mt-1.5 text-sm text-red-500">
+                  {form.errors.siteName.message}
+                </p>
               )}
             </div>
 
@@ -85,7 +92,9 @@ export function SubmitFriendLinkPage({ myLinks, form }: SubmitFriendLinkPageProp
                 placeholder="https://example.com"
               />
               {form.errors.siteUrl && (
-                <p className="mt-1.5 text-sm text-red-500">{form.errors.siteUrl.message}</p>
+                <p className="mt-1.5 text-sm text-red-500">
+                  {form.errors.siteUrl.message}
+                </p>
               )}
             </div>
 
@@ -111,7 +120,9 @@ export function SubmitFriendLinkPage({ myLinks, form }: SubmitFriendLinkPageProp
                 placeholder="you@example.com"
               />
               {form.errors.contactEmail && (
-                <p className="mt-1.5 text-sm text-red-500">{form.errors.contactEmail.message}</p>
+                <p className="mt-1.5 text-sm text-red-500">
+                  {form.errors.contactEmail.message}
+                </p>
               )}
             </div>
 

@@ -8,7 +8,9 @@ export const Route = createFileRoute("/_public/friend-links")({
   component: FriendLinksPage,
   loader: async ({ context }) => {
     // Force fresh data on each load (bypass stale cache)
-    context.queryClient.removeQueries({ queryKey: ["friend-links", "approved"] });
+    context.queryClient.removeQueries({
+      queryKey: ["friend-links", "approved"],
+    });
     await context.queryClient.ensureQueryData(approvedFriendLinksQuery());
 
     return {
