@@ -16,6 +16,8 @@ import {
 import EditorToolbar from "./ui/editor-toolbar";
 import type { FormulaMode } from "./ui/formula-modal";
 import { FormulaModal } from "./ui/formula-modal";
+import type { CardVideoModalType } from "./ui/insert-card-video-modal";
+import { InsertCardVideoModal } from "./ui/insert-card-video-modal";
 import type { ModalType } from "./ui/insert-modal";
 import InsertModal from "./ui/insert-modal";
 import { TableBubbleMenu } from "./ui/table-bubble-menu";
@@ -43,6 +45,8 @@ export const Editor = memo(function Editor({
   const [modalOpen, setModalOpen] = useState<ModalType>(null);
   const [modalInitialUrl, setModalInitialUrl] = useState("");
   const [formulaModalOpen, setFormulaModalOpen] = useState(false);
+  const [cardVideoModal, setCardVideoModal] =
+    useState<CardVideoModalType>(null);
   const [formulaPayload, setFormulaPayload] = useState<{
     mode: FormulaMode;
     initialLatex: string;
@@ -207,6 +211,8 @@ export const Editor = memo(function Editor({
           onImageClick={openImageModal}
           onFormulaInlineClick={() => openFormulaModal("inline")}
           onFormulaBlockClick={() => openFormulaModal("block")}
+          onCardClick={() => setCardVideoModal("CARD")}
+          onVideoClick={() => setCardVideoModal("VIDEO")}
         />
       )}
 
@@ -226,6 +232,21 @@ export const Editor = memo(function Editor({
           initialUrl={modalInitialUrl}
           onClose={() => setModalOpen(null)}
           onSubmit={handleModalSubmit}
+        />
+      )}
+
+      {editable && (
+        <InsertCardVideoModal
+          type={cardVideoModal}
+          onClose={() => setCardVideoModal(null)}
+          onCardSubmit={(attrs) => {
+            editor?.chain().focus().insertLinkCard(attrs).run();
+          }}
+          onVideoSubmit={(src, title) =>
+            // 解析失败返回 false，弹窗据此显示错误且不插入。
+            editor?.chain().focus().insertVideoEmbed({ src, title }).run() ??
+            false
+          }
         />
       )}
 

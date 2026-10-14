@@ -7,6 +7,20 @@ import { extractImageKey } from "@/features/media/utils/media.utils";
  * 直接遍历 TipTap JSONContent AST，不依赖 ProseMirror schema 和 extensions，
  * 避免 server 端引入浏览器依赖。
  */
+
+/**
+ * 转义写入 HTML 属性的值。
+ *
+ * 卡片/视频节点以 `data-*` 属性承载内容，若标题里含 `"` 而不转义，
+ * 会提前闭合属性并破坏整段 HTML（导出后再导入就还原不回来）。
+ */
+function escapeAttr(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
 export function jsonContentToMarkdown(
   doc: JSONContent,
   options?: {
@@ -99,6 +113,27 @@ function serializeNode(
       const latex = attrs?.latex ?? "";
       if (!latex.trim()) return "";
       return `\n$$\n${latex}\n$$\n`;
+    }
+
+    /**
+     * 链接卡片与视频嵌入序列化为 HTML 元素（与 blockMath 同一机制）：
+     * marked 会把这些标签原样透传，再由节点的 parseHTML 还原，
+     * 因此导出再导入是无损的。属性值必须转义，否则标题里的引号
+     * 会截断属性、破坏 HTML。
+     */
+    case "linkCard": {
+      const attrs = node.attrs as Record<string, string> | undefined;
+      if (!attrs?.href) {
+        // 没有链接的卡片降级为纯文本，避免导出无意义标签
+        return attrs?.title ? `\n${attrs.title}\n` : "";
+      }
+      return `\n<div data-link-card="true" data-emoji="${escapeAttr(attrs.emoji ?? "")}" data-title="${escapeAttr(attrs.title ?? "")}" data-description="${escapeAttr(attrs.description ?? "")}" data-href="${escapeAttr(attrs.href)}" data-site="${escapeAttr(attrs.site ?? "")}"></div>\n`;
+    }
+
+    case "videoEmbed": {
+      const attrs = node.attrs as Record<string, string> | undefined;
+      if (!attrs?.src) return "";
+      return `\n<div data-video-embed="true" data-src="${escapeAttr(attrs.src)}" data-provider="${escapeAttr(attrs.provider ?? "")}" data-video-id="${escapeAttr(attrs.videoId ?? "")}" data-title="${escapeAttr(attrs.title ?? "")}"></div>\n`;
     }
 
     default:

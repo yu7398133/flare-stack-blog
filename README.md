@@ -34,6 +34,7 @@
 ## 核心功能
 
 - **文章管理** — 富文本编辑器，支持代码高亮、图片上传、草稿/发布流程
+- **卡片与视频嵌入** — 编辑器内插入链接卡片（emoji + 标题 + 描述 + 链接）与 B站/YouTube 视频，编辑器与发布页渲染一致，导入导出可无损往返
 - **版本历史** — 编辑器自动快照与文章版本回溯，方便恢复误改内容
 - **标签系统** — 灵活的文章分类
 - **评论系统** — 支持嵌套回复、邮件通知、AI 辅助审核与上下文化评论审核
@@ -131,6 +132,19 @@
 - **Content-Security-Policy (CSP)**：添加完整 CSP 头，通过 Hono 中间件全局拦截
 - **字体加载安全**：配置 `font-src` / `style-src` 白名单（Google Fonts → jsDelivr）
 - **可控部署**：支持通过 `ROUTE` 环境变量切换 custom_domain / routes 部署模式
+- **admin API 鉴权修复**：`/api/admin/{photos,moments,projects}` 三条 Hono 路由曾**完全无鉴权**
+  （匿名可读、可写、可删生产数据），已统一挂上 `adminGuardMiddleware`；附 15 个真实请求测试
+  与 1 个静态扫描守卫（防止新增 API 再次漏挂）
+- **链接协议白名单**：链接 href 改为协议 allowlist，拒绝 `javascript:` / `data:` / `vbscript:`
+  等伪协议（含大小写混淆与 URL 编码绕过形式）
+- **CSP 收敛为单一来源**：`src/lib/csp.ts`，修复公开路由与 Hono 中间件两处 CSP 漂移
+- **MCP 限流**：`/mcp` 端点按 principal/IP 限流（60 次/分钟）
+
+### 🗺️ 项目图谱
+
+- **[docs/PROJECT-MAP.md](docs/PROJECT-MAP.md)** — 一页看懂项目骨架：请求入口、
+  两套鉴权机制的区别、数据流与缓存、功能域分层、部署链路、以及「我想改 X 去哪找」的定位表。
+  排查问题或加功能前先看它。
 
 ### 🎨 字体系统优化
 

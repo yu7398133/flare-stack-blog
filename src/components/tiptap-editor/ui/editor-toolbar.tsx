@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   Bold,
   Code,
+  CreditCard,
   Heading1,
   Heading2,
   Heading3,
@@ -22,6 +23,7 @@ import {
   Terminal,
   Underline as UnderlineIcon,
   Undo,
+  Video,
 } from "lucide-react";
 import type React from "react";
 import { m } from "@/paraglide/messages";
@@ -32,6 +34,10 @@ interface EditorToolbarProps {
   onImageClick: () => void;
   onFormulaInlineClick: () => void;
   onFormulaBlockClick: () => void;
+  /** 打开链接卡片插入弹窗。 */
+  onCardClick: () => void;
+  /** 打开视频嵌入插入弹窗。 */
+  onVideoClick: () => void;
 }
 
 interface ToolbarButtonProps {
@@ -69,6 +75,8 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
   onImageClick,
   onFormulaInlineClick,
   onFormulaBlockClick,
+  onCardClick,
+  onVideoClick,
 }) => {
   const {
     isBold,
@@ -271,6 +279,18 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
         isActive={false}
         icon={ImageIcon}
         label={m.editor_toolbar_image()}
+      />
+      <ToolbarButton
+        onClick={onCardClick}
+        isActive={editor?.isActive("linkCard")}
+        icon={CreditCard}
+        label={m.editor_toolbar_card()}
+      />
+      <ToolbarButton
+        onClick={onVideoClick}
+        isActive={editor?.isActive("videoEmbed")}
+        icon={Video}
+        label={m.editor_toolbar_video()}
       />
 
       <div className="ml-auto flex gap-1">

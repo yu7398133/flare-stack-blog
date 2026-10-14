@@ -1,10 +1,12 @@
 import type { JSONContent } from "@tiptap/react";
-import { useMemo } from "react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
+import { useMemo } from "react";
 import { MathFormula } from "@/components/content/math-formula";
 import { extensions } from "@/features/posts/editor/config";
 import { CodeBlock } from "./code-block";
 import { ImageDisplay } from "./image-display";
+import { LinkCardDisplay } from "./link-card-display";
+import { VideoEmbedDisplay } from "./video-embed-display";
 
 export function ContentRenderer({ content }: { content: JSONContent | null }) {
   const rendered = useMemo(() => {
@@ -25,9 +27,13 @@ export function ContentRenderer({ content }: { content: JSONContent | null }) {
               (attrs.alt && attrs.alt !== "null" ? attrs.alt : null) ||
               "blog image";
             const width =
-              typeof attrs.width === "string" ? parseInt(attrs.width) : attrs.width;
+              typeof attrs.width === "string"
+                ? parseInt(attrs.width)
+                : attrs.width;
             const height =
-              typeof attrs.height === "string" ? parseInt(attrs.height) : attrs.height;
+              typeof attrs.height === "string"
+                ? parseInt(attrs.height)
+                : attrs.height;
             return (
               <ImageDisplay
                 src={attrs.src}
@@ -90,6 +96,40 @@ export function ContentRenderer({ content }: { content: JSONContent | null }) {
           blockMath: ({ node }) => {
             const latex = (node.attrs as { latex?: string }).latex ?? "";
             return <MathFormula latex={latex} mode="block" />;
+          },
+          linkCard: ({ node }) => {
+            const attrs = node.attrs as {
+              emoji?: string;
+              title?: string;
+              description?: string;
+              href?: string;
+              site?: string;
+            };
+            return (
+              <LinkCardDisplay
+                description={attrs.description}
+                emoji={attrs.emoji}
+                href={attrs.href}
+                site={attrs.site}
+                title={attrs.title}
+              />
+            );
+          },
+          videoEmbed: ({ node }) => {
+            const attrs = node.attrs as {
+              src?: string;
+              provider?: string;
+              videoId?: string;
+              title?: string;
+            };
+            return (
+              <VideoEmbedDisplay
+                provider={attrs.provider}
+                src={attrs.src}
+                title={attrs.title}
+                videoId={attrs.videoId}
+              />
+            );
           },
         },
       },

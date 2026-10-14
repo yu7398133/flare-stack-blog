@@ -12,11 +12,13 @@ import {
 import { uploadImageFn } from "@/features/media/api/media.api";
 import { CodeBlockExtension } from "@/features/posts/editor/extensions/code-block";
 import { ImageExtension } from "@/features/posts/editor/extensions/images";
+import { LinkCardExtension } from "@/features/posts/editor/extensions/link-card";
 import { TableBlockExtension } from "@/features/posts/editor/extensions/table";
 import { BlockQuoteExtension } from "@/features/posts/editor/extensions/typography/block-quote";
 import { HeadingExtension } from "@/features/posts/editor/extensions/typography/heading";
 import type { ImageUploadResult } from "@/features/posts/editor/extensions/upload-image";
 import { ImageUpload } from "@/features/posts/editor/extensions/upload-image";
+import { VideoEmbedExtension } from "@/features/posts/editor/extensions/video";
 import { slugify } from "@/features/posts/utils/content";
 import { m } from "@/paraglide/messages";
 
@@ -130,6 +132,10 @@ export const extensions = [
   }),
   ...TableBlockExtension,
   ImageExtension,
+  // 链接卡片与视频嵌入：编辑器与前台渲染器共用同一份扩展列表，
+  // 因此在这里注册一次即可同时作用于编辑态与发布态。
+  LinkCardExtension,
+  VideoEmbedExtension,
   ImageUpload.configure({
     onUpload: handleImageUpload,
     onError: (error) => {

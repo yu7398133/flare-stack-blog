@@ -100,6 +100,15 @@ export async function markdownToJsonContent(
   );
   const { default: TableCell } = await import("@tiptap/extension-table-cell");
 
+  // 卡片/视频节点只用到 Node 定义（含 parseHTML），不需要 React 视图，
+  // 因此直接动态导入以保证 server 端不引入浏览器依赖。
+  const { LinkCardExtension } = await import(
+    "@/features/posts/editor/extensions/link-card"
+  );
+  const { VideoEmbedExtension } = await import(
+    "@/features/posts/editor/extensions/video"
+  );
+
   const schema = getSchema([
     StarterKit,
     ImageExt,
@@ -108,6 +117,8 @@ export async function markdownToJsonContent(
     TableRow,
     TableHeader,
     TableCell,
+    LinkCardExtension,
+    VideoEmbedExtension,
   ]);
 
   const { document } = parseHTML(
