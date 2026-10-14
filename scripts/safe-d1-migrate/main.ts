@@ -72,7 +72,7 @@ const cwd = process.cwd();
 const tmpDir = path.join(cwd, "tmp");
 const defaultLocalPersistTo = path.join(cwd, ".wrangler/state");
 
-function parseArgs(argv: Array<string>): ParsedArgs {
+export function parseArgs(argv: Array<string>): ParsedArgs {
   let database = "DB";
   let target: Target = "remote";
   let persistTo: string | undefined;
@@ -365,7 +365,9 @@ function inspectTablePresence(
   };
 }
 
-function resolveVerificationPlan(tables: TablePresence): VerificationPlan {
+export function resolveVerificationPlan(
+  tables: TablePresence,
+): VerificationPlan {
   if (!tables.hasPosts && !tables.hasComments && !tables.hasD1Migrations) {
     return {
       kind: "fresh",
