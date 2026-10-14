@@ -1,6 +1,16 @@
 name: CI
 
 on:
+  # push：直推 main 也要跑质量门禁。此前只有 pull_request 触发器，
+  # 导致直推 main 完全绕过 lint/typecheck/test（而 deploy.yml 会在同一次
+  # push 上直接部署），真实缺陷因此在 main 上长期存活。
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - ".agent/**"
+      - ".vscode/**"
+      - ".gitignore"
   pull_request:
     branches: [main]
     paths-ignore:
@@ -9,6 +19,12 @@ on:
       - ".vscode/**"
       - ".gitignore"
   workflow_dispatch:
+
+env:
+  # 构建与类型检查都依赖 @theme alias 指向真实主题目录。
+  # 缺失时 vite 会因 ENOENT 失败，tsc 会报 "Cannot find module '@theme'"。
+  # 与 deploy.yml 的 vars.THEME 保持一致，此处显式声明以免 CI 依赖仓库变量。
+  THEME: xinghui
 
 jobs:
   quality:
@@ -56,3 +72,7 @@ jobs:
 
       - name: Run Integration Tests
         run: bun run test
+
+      - name: Build
+        run: bun run build
+

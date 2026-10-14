@@ -16,8 +16,65 @@ on:
   workflow_dispatch:
 
 jobs:
+  # 部署前置质量门禁。
+  #
+  # 此前 deploy 是 push main 后的第一个也是唯一的作业，job 内没有任何
+  # test/lint/typecheck —— 坏代码直达生产。更糟的是 package.json 的
+  # deploy 脚本是 `bun db:migrate && wrangler deploy`，即构建失败时
+  # 迁移已经跑过生产库了。
+  #
+  # 这里刻意不写 `needs: quality` 引用 ci.yml（跨 workflow 的 needs 不被
+  # 支持），而是把最小必要校验内联进来：类型检查 + 测试 + 构建。
+  # 任何一步失败，deploy 作业不会开始，生产不受影响。
+  quality:
+    name: Pre-deploy Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun ci
+
+      - name: Setup Wrangler Config
+        run: cp wrangler.example.jsonc wrangler.jsonc
+
+      - name: Compile Paraglide Runtime
+        run: bun run i18n:compile
+
+      - name: Lint Check
+        run: bun lint
+
+      - name: Type Check
+        run: bun tsc --noEmit
+
+      - name: Run Node Tests
+        run: bun run test:node
+
+      - name: Run Integration Tests
+        run: bun run test
+
   deploy:
     name: Deploy
+    needs: quality
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
