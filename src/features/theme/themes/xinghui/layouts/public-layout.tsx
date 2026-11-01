@@ -1,5 +1,5 @@
 import { useRouteContext } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import type { PublicLayoutProps } from "@/features/theme/contract/layouts";
 import { ClickEffect } from "../components/click-effect";
 import { DanmakuBackground } from "../components/danmaku-background";
@@ -7,6 +7,7 @@ import { FireflyEffect } from "../components/firefly-effect";
 import { FloatingPlayer } from "../components/floating-player";
 import { MusicProvider } from "../components/music-provider";
 import { WindyGrass } from "../components/windy-grass";
+import { useHomeBg } from "../utils/home-bg";
 import { MobileMenu } from "./mobile-menu";
 import { Navbar } from "./navbar";
 
@@ -46,19 +47,13 @@ export function PublicLayout({
   );
   const homeBgBase = siteConfig.theme.xinghui?.homeBg;
 
-  const [bgUrl, setBgUrl] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    if (!homeBgBase) return;
-    const sep = homeBgBase.includes("?") ? "&" : "?";
-    setBgUrl(`${homeBgBase}${sep}_t=${Date.now()}`);
-  }, [homeBgBase]);
-
-  const refreshBg = useCallback(() => {
-    if (!homeBgBase) return;
-    const sep = homeBgBase.includes("?") ? "&" : "?";
-    setBgUrl(`${homeBgBase}${sep}_t=${Date.now()}`);
-  }, [homeBgBase]);
+  const {
+    url: bgUrl,
+    degraded: isBgDegraded,
+    onError: handleBgError,
+    onLoad: handleBgLoad,
+    refresh: refreshBg,
+  } = useHomeBg(homeBgBase);
 
   return (
     <MusicProvider
@@ -71,14 +66,19 @@ export function PublicLayout({
       <div className="xh-page-bg min-h-screen relative">
         <DanmakuBackground />
 
-        {bgUrl && (
-          <div className="fixed inset-0 z-0">
-            <img
-              src={bgUrl}
-              alt=""
-              className="w-full h-full object-cover"
-              aria-hidden="true"
-            />
+        {/* 随机图源会返回 404 单图；img 抛错时换一张，取不到就退到这个渐变底色 */}
+        {(bgUrl || isBgDegraded) && (
+          <div className="fixed inset-0 z-0 bg-gradient-to-br from-slate-900 via-slate-800 to-black">
+            {bgUrl && (
+              <img
+                src={bgUrl}
+                alt=""
+                className="w-full h-full object-cover"
+                aria-hidden="true"
+                onError={handleBgError}
+                onLoad={handleBgLoad}
+              />
+            )}
             <div className="absolute inset-0 bg-black/30 dark:bg-black/50" />
             <div className="absolute inset-0 backdrop-blur-sm" />
           </div>

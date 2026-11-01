@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Ghost, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { PostListItem } from "@/features/posts/schema/posts.schema";
-import { getPostCover } from "../../utils/post-cover";
+import { PostCoverImage } from "../../components/post-cover-image";
 
 interface TalkPageProps {
   posts: PostListItem[];
@@ -85,7 +85,6 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
       {filteredPosts.length > 0 ? (
         <div className="columns-2 lg:columns-3 gap-3 md:gap-6 space-y-3 md:space-y-6">
           {filteredPosts.map((post) => {
-            const cover = getPostCover(post.slug, undefined, 400, 250);
             return (
               <div key={post.id} className="break-inside-avoid">
                 <Link
@@ -94,11 +93,9 @@ export function TalkPage({ posts, hasNextPage, onLoadMore }: TalkPageProps) {
                   className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-transform duration-300"
                 >
                   <div className="relative h-28 sm:h-36 overflow-hidden">
-                    <img
-                      src={cover}
-                      alt=""
+                    <PostCoverImage
+                      slug={post.slug}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      loading="lazy"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

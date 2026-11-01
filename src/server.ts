@@ -28,4 +28,11 @@ export default {
   async queue(batch, env, ctx) {
     await handleQueueBatch(batch, env, ctx);
   },
+  // 定时巡检随机背景图源：随机图单张 404 是常态，只有持续采样才能看出源是否已坏
+  async scheduled(_controller, _env, ctx) {
+    const { runBackgroundHealthCheck } = await import(
+      "@/features/theme/background-health.cron"
+    );
+    ctx.waitUntil(runBackgroundHealthCheck());
+  },
 } satisfies ExportedHandler<Env>;

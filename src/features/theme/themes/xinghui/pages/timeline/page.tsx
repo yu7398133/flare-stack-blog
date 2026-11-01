@@ -3,7 +3,7 @@ import { ArrowUp, LayoutGrid, ListTree, Search, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { TimelinePageProps } from "@/features/theme/contract/pages";
 
-import { getPostCover } from "../../utils/post-cover";
+import { PostCoverImage } from "../../components/post-cover-image";
 
 export function TimelinePageSkeleton() {
   return (
@@ -180,9 +180,8 @@ export function TimelinePage({ posts }: TimelinePageProps) {
                   className="rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-transform duration-300"
                 >
                   <div className="relative h-28 sm:h-36 overflow-hidden">
-                    <img
-                      src={getPostCover(post.slug)}
-                      alt=""
+                    <PostCoverImage
+                      slug={post.slug}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

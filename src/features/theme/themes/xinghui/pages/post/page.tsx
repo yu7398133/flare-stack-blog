@@ -19,11 +19,7 @@ function formatDate(date: Date | string) {
 }
 
 // Consistent image per post slug (same seed = same image as timeline)
-import { getPostCover } from "../../utils/post-cover";
-
-function getPostCoverLocal(slug: string) {
-  return getPostCover(slug, undefined, 1200, 600);
-}
+import { PostCoverImage } from "../../components/post-cover-image";
 
 export function PostPage({ post }: PostPageProps) {
   const { data: session } = authClient.useSession();
@@ -45,7 +41,6 @@ export function PostPage({ post }: PostPageProps) {
 
   // posts 表没有 cover 列（迁移中从未出现），封面一律由 slug 派生。
   // 此前这里传 post.cover，是访问不存在的字段，类型检查报 TS2339。
-  const coverSrc = getPostCoverLocal(post.slug);
 
   return (
     <div className="flex flex-col gap-6 xh-animate-in">
@@ -64,9 +59,8 @@ export function PostPage({ post }: PostPageProps) {
         <article className="flex-1 min-w-0 rounded-3xl bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl overflow-hidden transition-colors duration-700">
           {/* Cover image */}
           <div className="w-full aspect-video bg-slate-200 dark:bg-slate-700 relative group overflow-hidden">
-            <img
-              src={coverSrc}
-              alt=""
+            <PostCoverImage
+              slug={post.slug}
               className="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105"
               referrerPolicy="no-referrer"
             />

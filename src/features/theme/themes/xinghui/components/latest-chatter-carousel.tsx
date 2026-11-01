@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PostItem } from "@/features/posts/schema/posts.schema";
-import { getPostCover } from "../utils/post-cover";
+import { PostCoverImage } from "./post-cover-image";
 
 interface LatestChatterCarouselProps {
   posts: PostItem[];
@@ -81,9 +81,8 @@ export function LatestChatterCarousel({
         className="absolute inset-0 z-0 transition-opacity duration-700"
         style={{ opacity: fade ? 1 : 0 }}
       >
-        <img
-          src={getPostCover(post.slug)}
-          alt=""
+        <PostCoverImage
+          slug={post.slug}
           className="w-full h-full object-cover opacity-80 dark:opacity-60 transition-transform duration-1000 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/10" />

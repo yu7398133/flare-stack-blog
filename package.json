@@ -16,6 +16,7 @@
     "serve": "vite preview",
     "test": "vitest run",
     "test:node": "vitest run --config vitest.node.config.ts",
+    "check:random-images": "node scripts/check-random-images.mjs",
     "lint": "biome lint",
     "lint:fix": "biome check --write",
     "format": "biome format --write",
